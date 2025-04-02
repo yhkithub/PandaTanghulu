@@ -1,0 +1,35 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+.vs/
+.vscode/
+.idea/
+
+# 유니티 빌드 결과물
+*.apk
+*.unitypackage
+*.exe
+
+# Auto-generated VS/JetBrains Rider project files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+
+# OS 별 불필요한 파일
+.DS_Store
+Thumbs.db
+
+# 기타
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
