@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - MouseTrail
   layers:
   - Default
   - TransparentFX
@@ -46,6 +47,9 @@ TagManager:
     locked: 0
   - name: character
     uniqueID: 3853892231
+    locked: 0
+  - name: mouse
+    uniqueID: 3143453737
     locked: 0
   m_RenderingLayers:
   - Default

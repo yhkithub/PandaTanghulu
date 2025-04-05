@@ -1,20 +1,20 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // 씬 전환을 위한 네임스페이스
+using UnityEngine.SceneManagement;
 
-public class TitleManager : MonoBehaviour  // MonoBehaviour 상속 확인
+public class TitleManager : MonoBehaviour
 {
     public void StartNewGame()
     {
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("StoryScene"); // 실제 게임 시작 씬 이름
     }
 
     public void ContinueGame()
     {
-        SceneManager.LoadScene("SavedGameScene");
+        SceneManager.LoadScene("SavedGameScene"); // 이어하기용 씬 이름
     }
 
     public void OpenAnimalBook()
     {
-        SceneManager.LoadScene("AnimalBookScene");
+        SceneManager.LoadScene("AnimalBookScene"); // 도감 씬 이름
     }
 }
