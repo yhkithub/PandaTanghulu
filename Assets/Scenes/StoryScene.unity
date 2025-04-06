@@ -262,8 +262,8 @@ Canvas:
   m_GameObject: {fileID: 523313703}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1686473765}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -273,7 +273,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 398348055
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &523313707
@@ -308,8 +308,8 @@ GameObject:
   m_Component:
   - component: {fileID: 876221003}
   - component: {fileID: 876221002}
-  - component: {fileID: 876221004}
-  m_Layer: 0
+  - component: {fileID: 876221005}
+  m_Layer: 5
   m_Name: BackgroundObj
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -386,7 +386,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &876221004
+--- !u!114 &876221005
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -574,9 +574,11 @@ MonoBehaviour:
   - text: "\uB9AC\uBCF8\uC744 \uC798\uB77C \uC8FC\uC138\uC694"
     backgroundImage: {fileID: -5448576196392795416, guid: a0aae151e7ab227498bcf05c36bdf27f, type: 3}
   backgroundRenderer: {fileID: 876221002}
+  backgroundScaler: {fileID: 876221005}
   storyText: {fileID: 1956048137}
   nextButton: {fileID: 1700300389}
   ribbonObj: {fileID: 1565801924}
+  mouseTrailObj: {fileID: 2084301630}
 --- !u!4 &1362302977
 Transform:
   m_ObjectHideFlags: 0
@@ -683,6 +685,7 @@ GameObject:
   - component: {fileID: 1565801927}
   - component: {fileID: 1565801926}
   - component: {fileID: 1565801925}
+  - component: {fileID: 1565801929}
   m_Layer: 0
   m_Name: RibbonObj
   m_TagString: Untagged
@@ -702,6 +705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47a90f8c28b2422448cfe0dadc9f209c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cutSprite: {fileID: -7267543976870629490, guid: 14536135064ca2245ae29f13f75c02df, type: 3}
 --- !u!61 &1565801926
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -789,8 +793,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 398348055
-  m_SortingLayer: 1
+  m_SortingLayerID: -441075065
+  m_SortingLayer: 2
   m_SortingOrder: 100
   m_Sprite: {fileID: -1467477243107901111, guid: 14536135064ca2245ae29f13f75c02df, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -818,6 +822,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1565801929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1565801924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61b31e59964cd924e834f9182875ffa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1686473763
 GameObject:
   m_ObjectHideFlags: 0
@@ -1239,6 +1255,7 @@ GameObject:
   - component: {fileID: 2084301638}
   - component: {fileID: 2084301637}
   - component: {fileID: 2084301636}
+  - component: {fileID: 2084301639}
   m_Layer: 0
   m_Name: MouseTrail
   m_TagString: MouseTrail
@@ -1388,7 +1405,7 @@ Transform:
   m_GameObject: {fileID: 2084301630}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 604.74866, y: 270.72943, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1493,7 +1510,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
 --- !u!96 &2084301638
 TrailRenderer:
@@ -1539,8 +1556,8 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1151513559
   m_SortingLayer: 3
-  m_SortingOrder: 500
-  m_Time: 1
+  m_SortingOrder: 100
+  m_Time: 0.5
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -1611,6 +1628,18 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!210 &2084301639
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084301630}
+  m_Enabled: 1
+  m_SortingLayerID: -1151513559
+  m_SortingLayer: 3
+  m_SortingOrder: 100
+  m_SortAtRoot: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
