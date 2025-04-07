@@ -38,18 +38,23 @@ public class MouseTrailController : MonoBehaviour
         // 메인 카메라가 유효한지 매 프레임 확인 (씬 전환 등 고려)
         if (mainCamera == null) return;
 
-        // 마우스 왼쪽 버튼을 새로 클릭했을 때 (단 한 번 발생)
+        // 마우스 왼쪽 버튼을 새로 클릭했을 때
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("MouseTrailController: 마우스 클릭 감지! 트레일 초기화 시도.");
-            if (trail != null)
+            Debug.Log("MouseTrailController: 마우스 클릭 감지! 위치 이동 후 트레일 초기화 시도.");
+            if (trail != null && mainCamera != null)
             {
-                trail.Clear(); // 기존 트레일 잔상 제거
-                // trail.enabled = true; // 필요 시 트레일 활성화
+                // 1. 먼저 새 위치로 이동
+                Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+                mousePos.z = 0f;
+                transform.position = mousePos;
+
+                // 2. 그 다음 초기화
+                trail.Clear();
             }
             else
             {
-                Debug.LogError("MouseTrailController Error: TrailRenderer 참조가 null입니다. 초기화 불가.");
+                Debug.LogError("MouseTrailController Error: TrailRenderer 또는 MainCamera 참조가 null입니다.");
             }
         }
 

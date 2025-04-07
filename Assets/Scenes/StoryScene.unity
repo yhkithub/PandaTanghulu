@@ -247,7 +247,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -705,7 +705,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47a90f8c28b2422448cfe0dadc9f209c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cutSprite: {fileID: -7267543976870629490, guid: 14536135064ca2245ae29f13f75c02df, type: 3}
+  cutSprite: {fileID: 21300000, guid: 095d6af264440fc4e921910122f9f1fa, type: 3}
+  fadeDuration: 0.25
+  delayAfterCut: 1
 --- !u!61 &1565801926
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -744,8 +746,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 60.000004, y: 10.96}
-    newSize: {x: 60.000004, y: 10.96}
+    oldSize: {x: 60.000004, y: 15.000001}
+    newSize: {x: 60.000004, y: 15.000001}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -796,12 +798,12 @@ SpriteRenderer:
   m_SortingLayerID: -441075065
   m_SortingLayer: 2
   m_SortingOrder: 100
-  m_Sprite: {fileID: -1467477243107901111, guid: 14536135064ca2245ae29f13f75c02df, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 14536135064ca2245ae29f13f75c02df, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 60.000004, y: 10.96}
+  m_Size: {x: 60.000004, y: 15.000001}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1005,10 +1007,10 @@ RectTransform:
   - {fileID: 1045286156}
   m_Father: {fileID: 523313707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 649.73, y: -408.03003}
-  m_SizeDelta: {x: -1366.2565, y: -957.0327}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 663, y: -414}
+  m_SizeDelta: {x: 417.79004, y: 92.71997}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1700300391
 MonoBehaviour:
@@ -1136,10 +1138,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 523313707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -138, y: -868}
-  m_SizeDelta: {x: 955.615, y: 167.0228}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 27.03, y: -334.65002}
+  m_SizeDelta: {x: 1591.68, y: 162.33002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1956048137
 MonoBehaviour:
@@ -1195,7 +1197,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0

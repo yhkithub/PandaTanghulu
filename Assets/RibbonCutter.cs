@@ -1,56 +1,105 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections; // 코루틴 사용을 위해 추가
 
-[RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))] // Collider는 여전히 필요 (Raycast Target용)
+[RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))]
 public class RibbonCutter : MonoBehaviour
 {
-    public Sprite cutSprite;
+    public Sprite cutSprite;            // 잘린 리본 스프라이트 (Inspector에서 할당)
+    public float fadeDuration = 0.25f;  // 페이드 아웃에 걸리는 시간 (초)
+    public float delayAfterCut = 0.25f; // 이미지 변경 후 씬 전환까지 추가 지연 시간
+
     private SpriteRenderer sr;
     private bool isCut = false;
-    private Camera mainCamera; // 카메라 캐싱
-    private Collider2D ribbonCollider; // 자신의 콜라이더 참조
+    private Camera mainCamera;
+    private Collider2D ribbonCollider;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
-        ribbonCollider = GetComponent<Collider2D>(); // 자신의 콜라이더 가져오기
+        ribbonCollider = GetComponent<Collider2D>();
         mainCamera = Camera.main;
-        // ... 오류 검사 ...
+        // --- 오류 검사 (이전과 동일) ---
+        if (sr == null) { Debug.LogError("RibbonCutter Error: SpriteRenderer 없음!"); enabled = false; }
+        if (ribbonCollider == null) { Debug.LogError("RibbonCutter Error: Collider2D 없음!"); enabled = false; }
+        if (mainCamera == null) { Debug.LogError("RibbonCutter Error: MainCamera 없음!"); enabled = false; }
         isCut = false;
     }
 
-    // OnTriggerStay2D 대신 Update 사용
+    // Raycasting 방식 사용 시 Update 함수
     void Update()
     {
-        // 이미 잘렸거나, 카메라가 없거나, 마우스 버튼 안 눌렀으면 종료
         if (isCut || mainCamera == null || !Input.GetMouseButton(0))
         {
             return;
         }
 
-        // 마우스 위치에서 Raycast 발사
         Vector2 mousePosWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.Raycast(mousePosWorld, Vector2.zero); // Vector2.zero는 점 형태의 Raycast
+        RaycastHit2D hit = Physics2D.Raycast(mousePosWorld, Vector2.zero);
 
-        // Raycast 결과 확인
-        if (hit.collider != null)
+        if (hit.collider != null && hit.collider == ribbonCollider)
         {
-             // Debug.Log($"Raycast hit: {hit.collider.name}"); // 무엇과 충돌했는지 확인
-
-             // 충돌한 Collider가 이 오브젝트(리본)의 Collider인지 확인
-             if (hit.collider == ribbonCollider)
-             {
-                 Debug.Log("RibbonCutter (Raycast): 마우스가 리본 위에 있고 버튼 눌림! 리본 자르기 실행.");
-                 isCut = true;
-
-                 if (cutSprite != null)
-                     sr.sprite = cutSprite;
-                 else
-                     Debug.LogWarning("RibbonCutter Warning: 'cutSprite'가 할당되지 않음.", this.gameObject);
-
-                 Invoke("LoadShopScene", 0.5f);
-             }
+            // 리본 자르기 로직 시작 (코루틴 호출)
+            StartCuttingSequence();
         }
+    }
+
+    // 리본 자르기 시작 (중복 호출 방지)
+    void StartCuttingSequence()
+    {
+        if (isCut) return; // 이미 잘리는 중이거나 잘렸으면 반환
+        isCut = true; // 잘림 플래그 설정
+
+        Debug.Log("RibbonCutter (Raycast): 리본 자르기 시퀀스 시작.");
+        // 코루틴 시작
+        StartCoroutine(CutRibbonSequence());
+    }
+
+    // 페이드 아웃 -> 스프라이트 교체 -> 씬 전환 코루틴
+    IEnumerator CutRibbonSequence()
+    {
+        // 1. 페이드 아웃
+        float timer = 0f;
+        Color originalColor = sr.color; // 초기 색상 저장 (알파값 포함)
+
+        while (timer < fadeDuration)
+        {
+            // 시간에 따라 알파값을 1에서 0으로 변경
+            float alpha = Mathf.Lerp(originalColor.a, 0f, timer / fadeDuration);
+            sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, alpha);
+
+            timer += Time.deltaTime;
+            yield return null; // 다음 프레임까지 대기
+        }
+        // 페이드 아웃 완료 후 알파값 0으로 확실히 설정
+        sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
+        Debug.Log("RibbonCutter: 페이드 아웃 완료.");
+
+        // 2. 스프라이트 교체
+        if (cutSprite != null)
+        {
+            sr.sprite = cutSprite;
+            Debug.Log("RibbonCutter: 스프라이트를 'cutSprite'으로 교체.");
+
+            // 3. 즉시 다시 보이게 함 (알파값 1로 설정)
+            // (만약 페이드 인 효과도 원하면 이 부분을 다시 Lerp 루프로 만들어야 함)
+            sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
+            Debug.Log("RibbonCutter: 잘린 리본 즉시 표시.");
+        }
+        else
+        {
+            Debug.LogWarning("RibbonCutter Warning: 'cutSprite'가 할당되지 않음.", this.gameObject);
+            // 스프라이트 교체 실패 시에도 씬 전환은 진행되도록 함
+        }
+
+        // 4. 추가 지연 시간만큼 대기
+        if (delayAfterCut > 0)
+        {
+            yield return new WaitForSeconds(delayAfterCut);
+        }
+
+        // 5. 씬 전환
+        LoadShopScene();
     }
 
     void LoadShopScene()
