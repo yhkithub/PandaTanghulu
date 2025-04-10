@@ -567,46 +567,59 @@ MonoBehaviour:
   - text: "\uBC29\uACFC \uD6C4 \uB300\uB098\uBB34\uC232 \uC18D\uC744 \uD55C\uAC00\uB85C\uC774
       \uAC70\uB2D0\uB358 \uD310\uB2E4 \uD478\uD478."
     backgroundImage: {fileID: 21300000, guid: 66ca04d9370feac44918589f173c5ee9, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\u201C\uC624\uB298 \uAC04\uC2DD\uC740 \uBB50 \uBA39\uC9C0?\u201D \uD558\uBA70
       \uACE0\uBBFC\uD558\uB358 \uCC30\uB098, \uC5B4\uB514\uC120\uAC00 \uB2EC\uCF64\uD55C
       \uD5A5\uAE30\uAC00 \uC194\uC194 \uD48D\uACA8\uC628\uB2E4."
     backgroundImage: {fileID: 9141755401725020031, guid: f477cbbcd6e944141804529a4a82453c, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\uADF8 \uD5A5\uAE30\uB97C \uB530\uB77C\uAC00\uBCF4\uB2C8, \uBC18\uC9DD\uBC18\uC9DD
       \uBE5B\uB098\uB294 \uD0D5\uD6C4\uB8E8 \uAC00\uAC8C \uC55E\uC5D0 \uAE34 \uC904\uC774
       \uB298\uC5B4\uC11C \uC788\uB2E4!"
     backgroundImage: {fileID: 9141755401725020031, guid: f477cbbcd6e944141804529a4a82453c, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\uD638\uAE30\uC2EC \uAC00\uB4DD\uD55C \uB208\uC73C\uB85C \uC904 \uB05D\uC5D0
       \uC120 \uD478\uD478\uB294, \uB9C8\uCE68\uB0B4 \uC724\uAE30\uB098\uB294 \uD1B5\uADE4\uD0D5\uD6C4\uB8E8
       \uD558\uB098\uB97C \uC190\uC5D0 \uB123\uB294\uB2E4."
     backgroundImage: {fileID: 21300000, guid: 162d556ec7ca1a946a45fb0392f88fd8, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\u201C\uD55C \uC785\uB9CC...!\u201D"
     backgroundImage: {fileID: 21300000, guid: 162d556ec7ca1a946a45fb0392f88fd8, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\uBC14\uC0AD!"
     backgroundImage: {fileID: 21300000, guid: 9aaa9e6d434011345a20b804957fbdb4, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\uB2EC\uCF64\uD55C \uC2DC\uB7FD\uC774 \uD1A1, \uC0C1\uD07C\uD55C \uACFC\uC999\uC774
       \uD321!"
     backgroundImage: {fileID: 21300000, guid: 9aaa9e6d434011345a20b804957fbdb4, type: 3}
-  - text: "\u201C\uC73C\uC545... \uC774\uAC74... \uC138\uC0C1\uC5D0\uC11C \uC81C\uC77C
-      \uB9DB\uC788\uC5B4!!\u201D"
-    backgroundImage: {fileID: 21300000, guid: 9aaa9e6d434011345a20b804957fbdb4, type: 3}
-  - text: "\uD0D5\uD6C4\uB8E8\uC758 \uB9C8\uC131\uC5D0 \uBE60\uC838\uBC84\uB9B0 \uD478\uD478\uB294
-      \uACB0\uC2EC\uD55C\uB2E4."
-    backgroundImage: {fileID: 21300000, guid: 3e9dbffe6ba0aa7439b08aba9132f5dc, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\u201C\uADF8\uB798! \uB098\uB3C4 \uC774\uB7F0 \uD0D5\uD6C4\uB8E8\uB97C
       \uB9CC\uB4E4 \uAC70\uC57C! \uBAA8\uB450\uC5D0\uAC8C \uC774 \uD589\uBCF5\uD55C
       \uB9DB\uC744 \uC804\uD574\uC904\uB798!\u201D"
     backgroundImage: {fileID: 21300000, guid: 3e9dbffe6ba0aa7439b08aba9132f5dc, type: 3}
+    soundEffect: {fileID: 0}
+  - text: "\u201C\uC73C\uC545... \uC774\uAC74... \uC138\uC0C1\uC5D0\uC11C \uC81C\uC77C
+      \uB9DB\uC788\uC5B4!!\u201D"
+    backgroundImage: {fileID: 21300000, guid: 9aaa9e6d434011345a20b804957fbdb4, type: 3}
+    soundEffect: {fileID: 0}
+  - text: "\uD0D5\uD6C4\uB8E8\uC758 \uB9C8\uC131\uC5D0 \uBE60\uC838\uBC84\uB9B0 \uD478\uD478\uB294
+      \uACB0\uC2EC\uD55C\uB2E4."
+    backgroundImage: {fileID: 21300000, guid: 3e9dbffe6ba0aa7439b08aba9132f5dc, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\uADF8\uB807\uAC8C, \uD478\uD478\uC758 \uB2EC\uCF64\uD558\uACE0 \uBC14\uC05C
       \uD558\uB8E8\uAC00 \uC2DC\uC791\uB41C\uB2E4."
     backgroundImage: {fileID: -5448576196392795416, guid: a0aae151e7ab227498bcf05c36bdf27f, type: 3}
+    soundEffect: {fileID: 0}
   - text: "\uB9AC\uBCF8\uC744 \uC798\uB77C \uC8FC\uC138\uC694"
     backgroundImage: {fileID: -5448576196392795416, guid: a0aae151e7ab227498bcf05c36bdf27f, type: 3}
+    soundEffect: {fileID: 0}
   backgroundRenderer: {fileID: 876221002}
   backgroundScaler: {fileID: 876221005}
   storyText: {fileID: 1956048137}
   nextButton: {fileID: 1700300389}
   ribbonObj: {fileID: 1565801924}
   mouseTrailObj: {fileID: 2084301630}
+  nextButtonSound: {fileID: 8300000, guid: e6d440cc4d3d0cc4dac032606c8e961d, type: 3}
 --- !u!4 &1362302977
 Transform:
   m_ObjectHideFlags: 0
