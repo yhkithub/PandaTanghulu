@@ -8,17 +8,29 @@ public class RibbonCutter : MonoBehaviour
     public Sprite cutSprite;            // 잘린 리본 스프라이트 (Inspector에서 할당)
     public float fadeDuration = 0.25f;  // 페이드 아웃에 걸리는 시간 (초)
     public float delayAfterCut = 0.25f; // 이미지 변경 후 씬 전환까지 추가 지연 시간
+    // ★ 리본 자르는 사운드 추가
+    public AudioClip ribbonCutSound;
 
     private SpriteRenderer sr;
     private bool isCut = false;
     private Camera mainCamera;
     private Collider2D ribbonCollider;
+    // ★ AudioSource 컴포넌트 참조 변수
+    private AudioSource audioSource;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         ribbonCollider = GetComponent<Collider2D>();
         mainCamera = Camera.main;
+        // ★ AudioSource 컴포넌트 가져오기
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            Debug.LogError("RibbonCutter Error: AudioSource 컴포넌트가 없습니다!");
+            enabled = false;
+            return;
+        }
         // --- 오류 검사 (이전과 동일) ---
         if (sr == null) { Debug.LogError("RibbonCutter Error: SpriteRenderer 없음!"); enabled = false; }
         if (ribbonCollider == null) { Debug.LogError("RibbonCutter Error: Collider2D 없음!"); enabled = false; }
@@ -26,7 +38,6 @@ public class RibbonCutter : MonoBehaviour
         isCut = false;
     }
 
-    // Raycasting 방식 사용 시 Update 함수
     void Update()
     {
         if (isCut || mainCamera == null || !Input.GetMouseButton(0))
@@ -44,7 +55,6 @@ public class RibbonCutter : MonoBehaviour
         }
     }
 
-    // 리본 자르기 시작 (중복 호출 방지)
     void StartCuttingSequence()
     {
         if (isCut) return; // 이미 잘리는 중이거나 잘렸으면 반환
@@ -55,7 +65,6 @@ public class RibbonCutter : MonoBehaviour
         StartCoroutine(CutRibbonSequence());
     }
 
-    // 페이드 아웃 -> 스프라이트 교체 -> 씬 전환 코루틴
     IEnumerator CutRibbonSequence()
     {
         // 1. 페이드 아웃
@@ -75,13 +84,24 @@ public class RibbonCutter : MonoBehaviour
         sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
         Debug.Log("RibbonCutter: 페이드 아웃 완료.");
 
-        // 2. 스프라이트 교체
+        // ★ 2. 사운드 재생 (페이드 아웃 직후 또는 스프라이트 교체 직전에 재생하는 것이 적절)
+        if (audioSource != null && ribbonCutSound != null)
+        {
+            audioSource.PlayOneShot(ribbonCutSound);
+            Debug.Log("RibbonCutter: 리본 자르는 사운드 재생.");
+        }
+        else
+        {
+            Debug.LogWarning("RibbonCutter Warning: AudioSource가 없거나 ribbonCutSound가 할당되지 않았습니다.");
+        }
+
+        // 3. 스프라이트 교체
         if (cutSprite != null)
         {
             sr.sprite = cutSprite;
             Debug.Log("RibbonCutter: 스프라이트를 'cutSprite'으로 교체.");
 
-            // 3. 즉시 다시 보이게 함 (알파값 1로 설정)
+            // 4. 즉시 다시 보이게 함 (알파값 1로 설정)
             // (만약 페이드 인 효과도 원하면 이 부분을 다시 Lerp 루프로 만들어야 함)
             sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
             Debug.Log("RibbonCutter: 잘린 리본 즉시 표시.");
@@ -92,13 +112,13 @@ public class RibbonCutter : MonoBehaviour
             // 스프라이트 교체 실패 시에도 씬 전환은 진행되도록 함
         }
 
-        // 4. 추가 지연 시간만큼 대기
+        // 5. 추가 지연 시간만큼 대기
         if (delayAfterCut > 0)
         {
             yield return new WaitForSeconds(delayAfterCut);
         }
 
-        // 5. 씬 전환
+        // 6. 씬 전환
         LoadShopScene();
     }
 
