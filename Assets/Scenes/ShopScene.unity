@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 959594982}
   - component: {fileID: 959594984}
   m_Layer: 5
-  m_Name: speechBubble
+  m_Name: CustomerSpeechBubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -932,8 +932,8 @@ Transform:
   m_GameObject: {fileID: 2141690272}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.95, y: -1.34, z: 0}
-  m_LocalScale: {x: 1.4097376, y: 1.6812314, z: 0.43557474}
+  m_LocalPosition: {x: -5.39, y: -1.4, z: 0}
+  m_LocalScale: {x: 1.4887, y: 1.4887, z: 0.6484401}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -957,6 +957,7 @@ MonoBehaviour:
   stretchSpeed: 5
   speechBubbleGroup: {fileID: 959594984}
   speechText: {fileID: 1765563131}
+  initialScale: {x: 1.4887, y: 1.4887, z: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
