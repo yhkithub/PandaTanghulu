@@ -217,9 +217,14 @@ public class CustomerDialogueManager : MonoBehaviour
 
     void OnNextButtonClicked()
     {
-        if (!isTextTyping) // 텍스트가 모두 출력된 후에만 다음 대사로 넘어갈 수 있도록
+        if (!isTextTyping)
         {
             StartCoroutine(FadeOut(currentBubbleGroup));
+            // 현재 활성화된 말풍선이 끼끼의 것이라면 손님 오브젝트 비활성화
+            if (currentBubbleGroup == kikiSpeechBubbleGroup && gameObject.GetComponentInParent<CustomerSquishyBounce>() != null)
+            {
+                gameObject.GetComponentInParent<CustomerSquishyBounce>().gameObject.SetActive(false);
+            }
         }
     }
 }
