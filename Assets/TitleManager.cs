@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TitleManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class TitleManager : MonoBehaviour
     public float logoFadeInDuration = 2f;
     public float fruitRollDelay = 0.5f;
     public GameObject[] fruitPrefabs; // 여러 종류의 과일 프리팹 배열
+    public int[] minFruitCounts; // 각 과일별 최소 생성 개수
     public Transform fruitRollStartPositionLeft;
     public Transform fruitRollStartPositionRight;
     public float fruitRollSpeed = 5f;
@@ -106,41 +108,39 @@ public class TitleManager : MonoBehaviour
         // 과일 단면 생성 및 굴러가는 효과
         if (fruitPrefabs.Length > 0 && fruitRollStartPositionLeft != null && fruitRollStartPositionRight != null)
         {
-            int numberOfFruits = 10;
-            float totalYRange = maxYSpawn - minYSpawn;
+            float[] targetYPositions = new float[] { 4.5f, 3.5f, 2.5f, 1.5f, 0.5f, -0.5f, -1.5f, -2.5f, -3.5f, -4.5f };
+            List<GameObject> generatedFruits = new List<GameObject>(); // 생성된 과일 목록
 
-            for (int i = 0; i < numberOfFruits / 2; i++)
+            for (int i = 0; i < targetYPositions.Length; i++)
             {
-                // 왼쪽 과일 생성
-                float leftSpawnY = Mathf.Lerp(minYSpawn, maxYSpawn, (float)i / (numberOfFruits / 2 - 1)) + Random.Range(-0.3f, 0.3f); // Y 오프셋 추가
-                Vector3 leftSpawnPosition = new Vector3(fruitRollStartPositionLeft.position.x, leftSpawnY, fruitRollStartPositionLeft.position.z);
-                GameObject leftFruit = Instantiate(fruitPrefabs[Random.Range(0, fruitPrefabs.Length)], leftSpawnPosition, Quaternion.identity);
-                Rigidbody2D leftRb = leftFruit.GetComponent<Rigidbody2D>();
-                if (leftRb != null)
+                // 왼쪽에서 생성 (짝수 인덱스)
+                if (i % 2 == 0)
                 {
-                    leftRb.velocity = Vector2.right * fruitRollSpeed;
+                    Vector3 leftSpawnPosition = new Vector3(fruitRollStartPositionLeft.position.x, targetYPositions[i], fruitRollStartPositionLeft.position.z);
+                    GameObject leftFruit = Instantiate(fruitPrefabs[Random.Range(0, fruitPrefabs.Length)], leftSpawnPosition, Quaternion.identity);
+                    Rigidbody2D leftRb = leftFruit.GetComponent<Rigidbody2D>();
+                    if (leftRb != null) leftRb.linearVelocity = Vector2.right * fruitRollSpeed;
+                    AddTrailToFruit(leftFruit);
+                    generatedFruits.Add(leftFruit);
+                    yield return new WaitForSeconds(0.3f);
                 }
-                AddTrailToFruit(leftFruit);
-                Destroy(leftFruit, 20f);
-                yield return new WaitForSeconds(0.4f);
-
-                // 오른쪽 과일 생성
-                float rightSpawnY = Mathf.Lerp(minYSpawn, maxYSpawn, (float)i / (numberOfFruits / 2 - 1)) + Random.Range(-0.3f, 0.3f); // Y 오프셋 추가
-                Vector3 rightSpawnPosition = new Vector3(fruitRollStartPositionRight.position.x, rightSpawnY, rightSpawnPosition.z);
-                GameObject rightFruit = Instantiate(fruitPrefabs[Random.Range(0, fruitPrefabs.Length)], rightSpawnPosition, Quaternion.identity);
-                Rigidbody2D rightRb = rightFruit.GetComponent<Rigidbody2D>();
-                if (rightRb != null)
+                // 오른쪽에서 생성 (홀수 인덱스)
+                else
                 {
-                    rightRb.velocity = Vector2.left * fruitRollSpeed;
+                    Vector3 rightSpawnPosition = new Vector3(fruitRollStartPositionRight.position.x, targetYPositions[i], fruitRollStartPositionRight.position.z);
+                    GameObject rightFruit = Instantiate(fruitPrefabs[Random.Range(0, fruitPrefabs.Length)], rightSpawnPosition, Quaternion.identity);
+                    Rigidbody2D rightRb = rightFruit.GetComponent<Rigidbody2D>();
+                    if (rightRb != null) rightRb.linearVelocity = Vector2.left * fruitRollSpeed;
+                    AddTrailToFruit(rightFruit);
+                    generatedFruits.Add(rightFruit);
+                    yield return new WaitForSeconds(0.3f);
                 }
-                AddTrailToFruit(rightFruit);
-                Destroy(rightFruit, 20f);
-                yield return new WaitForSeconds(0.4f);
             }
-        }
-        else
-        {
-            Debug.LogWarning("TitleManager Warning: 과일 프리팹 배열이 비어 있거나 시작 위치가 할당되지 않았습니다.");
+
+            foreach (GameObject fruit in generatedFruits)
+            {
+                Destroy(fruit, 20f);
+            }
         }
 
         yield return new WaitForSeconds(5f); // 전환 대기 시간 (조정 필요)
