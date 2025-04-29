@@ -94,9 +94,12 @@ public class CustomerDialogueManager : MonoBehaviour
         if (bubbleGroup != null)
         {
             bubbleGroup.gameObject.SetActive(true);
+            // 말풍선 등장 사운드를 FadeIn 시작 전에 재생
+            if (AudioManager.Instance != null && !string.IsNullOrEmpty(bubbleOpenSoundName))
+            {
+                AudioManager.Instance.PlaySound(bubbleOpenSoundName);
+            }
             yield return StartCoroutine(FadeIn(bubbleGroup));
-            // AudioManager를 통해 사운드 재생
-            AudioManager.Instance?.PlaySound(bubbleOpenSoundName);
             textComponent.text = "";
             yield return StartCoroutine(TypeText(textComponent, message));
             if (nextBtn != null)
@@ -109,16 +112,40 @@ public class CustomerDialogueManager : MonoBehaviour
     IEnumerator TypeText(TextMeshProUGUI textComponent, string message)
     {
         isTextTyping = true;
-        textComponent.text = "";
+        textComponent.text = ""; // 텍스트 초기화
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(textSoundName))
+        {
+            // PlayOneShot 대신 Play를 사용하고, StopTextSound로 제어
+            Sound s = AudioManager.Instance.sounds.Find(sound => sound.name == textSoundName);
+            if (s != null)
+            {
+                s.source.Play();
+            }
+        }
         foreach (char c in message)
         {
             textComponent.text += c;
-            // AudioManager를 통해 사운드 재생
-            AudioManager.Instance?.PlayOneShotSound(textSoundName);
-            yield return new WaitForSeconds(0.02f);
+            yield return new WaitForSeconds(0.02f); // 타이핑 속도 약간 빠르게 조정
         }
         isTextTyping = false;
+        // 타이핑이 끝나면 텍스트 사운드 정지
+        AudioManager.Instance?.StopTextSound();
     }
+
+
+    //IEnumerator TypeText(TextMeshProUGUI textComponent, string message)
+    //{
+    //    isTextTyping = true;
+    //    textComponent.text = "";
+    //    foreach (char c in message)
+    //    {
+    //        textComponent.text += c;
+    //        // AudioManager를 통해 사운드 재생
+    //        AudioManager.Instance?.PlayOneShotSound(textSoundName);
+    //        yield return new WaitForSeconds(0.02f);
+    //    }
+    //    isTextTyping = false;
+    //}
 
     IEnumerator FadeIn(CanvasGroup canvasGroup, float duration = 0.2f)
     {
