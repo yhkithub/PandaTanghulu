@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2191408846496898159}
   - component: {fileID: 7885042920128022363}
   - component: {fileID: 541931980910519797}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: kiwi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 398348055
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 100
   m_Sprite: {fileID: -6511435452147127883, guid: 2825719cc3d234544b7344d5dfd921d2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -161,7 +161,7 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 398348055
   m_SortingLayer: 1
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_Time: 5
   m_PreviewTimeScale: 1
   m_Parameters:
