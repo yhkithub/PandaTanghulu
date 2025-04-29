@@ -23,12 +23,12 @@ public class CustomerDialogueManager : MonoBehaviour
     public TextMeshProUGUI pupuSpeechText;
     public Button pupuNextButton;
 
+    [Header("오디오 설정")]
+    public string bubbleOpenSoundName = "BubbleOpen"; // Inspector에서 연결할 사운드 이름
+    public string textSoundName = "Text";         // Inspector에서 연결할 사운드 이름
+
     [Header("대화 순서 및 내용")]
     public List<DialogueEntry> dialogueSequence = new List<DialogueEntry>();
-
-    [Header("사운드 설정")]
-    public AudioSource bubbleOpenAudioSource;
-    public AudioSource textAudioSource;
 
     private int currentDialogueIndex = 0;
     private bool isDialoguePlaying = false;
@@ -95,8 +95,8 @@ public class CustomerDialogueManager : MonoBehaviour
         {
             bubbleGroup.gameObject.SetActive(true);
             yield return StartCoroutine(FadeIn(bubbleGroup));
-            // AudioManager를 통해 "BubbleOpen" 사운드 재생
-            AudioManager.Instance?.PlaySound("BubbleOpen");
+            // AudioManager를 통해 사운드 재생
+            AudioManager.Instance?.PlaySound(bubbleOpenSoundName);
             textComponent.text = "";
             yield return StartCoroutine(TypeText(textComponent, message));
             if (nextBtn != null)
@@ -113,8 +113,8 @@ public class CustomerDialogueManager : MonoBehaviour
         foreach (char c in message)
         {
             textComponent.text += c;
-            // AudioManager를 통해 "Text" 사운드 재생 (PlayOneShot 사용 권장)
-            AudioManager.Instance?.PlayOneShotSound("Text");
+            // AudioManager를 통해 사운드 재생
+            AudioManager.Instance?.PlayOneShotSound(textSoundName);
             yield return new WaitForSeconds(0.02f);
         }
         isTextTyping = false;
