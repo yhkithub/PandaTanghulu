@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1618058900529040893}
   - component: {fileID: 5462954695652381218}
-  - component: {fileID: -5936375923058257190}
-  - component: {fileID: 5716659839528636871}
+  - component: {fileID: -2587686000776204346}
+  - component: {fileID: 2373482860771671004}
   m_Layer: 0
-  m_Name: "FruitPrefab_\uB538\uAE30"
+  m_Name: "FruitPrefab_\uD3EC\uB3C4"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2c8c2b84c9b7c0e4ebffdce67988dafc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0456dd12df7a8374280d3034d9f29b69, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -89,7 +89,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-5936375923058257190
+--- !u!114 &-2587686000776204346
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -101,8 +101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5ce1022f2577541a5083cd079c1710, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fruitName: "\uB538\uAE30"
---- !u!58 &5716659839528636871
+  fruitName: "\uD3EC\uB3C4"
+--- !u!58 &2373482860771671004
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -137,4 +137,4 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 5.12
+  m_Radius: 2.57
