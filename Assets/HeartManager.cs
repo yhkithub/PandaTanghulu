@@ -1,3 +1,4 @@
+// HeartManager.cs
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -19,7 +20,7 @@ public class HeartManager : MonoBehaviour
         {
             if (_instance == null)
             {
-                _instance = FindObjectOfType<HeartManager>();
+                _instance = FindFirstObjectByType<HeartManager>();
                 if (_instance == null)
                 {
                     GameObject go = new GameObject("HeartManager");

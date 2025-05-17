@@ -1,0 +1,442 @@
+fileFormatVersion: 2
+guid: 02f172ccb62d3c241aa0aa063bd60fd9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2958369054062030232
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_0
+  - first:
+      213: -1331841801805863311
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_1
+  - first:
+      213: -2848215468920109158
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_2
+  - first:
+      213: 8445655651795781092
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_3
+  - first:
+      213: 4826322158247665333
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_4
+  - first:
+      213: -1861847325707464235
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_5
+  - first:
+      213: 8607380028304690033
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_6
+  - first:
+      213: -7675843329496360644
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_7
+  - first:
+      213: -1674555280353210460
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_8
+  - first:
+      213: 6393000314194119315
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_9
+  - first:
+      213: 7365403036890779152
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_10
+  - first:
+      213: 783009288695436051
+    second: pngtree-torn-paper-note-png-mockup-png-image_16249924_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_0
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 65
+        width: 474
+        height: 530
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89d20e50bfc3e0920800000000000000
+      internalID: 2958369054062030232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_1
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 536
+        width: 57
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 176685a00f8548de0800000000000000
+      internalID: -1331841801805863311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_2
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 480
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a978e3b1f1b1978d0800000000000000
+      internalID: -2848215468920109158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_3
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 385
+        width: 57
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e5ce8c711ff43570800000000000000
+      internalID: 8445655651795781092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_4
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 333
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bed2f59e6a8af240800000000000000
+      internalID: 4826322158247665333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_5
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 216
+        width: 57
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d11235c8b36926e0800000000000000
+      internalID: -1861847325707464235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_6
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 160
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17b84e9288e837770800000000000000
+      internalID: 8607380028304690033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_7
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 65
+        width: 57
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3951d1092de97590800000000000000
+      internalID: -7675843329496360644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_8
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 13
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4afcacd38d8c2c8e0800000000000000
+      internalID: -1674555280353210460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_9
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 13
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39a40880aef78b850800000000000000
+      internalID: 6393000314194119315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_10
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 13
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01e4579d90b273660800000000000000
+      internalID: 7365403036890779152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pngtree-torn-paper-note-png-mockup-png-image_16249924_11
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 13
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 313d58caccecdda00800000000000000
+      internalID: 783009288695436051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_0: 2958369054062030232
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_1: -1331841801805863311
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_10: 7365403036890779152
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_11: 783009288695436051
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_2: -2848215468920109158
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_3: 8445655651795781092
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_4: 4826322158247665333
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_5: -1861847325707464235
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_6: 8607380028304690033
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_7: -7675843329496360644
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_8: -1674555280353210460
+      pngtree-torn-paper-note-png-mockup-png-image_16249924_9: 6393000314194119315
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

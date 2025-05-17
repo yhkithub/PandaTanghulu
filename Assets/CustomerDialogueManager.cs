@@ -87,7 +87,7 @@ public class CustomerDialogueManager : MonoBehaviour
         isDialoguePlaying = false;
         Debug.Log("모든 대화 종료!");
         // 대화 종료 후 로직
-        SceneSwitcher.Instance.LoadFruitCatchingScene(); // SceneSwitcher 스크립트 사용 가정
+        // SceneSwitcher.Instance.LoadFruitCatchingScene(); // SceneSwitcher 스크립트 사용 가정
     }
 
     IEnumerator ShowSpeechBubbleAndText(CanvasGroup bubbleGroup, TextMeshProUGUI textComponent, string message, Button nextBtn)

@@ -19,7 +19,7 @@ public class CustomerSquishyBounce : MonoBehaviour
         transform.localScale = initialScale;
         transform.position = startPos;
 
-        dialogueManager = FindObjectOfType<CustomerDialogueManager>();
+        dialogueManager = FindFirstObjectByType<CustomerDialogueManager>();
         if (dialogueManager == null)
         {
             Debug.LogError("CustomerDialogueManager 스크립트를 찾을 수 없습니다!");
