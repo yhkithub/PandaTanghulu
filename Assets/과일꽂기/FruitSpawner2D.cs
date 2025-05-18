@@ -5,6 +5,7 @@ using System.Collections; // IEnumerator 사용
 
 public class FruitSpawner2D : MonoBehaviour
 {
+    
     public static FruitSpawner2D Instance { get; private set; } // 싱글톤으로 만들기 (선택 사항)
     private bool isSpawningPaused = false;
 
@@ -38,10 +39,66 @@ public class FruitSpawner2D : MonoBehaviour
 
     // private List<GameObject> activeFallingFruits = new List<GameObject>(); // 현재는 사용하지 않으므로 주석 처리 또는 삭제
 
+    private Coroutine spawnCoroutine; // 스폰 코루틴 참조
+
     void Start()
     {
-        StartCoroutine(SpawnFruitsRoutine());
+        // StartCoroutine(SpawnFruitsRoutine()); // 여기서 바로 시작하지 않음
     }
+
+    public bool IsSpawningActive() // ★★★ 새로운 함수 추가 ★★★
+    {
+        // 코루틴이 실행 중이고, 일시정지 상태가 아니면 활성 상태로 간주
+        return spawnCoroutine != null && !isSpawningPaused;
+    }
+
+    public void StartSpawning()
+    {
+        if (spawnCoroutine == null) // 이미 실행 중이지 않을 때만 새로 시작
+        {
+            isSpawningPaused = false;
+            spawnCoroutine = StartCoroutine(SpawnFruitsRoutine());
+            Debug.Log("FruitSpawner2D: 스폰 시작됨.");
+        }
+        else if (isSpawningPaused) // 이미 코루틴은 있지만 멈춰있다면 재개
+        {
+            isSpawningPaused = false;
+            Debug.Log("FruitSpawner2D: 스폰 재개됨 (이미 코루틴 존재).");
+        }
+    }
+
+    public void StopSpawningCompletely() // 완전히 멈추고 코루틴도 종료
+    {
+        if (spawnCoroutine != null)
+        {
+            StopCoroutine(spawnCoroutine);
+            spawnCoroutine = null;
+            isSpawningPaused = true; // 상태도 확실히 멈춤으로
+            Debug.Log("FruitSpawner2D: 스폰 완전 중지됨.");
+        }
+    }
+
+    public void PauseSpawning(bool pause)
+    {
+        isSpawningPaused = pause;
+        if (pause)
+        {
+            Debug.Log("FruitSpawner2D: 스폰 일시정지됨.");
+            // StopSpawningCompletely(); // 필요에 따라 코루틴을 완전히 멈출 수도 있음
+        }
+        else
+        {
+            Debug.Log("FruitSpawner2D: 스폰 재개됨.");
+            // 이미 StartSpawning()이 호출되어 spawnCoroutine이 null이 아니거나,
+            // 또는 게임 상태에 따라 여기서 StartSpawning()을 다시 호출할 수도 있습니다.
+            // 현재 CustomerOrderManager에서 명시적으로 StartSpawning을 부르므로 여기서는 isSpawningPaused만 변경.
+            if (spawnCoroutine == null && CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.currentGameState == GameState.Playing)
+            {
+                StartSpawning();
+            }
+        }
+    }
+
     void Awake() // 만약 싱글톤으로 만든다면
     {
         if (Instance == null)
@@ -189,18 +246,5 @@ public class FruitSpawner2D : MonoBehaviour
         }
         // 만약의 경우 (부동소수점 오류 등으로 루프를 빠져나올 경우) 마지막 아이템 반환
         return fruitPrefabsWithChance[fruitPrefabsWithChance.Count - 1].prefab;
-    }
-    // 스포너 일시정지/재개 함수
-    public void PauseSpawning(bool pause)
-    {
-        isSpawningPaused = pause;
-        if (pause)
-        {
-            Debug.Log("FruitSpawner2D: 스폰 일시정지됨.");
-        }
-        else
-        {
-            Debug.Log("FruitSpawner2D: 스폰 재개됨.");
-        }
     }
 }

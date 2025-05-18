@@ -32,9 +32,18 @@ public class SkewerManager : MonoBehaviour
 
     public void AddFruitToSkewer(FruitType fruitType, GameObject fruitObject)
     {
+        // 게임 상태가 'Playing'이 아닐 때는 과일 꽂기 로직 실행 안 함
+        if (CustomerOrderManager.Instance == null || CustomerOrderManager.Instance.currentGameState != GameState.Playing)
+        {
+            Debug.Log("SkewerManager: 게임 플레이 중이 아니므로 과일을 꽂을 수 없습니다. 현재 상태: " + (CustomerOrderManager.Instance != null ? CustomerOrderManager.Instance.currentGameState.ToString() : "Unknown"));
+            if (fruitObject != null) Destroy(fruitObject);
+            return;
+        }
+
+        // CustomerOrderManager나 현재 주문 데이터가 없으면 과일 처리하지 않음 (위의 게임 상태 체크로 대부분 커버될 수 있음)
         if (orderManager == null || orderManager.CurrentOrderData == null)
         {
-            Debug.LogError("SkewerManager: 현재 주문 정보를 가져올 수 없습니다!");
+            Debug.LogError("SkewerManager: 현재 주문 정보를 가져올 수 없습니다! (orderManager 또는 CurrentOrderData가 null)");
             if (fruitObject != null) Destroy(fruitObject);
             return;
         }

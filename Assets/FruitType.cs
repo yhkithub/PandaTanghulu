@@ -1,5 +1,8 @@
 // FruitType.cs
+using UnityEngine; // Sprite를 사용하기 위해 필요할 수 있음 (FruitSpriteMapping에서)
 
+// 여기에 FruitType Enum이 이미 정의되어 있어야 합니다.
+// public enum FruitType { None, 귤, 바나나, ... } // 이전 단계에서 만듦
 // 이 아래에 있는 내용만 남기거나, 새로 만드셨다면 public enum FruitType { ... } 부분만 작성합니다.
 // using UnityEngine; 등은 필요 없습니다.
 
@@ -24,4 +27,15 @@ public enum FruitType
     생선장식,   // 냥냥 주문 (생선 -> 생선장식으로 명확히)
     치즈        // 찍찍이 주문
     // 필요에 따라 게임에 등장할 모든 과일/아이템 종류를 여기에 추가합니다.
+}
+
+// 여기에 FruitType Enum이 이미 정의되어 있어야 합니다.
+// public enum FruitType { None, 귤, 바나나, ... } // 이전 단계에서 만듦
+
+public enum GameState
+{
+    TutorialDisplay,
+    Playing,
+    Paused,
+    GameOver
 }
