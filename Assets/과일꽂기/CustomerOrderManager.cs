@@ -2,14 +2,18 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI; // UI.Image 사용
-using System.Linq; // SequenceEqual 등 사용
+using System.Linq;    // SequenceEqual 등 사용
 
 public class CustomerOrderManager : MonoBehaviour
 {
-    [Header("주문서 동적 생성용 UI 설정")]
-    public GameObject orderDisplayPanel; // 과일과 꼬치 이미지가 배치될 부모 Panel (Horizontal/Vertical Layout Group 권장)
-    public Image skewerStickImagePrefab; // 꼬치 막대 UI Image 프리팹 (선택 사항, Panel 배경으로 처리 가능)
-    public Image fruitImagePrefab_UI;    // 주문서에 표시될 개별 과일 UI Image 프리팹 (크기/피봇 미리 설정)
+    [Header("주문서 UI 구성 요소")]
+    public GameObject orderDisplayBackgroundPanel; // 주문서 배경 Panel (예: UI_Bill)
+    public GameObject fruitsContainerForOrderUI; // 과일 이미지들이 담길 자식 Panel (VerticalLayoutGroup 적용 권장)
+    public Image skewerStickImagePrefab_UI;   // 주문서에 표시될 꼬치 막대 UI Image 프리팹 (선택 사항)
+    public Image fruitImagePrefab_UI;         // 주문서에 표시될 개별 과일 UI Image 프리팹
+
+    public bool isTutorialActive = true; // 게임 시작 시 true로 설정
+
 
     // 과일 타입에 따른 스프라이트 매핑 (Inspector에서 설정)
     [System.Serializable]
@@ -21,19 +25,14 @@ public class CustomerOrderManager : MonoBehaviour
     public List<FruitSpriteMapping> fruitSpritesForOrderUI;
     private Dictionary<FruitType, Sprite> fruitSpriteDic;
 
-    [Header("손님 주문 데이터")]
-    public List<CustomerOrderData> allCustomerOrders; // 모든 손님 주문 ScriptableObject 리스트 (Inspector에서 연결)
-    // 만약 ScriptableObject를 사용하지 않고 CustomerDefinition 클래스를 사용한다면:
-    // public List<CustomerDefinition> allCustomerDefinitions;
+    [Header("손님 주문 데이터 목록")]
+    public List<CustomerOrderData> allCustomerOrders; // 여기에 손님별 주문 데이터 ScriptableObject들을 연결
 
-    private CustomerOrderData currentCustomerOrderData; // 현재 손님의 주문 데이터
-    // 또는 private CustomerDefinition currentCustomerDefinition;
+    public CustomerOrderData CurrentOrderData { get; private set; }
+    public List<FruitType> CurrentRequiredFruits { get; private set; } = new List<FruitType>();
 
-    public List<FruitType> currentRequiredFruits = new List<FruitType>(); // 현재 만들어야 할 과일/아이템 리스트 (FruitCollision2D에서 비교용)
+    private int currentCustomerIndex = 0;
 
-    private int currentCustomerIndex = 0; // 다음 손님을 순차적으로 부르기 위한 인덱스 (또는 랜덤)
-
-    // 싱글톤 패턴 (게임 전체에서 하나의 인스턴스만 존재하도록)
     public static CustomerOrderManager Instance { get; private set; }
 
     void Awake()
@@ -41,19 +40,22 @@ public class CustomerOrderManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // DontDestroyOnLoad(gameObject); // 씬 전환 시 유지하고 싶다면
         }
         else
         {
             Destroy(gameObject);
+            return;
         }
-       // 과일 스프라이트 딕셔너리 초기화
+
         fruitSpriteDic = new Dictionary<FruitType, Sprite>();
-        foreach (var mapping in fruitSpritesForOrderUI)
+        if (fruitSpritesForOrderUI != null)
         {
-            if (!fruitSpriteDic.ContainsKey(mapping.fruitType))
+            foreach (var mapping in fruitSpritesForOrderUI)
             {
-                fruitSpriteDic.Add(mapping.fruitType, mapping.sprite);
+                if (!fruitSpriteDic.ContainsKey(mapping.fruitType))
+                {
+                    fruitSpriteDic.Add(mapping.fruitType, mapping.sprite);
+                }
             }
         }
     }
@@ -62,10 +64,10 @@ public class CustomerOrderManager : MonoBehaviour
     {
         if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
-            Debug.LogError("손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다!");
+            Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다! Inspector를 확인해주세요.");
+            if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(false);
             return;
         }
-        // 첫 번째 손님 주문 로드 (또는 특정 로직에 따라)
         LoadCustomerOrder(currentCustomerIndex);
     }
 
@@ -74,9 +76,8 @@ public class CustomerOrderManager : MonoBehaviour
         currentCustomerIndex++;
         if (currentCustomerIndex >= allCustomerOrders.Count)
         {
-            Debug.Log("모든 손님의 주문을 완료했습니다! (게임 엔딩 또는 다음 단계 로직)");
-            // 게임 클리어 또는 반복 로직 처리
-            currentCustomerIndex = 0; // 처음부터 다시 시작 (예시)
+            Debug.Log("모든 손님의 주문을 완료했습니다!");
+            currentCustomerIndex = 0; // 예시: 처음으로 돌아감
         }
         LoadCustomerOrder(currentCustomerIndex);
     }
@@ -85,121 +86,118 @@ public class CustomerOrderManager : MonoBehaviour
     {
         if (customerIndex < 0 || customerIndex >= allCustomerOrders.Count)
         {
-            Debug.LogError("유효하지 않은 손님 인덱스입니다: " + customerIndex);
+            Debug.LogError("CustomerOrderManager: 유효하지 않은 손님 인덱스입니다: " + customerIndex);
             return;
         }
 
-        currentCustomerOrderData = allCustomerOrders[customerIndex];
-        // currentCustomerDefinition = allCustomerDefinitions[customerIndex]; // 클래스 방식일 경우
-
-        // 주문서 UI 업데이트
-        // DisplayOrder();
-
-        // 현재 만들어야 할 과일 리스트 업데이트 (FruitCollision2D에서 사용할 실제 과일 타입 리스트)
-        currentRequiredFruits.Clear();
-        foreach (OrderItem item in currentCustomerOrderData.skewerOrder)
-        // foreach (OrderItem item in currentCustomerDefinition.skewerOrder) // 클래스 방식일 경우
+        CurrentOrderData = allCustomerOrders[customerIndex];
+        CurrentRequiredFruits.Clear();
+        if (CurrentOrderData != null && CurrentOrderData.skewerOrder != null)
         {
-            currentRequiredFruits.Add(item.fruit);
+            foreach (OrderItem item in CurrentOrderData.skewerOrder)
+            {
+                CurrentRequiredFruits.Add(item.fruit);
+            }
         }
-
-        // (선택 사항) 손님 이름, 대사 등 표시 로직
-        // if (customerNameText != null) customerNameText.text = currentCustomerOrderData.customerName;
-        // if (dialogueText != null && currentCustomerOrderData.dialogueLines.Length > 0) dialogueText.text = currentCustomerOrderData.dialogueLines[0]; // 첫 번째 대사만 표시 (예시)
-
-        Debug.Log(currentCustomerOrderData.customerName + " 손님의 주문: " + string.Join(", ", currentRequiredFruits.Select(f => f.ToString())));
+        Debug.Log(CurrentOrderData.customerName + " 손님의 주문 로드 완료. 주문: " + string.Join(", ", CurrentRequiredFruits.Select(f => f.ToString())));
+        DisplayOrderOnUI();
     }
 
-    void DisplayCurrentOrder() // 이전의 DisplayOrder 함수를 이렇게 수정
+    void DisplayOrderOnUI()
     {
-        if (orderDisplayPanel == null || fruitImagePrefab_UI == null || currentOrderData == null)
+        if (fruitsContainerForOrderUI == null || fruitImagePrefab_UI == null || CurrentOrderData == null)
         {
-            Debug.LogError("주문서 표시에 필요한 UI 요소 또는 주문 데이터가 없습니다!");
+            Debug.LogError("주문서 표시에 필요한 UI 요소가 없습니다! (fruitsContainerForOrderUI, fruitImagePrefab_UI, CurrentOrderData)");
+            if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(false);
             return;
         }
 
-        // 1. 이전 주문 UI 요소들 삭제
-        foreach (Transform child in orderDisplayPanel.transform)
+        if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(true);
+
+        foreach (Transform child in fruitsContainerForOrderUI.transform)
         {
             Destroy(child.gameObject);
         }
 
-        // (선택 사항) 2. 꼬치 막대 이미지 생성
-        if (skewerStickImagePrefab != null)
+        // 꼬치 막대 이미지 생성 (fruitsContainerForOrderUI의 자식으로, 가장 먼저 또는 가장 나중에 추가하여 순서 조절)
+        Image stickInstance = null; // stickInstance 변수 선언 위치 변경
+        if (skewerStickImagePrefab_UI != null)
         {
-            Image stickInstance = Instantiate(skewerStickImagePrefab, orderDisplayPanel.transform);
-            // 꼬치 막대 위치/크기 조정 (Layout Group이 있다면 자동으로 어느정도 맞춰짐)
-            // stickInstance.rectTransform.SetAsFirstSibling(); // 다른 과일들보다 뒤에 그려지도록 (필요시)
+            stickInstance = Instantiate(skewerStickImagePrefab_UI, fruitsContainerForOrderUI.transform);
+            stickInstance.name = "SkewerStick_InOrderUI";
+            // Layout Group을 사용한다면 막대의 순서(Sibling Index)가 중요합니다.
+            // 예: 과일보다 먼저(뒤에) 그려지게 하려면 SetAsFirstSibling() 사용
+            stickInstance.transform.SetAsFirstSibling();
         }
 
-        // 3. 주문된 과일 이미지들 순서대로 생성 및 배치
-        if (currentOrderData.skewerOrder != null && currentOrderData.skewerOrder.Count > 0)
+        if (CurrentOrderData.skewerOrder != null && CurrentOrderData.skewerOrder.Count > 0)
         {
-            foreach (OrderItem item in currentOrderData.skewerOrder)
+            // 주문서 표시 순서 결정 (true: 주문 데이터 0번이 가장 위, false: 0번이 가장 아래)
+            // 탕후루는 보통 아래에서 위로 꽂으므로, 주문서에서 0번 항목(첫번째 꽂는 과일)이
+            // 아래에 표시되게 하려면 리스트를 뒤집거나 Layout Group의 Reverse Arrangement를 사용합니다.
+            // 여기서는 Layout Group에서 처리한다고 가정하고, 주문 데이터 순서대로 생성합니다.
+            // (Vertical Layout Group의 Child Alignment: Upper Center, Reverse Arrangement: false 라면 0번이 가장 위)
+            // (Vertical Layout Group의 Child Alignment: Bottom Center, Reverse Arrangement: false 라면 0번이 가장 아래)
+
+            List<OrderItem> orderItemsToDisplay = CurrentOrderData.skewerOrder;
+
+            // 만약 Vertical Layout Group을 Upper Center로 설정하고,
+            // 주문 데이터의 0번(첫번째 꽂는 과일)이 UI상 가장 아래에 보이길 원한다면 아래처럼 리스트를 뒤집습니다.
+            // orderItemsToDisplay = new List<OrderItem>(CurrentOrderData.skewerOrder);
+            // orderItemsToDisplay.Reverse();
+
+
+            foreach (OrderItem item in orderItemsToDisplay)
             {
                 if (fruitSpriteDic.TryGetValue(item.fruit, out Sprite fruitSpriteToShow))
                 {
-                    Image fruitUI = Instantiate(fruitImagePrefab_UI, orderDisplayPanel.transform);
+                    Image fruitUI = Instantiate(fruitImagePrefab_UI, fruitsContainerForOrderUI.transform);
                     fruitUI.sprite = fruitSpriteToShow;
-                    fruitUI.name = item.fruit.ToString() + "_OrderUI"; // 디버깅용 이름
-
-                    // Layout Group (Horizontal/Vertical)을 orderDisplayPanel에 추가하면
-                    // 자식 UI 요소들의 배치(순서, 간격 등)를 자동으로 관리해줍니다.
-                    // 수동으로 위치를 잡으려면 fruitUI.rectTransform.anchoredPosition 등을 사용해야 합니다.
+                    fruitUI.name = item.fruit.ToString() + "_OrderUI";
                 }
                 else
                 {
-                    Debug.LogWarning("주문서 UI: " + item.fruit.ToString() + "에 해당하는 스프라이트를 fruitSpritesForOrderUI에서 찾을 수 없습니다.");
+                    Debug.LogWarning("CustomerOrderManager: 주문서 UI에 표시할 " + item.fruit.ToString() + " 타입의 스프라이트를 fruitSpritesForOrderUI에서 찾을 수 없습니다.");
                 }
             }
-            Debug.Log(currentOrderData.customerName + " 손님의 주문을 UI에 동적으로 표시했습니다.");
+            Debug.Log(CurrentOrderData.customerName + " 손님의 주문을 UI에 동적으로 표시했습니다.");
         }
         else
         {
-            Debug.LogWarning(currentOrderData.customerName + " 손님의 주문 내용(skewerOrder)이 비어있습니다.");
+            Debug.LogWarning("CustomerOrderManager: " + CurrentOrderData.customerName + " 손님의 주문 내용(skewerOrder)이 비어있거나 없습니다.");
         }
     }
 
-    // 플레이어가 꼬치에 꽂은 과일 리스트와 현재 주문을 비교
-    // FruitCollision2D 스크립트에서 호출됨
     public bool CheckOrder(List<FruitType> collectedPlayerFruits)
     {
-        if (currentRequiredFruits.Count == 0)
+        if (CurrentOrderData == null || CurrentRequiredFruits.Count == 0)
         {
-            Debug.LogWarning("현재 생성된 주문이 없습니다.");
+            Debug.LogWarning("CustomerOrderManager: 현재 생성된 주문이 없어서 확인할 수 없습니다.");
             return false;
         }
 
-        // 순서와 내용 모두 일치하는지 확인
-        bool orderMatch = collectedPlayerFruits.SequenceEqual(currentRequiredFruits);
+        bool orderMatch = collectedPlayerFruits.SequenceEqual(CurrentRequiredFruits);
 
         if (orderMatch)
         {
-            Debug.Log("주문 성공!");
-            // 성공 처리 (점수 증가, 다음 손님 로드 등)
-            // HeartManager.Instance.GainPoint(); // (예시) 점수 획득
-            LoadNextCustomerOrder(); // 다음 손님 주문으로 넘어감
+            Debug.Log("주문 성공! (" + CurrentOrderData.customerName + ")");
+            LoadNextCustomerOrder();
         }
         else
         {
-            Debug.Log("주문 실패! 플레이어: " + string.Join(", ", collectedPlayerFruits.Select(f => f.ToString())) + " / 정답: " + string.Join(", ", currentRequiredFruits.Select(f => f.ToString())));
-            HeartManager.Instance.LoseHeart(); // 하트 차감 (즉시)
+            string playerOrderStr = string.Join(", ", collectedPlayerFruits.Select(f => f.ToString()));
+            string correctOrderStr = string.Join(", ", CurrentRequiredFruits.Select(f => f.ToString()));
+            Debug.Log("주문 실패! (" + CurrentOrderData.customerName + ")\n플레이어 제출: [" + playerOrderStr + "]\n정답: [" + correctOrderStr + "]");
+
+            if (HeartManager.Instance != null)
+            {
+                HeartManager.Instance.LoseHeart();
+            }
+            else
+            {
+                Debug.LogError("CustomerOrderManager: HeartManager 인스턴스를 찾을 수 없어 하트를 차감할 수 없습니다.");
+            }
         }
         return orderMatch;
-    }
-
-    // FruitCollision2D에서 과일 이름을 FruitType으로 변환하기 위한 헬퍼 함수 (필요시)
-    // 또는 FruitCollision2D에서 FruitType을 직접 갖도록 수정하는 것이 더 좋음
-    public FruitType GetFruitTypeByName(string fruitName)
-    {
-        try
-        {
-            return (FruitType)System.Enum.Parse(typeof(FruitType), fruitName);
-        }
-        catch (System.ArgumentException)
-        {
-            Debug.LogError("알 수 없는 과일 이름입니다: " + fruitName + ". FruitType Enum에 정의되어 있는지 확인하세요.");
-            return FruitType.None;
-        }
     }
 }

@@ -18,6 +18,10 @@ public class FruitSpawner2D : MonoBehaviour
     public float spawnAreaWidth = 10f; // 과일이 생성될 X축 범위 (중앙 기준 좌우로 spawnAreaWidth / 2)
     public float spawnHeight = 7f;    // 과일이 생성될 Y축 높이
 
+    [Header("여러 개 동시 생성 시 설정")]
+    public float multipleSpawnXOffset = 0.8f; // 한 번에 여러 과일 생성 시 X축 기본 간격
+
+
     // 특정 과일(특별 아이템)의 등장 확률을 낮추기 위한 설정
     [System.Serializable]
     public struct FruitPrefabChance
@@ -39,30 +43,79 @@ public class FruitSpawner2D : MonoBehaviour
 
     IEnumerator SpawnFruitsRoutine()
     {
-        while (true) // 게임이 실행되는 동안 계속 반복
+        while (true)
         {
             float delay = Random.Range(minSpawnDelay, maxSpawnDelay);
             yield return new WaitForSeconds(delay);
 
-            int count = Random.Range(1, maxFruitsToSpawnAtOnce + 1);
-            for (int i = 0; i < count; i++)
+            int countToSpawn = Random.Range(1, maxFruitsToSpawnAtOnce + 1);
+            // 한 묶음의 전체 예상 너비 (대략적인 계산)
+            float estimatedBundleWidth = (countToSpawn - 1) * multipleSpawnXOffset;
+            // 생성될 묶음의 시작 X 위치 (화면 중앙에서 벗어나지 않도록)
+            float bundleStartX = Random.Range(-(spawnAreaWidth / 2) + (estimatedBundleWidth / 2), (spawnAreaWidth / 2) - (estimatedBundleWidth / 2));
+
+            if (countToSpawn == 1) // 하나만 생성할 경우엔 중앙에서 랜덤
             {
-                SpawnRandomFruit();
+                bundleStartX = Random.Range(-spawnAreaWidth / 2, spawnAreaWidth / 2);
+            }
+
+
+            for (int i = 0; i < countToSpawn; i++)
+            {
+                // 각 과일의 최종 X 위치 계산
+                // 여러 개일 경우: 시작 X 위치에서 (-(묶음너비/2) + i * 간격) 만큼 떨어진 위치
+                // 하나일 경우: bundleStartX (이미 랜덤)
+                float currentFruitX = bundleStartX;
+                if (countToSpawn > 1)
+                {
+                    currentFruitX = bundleStartX - (estimatedBundleWidth / 2) + (i * multipleSpawnXOffset);
+                }
+
+                // Y축 위치는 동일하게 유지하거나 약간의 변화를 줄 수도 있음
+                float currentFruitY = transform.position.y + spawnHeight;
+                // float yOffsetRandom = Random.Range(-0.1f, 0.1f); // 아주 약간의 Y축 변화 (선택)
+                // currentFruitY += yOffsetRandom;
+
+
+                Vector3 spawnPos = new Vector3(transform.position.x + currentFruitX, currentFruitY, 0f);
+                SpawnSpecificFruit(spawnPos); // 위치를 직접 전달하는 함수 호출
+
+                // 아주 짧은 시간차를 두고 생성 (선택 사항, 좀 더 자연스러울 수 있음)
+                if (countToSpawn > 1 && i < countToSpawn - 1) // 마지막 과일 제외
+                {
+                    yield return new WaitForSeconds(0.05f); // 예: 0.05초 간격
+                }
             }
         }
     }
 
-    void SpawnRandomFruit()
+    void SpawnSpecificFruit(Vector3 positionToSpawn)
     {
-        GameObject fruitToSpawn = GetRandomFruitPrefab();
-        if (fruitToSpawn == null)
+        GameObject fruitToSpawnPrefab = GetRandomFruitPrefab(); // 어떤 과일을 생성할지 결정
+        if (fruitToSpawnPrefab == null)
         {
-            Debug.LogWarning("생성할 과일 프리팹을 선택하지 못했습니다. fruitPrefabsWithChance 설정을 확인하세요.");
+            Debug.LogWarning("생성할 과일 프리팹을 선택하지 못했습니다.");
             return;
         }
 
-        float randomX = Random.Range(-spawnAreaWidth / 2, spawnAreaWidth / 2);
-        Vector3 spawnPosition = new Vector3(transform.position.x + randomX, transform.position.y + spawnHeight, 0f);
+        // 생성 범위 Clamp (필요하다면 X축만 또는 X,Y 모두)
+        positionToSpawn.x = Mathf.Clamp(positionToSpawn.x, transform.position.x - spawnAreaWidth / 2, transform.position.x + spawnAreaWidth / 2);
+
+        Instantiate(fruitToSpawnPrefab, positionToSpawn, Quaternion.identity);
+        // Rigidbody2D 속도/중력 설정은 각 프리팹 또는 여기서 필요에 따라 추가
+    }
+
+
+    void SpawnRandomFruit(float specificX) // 또는 spawnXOffset 같은 이름으로
+    {
+        GameObject fruitToSpawn = GetRandomFruitPrefab();
+        if (fruitToSpawn == null) return;
+
+        // float randomX = Random.Range(-spawnAreaWidth / 2, spawnAreaWidth / 2); // 이 부분 대신 인자를 사용
+        Vector3 spawnPosition = new Vector3(transform.position.x + specificX, transform.position.y + spawnHeight, 0f);
+
+        // X축 생성 범위 초과하지 않도록 Clamp (선택 사항)
+        spawnPosition.x = Mathf.Clamp(spawnPosition.x, transform.position.x - spawnAreaWidth / 2, transform.position.x + spawnAreaWidth / 2);
 
         GameObject spawnedFruit = Instantiate(fruitToSpawn, spawnPosition, Quaternion.identity);
 
