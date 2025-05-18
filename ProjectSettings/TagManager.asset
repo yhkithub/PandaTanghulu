@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MouseTrail
   - Skewer
+  - TrashCan
   layers:
   - Default
   - TransparentFX
