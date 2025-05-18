@@ -1,3 +1,4 @@
+// TitleManager.cs
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,6 +10,8 @@ public class TitleManager : MonoBehaviour
     public GameObject newGameButton;
     public GameObject continueGameButton;
     public GameObject animalBookButton;
+    public GameObject settingsButton; // 설정 버튼 GameObject
+    public GameObject settingsPanel;  // 설정 UI 패널 GameObject (BGM on/off 등의 UI 포함)
     public Image logoImage;
     public float logoFadeInDuration = 2f;
     public float fruitRollDelay = 0.5f;
@@ -22,17 +25,25 @@ public class TitleManager : MonoBehaviour
     public string newGameSceneName = "StoryScene";
     public string gameSceneToLoad = "";
 
+    // --- 설정 패널 내부 UI 요소들 ---
+    public UnityEngine.UI.Toggle bgmToggle; // BGM 켜고 끄는 토글 (UnityEngine.UI.Toggle로 명시)
+    public UnityEngine.UI.Toggle sfxToggle; // 효과음 켜고 끄는 토글 (UnityEngine.UI.Toggle로 명시)
+    // public Button closeSettingsButton; // 닫기 버튼은 기존 ToggleSettingsPanel 함수를 재활용하거나 아래에 새 함수를 만들 수 있습니다.
+
     private string savedSceneKey = "LastPlayedScene";
-    private Color initialLogoColor; // 초기 로고 색상 저장
+    private Color initialLogoColor;
+
+    // 오디오 설정을 저장할 때 사용할 키 값들
+    private const string BGM_KEY = "BGMOn";
+    private const string SFX_KEY = "SFXOn";
 
     void Start()
     {
-        // 초기 로고 표시
         if (logoImage != null)
         {
             logoImage.gameObject.SetActive(true);
             initialLogoColor = logoImage.color;
-            logoImage.color = new Color(initialLogoColor.r, initialLogoColor.g, initialLogoColor.b, 1f); // 처음부터 보이도록 설정
+            logoImage.color = new Color(initialLogoColor.r, initialLogoColor.g, initialLogoColor.b, 1f);
         }
         else
         {
@@ -40,26 +51,31 @@ public class TitleManager : MonoBehaviour
         }
 
         gameSceneToLoad = PlayerPrefs.GetString(savedSceneKey, "");
-        continueGameButton.SetActive(!string.IsNullOrEmpty(gameSceneToLoad));
+        if (continueGameButton != null) continueGameButton.SetActive(!string.IsNullOrEmpty(gameSceneToLoad)); // null 체크 추가
 
         if (newGameButton != null) newGameButton.SetActive(true);
-        if (continueGameButton != null) continueGameButton.SetActive(true);
+        // continueGameButton은 위에서 이미 처리
         if (animalBookButton != null) animalBookButton.SetActive(true);
+        if (settingsButton != null) settingsButton.SetActive(true);
+
+        if (settingsPanel != null) settingsPanel.SetActive(false);
+
+        // 게임 시작 시 저장된 오디오 설정 불러오기
+        LoadAudioSettings();
     }
 
     public void StartNewGame()
     {
-        // 버튼들 비활성화
         if (newGameButton != null) newGameButton.SetActive(false);
         if (continueGameButton != null) continueGameButton.SetActive(false);
         if (animalBookButton != null) animalBookButton.SetActive(false);
-
-        // 로고 페이드 아웃 후 중앙에서 페이드 인 및 과일 생성
+        if (settingsButton != null) settingsButton.SetActive(false);
         StartCoroutine(FadeOutLogoThenFadeInAndRollFruits());
     }
 
     IEnumerator FadeOutLogoThenFadeInAndRollFruits()
     {
+        // ... (기존 로고 및 과일 애니메이션 코드는 동일) ...
         if (logoImage != null)
         {
             float fadeOutDuration = logoFadeInDuration / 2f;
@@ -67,7 +83,7 @@ public class TitleManager : MonoBehaviour
             Color startColor = logoImage.color;
             Color endFadeOut = new Color(startColor.r, startColor.g, startColor.b, 0f);
             RectTransform logoRectTransform = logoImage.GetComponent<RectTransform>();
-            Vector2 originalPosition = logoRectTransform.anchoredPosition; // 원래 위치 저장
+            Vector2 originalPosition = logoRectTransform.anchoredPosition;
 
             float timer = 0f;
             while (timer < fadeOutDuration)
@@ -79,15 +95,13 @@ public class TitleManager : MonoBehaviour
             logoImage.gameObject.SetActive(false);
             yield return new WaitForSeconds(0.2f);
 
-            // 로고 위치를 캔버스 중앙으로 설정 (anchoredPosition 사용)
             if (logoRectTransform != null && GetComponentInParent<Canvas>() != null)
             {
-                logoRectTransform.anchoredPosition = Vector2.zero; // 캔버스 중앙 (앵커 기준)
+                logoRectTransform.anchoredPosition = Vector2.zero;
             }
             else
             {
                 Debug.LogWarning("TitleManager Warning: 로고 RectTransform 또는 Canvas가 없습니다.");
-                // fallback: 월드 좌표 중앙 (정확하지 않을 수 있음)
                 Vector3 viewportCenter = new Vector3(0.5f, 0.5f, 0f);
                 logoImage.transform.position = Camera.main.ViewportToWorldPoint(viewportCenter);
             }
@@ -105,15 +119,13 @@ public class TitleManager : MonoBehaviour
             logoImage.color = endFadeIn;
         }
 
-        // 과일 단면 생성 및 굴러가는 효과
         if (fruitPrefabs.Length > 0 && fruitRollStartPositionLeft != null && fruitRollStartPositionRight != null)
         {
             float[] targetYPositions = new float[] { 4.5f, 3.5f, 2.5f, 1.5f, 0.5f, -0.5f, -1.5f, -2.5f, -3.5f, -4.5f };
-            List<GameObject> generatedFruits = new List<GameObject>(); // 생성된 과일 목록
+            List<GameObject> generatedFruits = new List<GameObject>();
 
             for (int i = 0; i < targetYPositions.Length; i++)
             {
-                // 왼쪽에서 생성 (짝수 인덱스)
                 if (i % 2 == 0)
                 {
                     Vector3 leftSpawnPosition = new Vector3(fruitRollStartPositionLeft.position.x, targetYPositions[i], fruitRollStartPositionLeft.position.z);
@@ -124,7 +136,6 @@ public class TitleManager : MonoBehaviour
                     generatedFruits.Add(leftFruit);
                     yield return new WaitForSeconds(0.3f);
                 }
-                // 오른쪽에서 생성 (홀수 인덱스)
                 else
                 {
                     Vector3 rightSpawnPosition = new Vector3(fruitRollStartPositionRight.position.x, targetYPositions[i], fruitRollStartPositionRight.position.z);
@@ -143,12 +154,14 @@ public class TitleManager : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(5f); // 전환 대기 시간 (조정 필요)
+        yield return new WaitForSeconds(5f);
         SceneManager.LoadScene(newGameSceneName);
     }
 
+
     void AddTrailToFruit(GameObject fruitObject)
     {
+        // ... (기존 AddTrailToFruit 코드는 동일) ...
         TrailRenderer trailRenderer = fruitObject.GetComponent<TrailRenderer>();
         FruitColor fruitColorComponent = fruitObject.GetComponent<FruitColor>();
 
@@ -163,12 +176,12 @@ public class TitleManager : MonoBehaviour
             if (fruitColorComponent != null)
             {
                 trailRenderer.startColor = fruitColorComponent.trailColor;
-                trailRenderer.endColor = fruitColorComponent.trailColor; // End Color도 불투명하게
+                trailRenderer.endColor = fruitColorComponent.trailColor;
             }
             else
             {
                 trailRenderer.startColor = Color.white;
-                trailRenderer.endColor = Color.white; // End Color도 불투명하게
+                trailRenderer.endColor = Color.white;
                 Debug.LogWarning("FruitColor 컴포넌트가 없어 흰색 트레일을 사용합니다.", fruitObject);
             }
         }
@@ -177,11 +190,12 @@ public class TitleManager : MonoBehaviour
             if (fruitColorComponent != null)
             {
                 trailRenderer.startColor = fruitColorComponent.trailColor;
-                trailRenderer.endColor = fruitColorComponent.trailColor; // End Color도 불투명하게
+                trailRenderer.endColor = fruitColorComponent.trailColor;
             }
             trailRenderer.time = 10f;
         }
     }
+
     public void ContinueGame()
     {
         if (!string.IsNullOrEmpty(gameSceneToLoad))
@@ -199,10 +213,93 @@ public class TitleManager : MonoBehaviour
         SceneManager.LoadScene("AnimalBookScene");
     }
 
+    // 설정 패널 열기/닫기 (기존 함수)
+    public void ToggleSettingsPanel()
+    {
+        if (settingsPanel != null)
+        {
+            bool isActive = !settingsPanel.activeSelf;
+            settingsPanel.SetActive(isActive);
+
+            // 패널이 열릴 때마다 현재 저장된 설정 값으로 토글 UI 업데이트
+            if (isActive)
+            {
+                LoadAudioSettingsToUI();
+            }
+        }
+        else
+        {
+            Debug.LogError("Settings Panel이 할당되지 않았습니다!");
+        }
+    }
+
+    // --- 오디오 설정 관련 함수들 ---
+    void LoadAudioSettings()
+    {
+        // BGM 설정 불러오기 (기본값은 true, 즉 켜짐)
+        bool bgmOn = PlayerPrefs.GetInt(BGM_KEY, 1) == 1;
+        if (bgmToggle != null) bgmToggle.isOn = bgmOn;
+        ApplyBGMSetting(bgmOn); // 실제 오디오 매니저에 적용하는 로직 (아래에 예시)
+
+        // SFX 설정 불러오기 (기본값은 true, 즉 켜짐)
+        bool sfxOn = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
+        if (sfxToggle != null) sfxToggle.isOn = sfxOn;
+        ApplySFXSetting(sfxOn); // 실제 오디오 매니저에 적용하는 로직 (아래에 예시)
+    }
+
+    void LoadAudioSettingsToUI()
+    {
+        if (bgmToggle != null)
+        {
+            bgmToggle.isOn = PlayerPrefs.GetInt(BGM_KEY, 1) == 1;
+        }
+        if (sfxToggle != null)
+        {
+            sfxToggle.isOn = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
+        }
+    }
+
+    // BGM 토글 값 변경 시 호출될 함수
+    public void OnBgmToggleChanged(bool isOn)
+    {
+        PlayerPrefs.SetInt(BGM_KEY, isOn ? 1 : 0);
+        PlayerPrefs.Save(); // 변경사항 즉시 저장
+        ApplyBGMSetting(isOn);
+        Debug.Log("BGM 설정 변경: " + (isOn ? "ON" : "OFF"));
+    }
+
+    // SFX 토글 값 변경 시 호출될 함수
+    public void OnSfxToggleChanged(bool isOn)
+    {
+        PlayerPrefs.SetInt(SFX_KEY, isOn ? 1 : 0);
+        PlayerPrefs.Save(); // 변경사항 즉시 저장
+        ApplySFXSetting(isOn);
+        Debug.Log("SFX 설정 변경: " + (isOn ? "ON" : "OFF"));
+    }
+
+    // 실제 BGM 설정을 오디오 시스템에 적용하는 부분 (예시)
+    void ApplyBGMSetting(bool isOn)
+    {
+        // 여기에 실제 BGM을 켜고 끄는 코드를 작성합니다.
+        // 예: FindObjectOfType<AudioManager>()?.SetBGM(isOn);
+        // 지금은 AudioManager가 없으므로, 콘솔에 로그만 남깁니다.
+        Debug.Log("ApplyBGMSetting 호출됨: " + isOn);
+    }
+
+    // 실제 SFX 설정을 오디오 시스템에 적용하는 부분 (예시)
+    void ApplySFXSetting(bool isOn)
+    {
+        // 여기에 실제 효과음을 켜고 끄는 코드를 작성합니다.
+        // 예: FindObjectOfType<AudioManager>()?.SetSFX(isOn);
+        // 지금은 AudioManager가 없으므로, 콘솔에 로그만 남깁니다.
+        Debug.Log("ApplySFXSetting 호출됨: " + isOn);
+    }
+
+
     public void SaveLastPlayedScene(string sceneName)
     {
         PlayerPrefs.SetString(savedSceneKey, sceneName);
         PlayerPrefs.Save();
-        continueGameButton.SetActive(true);
+        if (continueGameButton != null) continueGameButton.SetActive(true);
     }
 }
