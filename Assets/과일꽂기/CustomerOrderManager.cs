@@ -2,18 +2,25 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI; // UI.Image 사용
-using System.Linq;    // SequenceEqual 등 사용
+using System.Linq;
+using TMPro;    // SequenceEqual 등 사용
+
+public enum GameState
+{
+    TutorialDisplay, // 튜토리얼 설명 보여주는 중
+    Playing,         // 실제 게임 플레이 중
+    Paused,          // 일시정지 등
+    GameOver         // 게임 오버
+}
 
 public class CustomerOrderManager : MonoBehaviour
 {
+
     [Header("주문서 UI 구성 요소")]
     public GameObject orderDisplayBackgroundPanel; // 주문서 배경 Panel (예: UI_Bill)
     public GameObject fruitsContainerForOrderUI; // 과일 이미지들이 담길 자식 Panel (VerticalLayoutGroup 적용 권장)
     public Image skewerStickImagePrefab_UI;   // 주문서에 표시될 꼬치 막대 UI Image 프리팹 (선택 사항)
     public Image fruitImagePrefab_UI;         // 주문서에 표시될 개별 과일 UI Image 프리팹
-
-    public bool isTutorialActive = true; // 게임 시작 시 true로 설정
-
 
     // 과일 타입에 따른 스프라이트 매핑 (Inspector에서 설정)
     [System.Serializable]
@@ -34,6 +41,15 @@ public class CustomerOrderManager : MonoBehaviour
     private int currentCustomerIndex = 0;
 
     public static CustomerOrderManager Instance { get; private set; }
+
+    public GameState currentGameState = GameState.Playing; // 현재 게임 상태, 초기값은 일반 플레이로 둘 수 있음
+    public bool isTutorialActive = false; // 이 변수는 계속 사용 (튜토리얼 손님인지 여부)
+
+    [Header("튜토리얼 UI 요소")]
+    public GameObject tutorialPanel_UI;     // 튜토리얼 설명과 시작 버튼을 포함하는 Panel
+    public TextMeshProUGUI tutorialMessageText_UI;   // 튜토리얼 설명을 보여줄 Text (tutorialPanel_UI의 자식)
+    public Button startGameButton_UI;     // "게임 시작" 버튼 (tutorialPanel_UI의 자식)
+
 
     void Awake()
     {
@@ -64,11 +80,89 @@ public class CustomerOrderManager : MonoBehaviour
     {
         if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
-            Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다! Inspector를 확인해주세요.");
-            if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(false);
+            Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다!");
+            if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false);
             return;
         }
-        LoadCustomerOrder(currentCustomerIndex);
+
+        // "게임 시작" 버튼에 리스너 추가 (Inspector에서 직접 연결해도 됨)
+        if (startGameButton_UI != null)
+        {
+            startGameButton_UI.onClick.AddListener(EndTutorialAndStartGame);
+        }
+        else if (isTutorialActive && tutorialPanel_UI != null) // 만약 첫 손님이 튜토리얼인데 버튼이 없다면 경고
+        {
+            Debug.LogWarning("CustomerOrderManager: startGameButton_UI가 연결되지 않았습니다. 튜토리얼 진행에 문제가 있을 수 있습니다.");
+        }
+
+
+        // 첫 번째 손님 주문 로드
+        // LoadCustomerOrder(currentCustomerIndex); // 이 호출은 튜토리얼 상태 설정 후로 이동하거나 조정
+        SetupInitialGameState();
+    }
+
+    void SetupInitialGameState()
+    {
+        // 첫 번째 손님인지 확인하여 튜토리얼 여부 결정
+        if (allCustomerOrders.Count > 0 && currentCustomerIndex == 0) // 첫 번째 손님 (끼끼)
+        {
+            isTutorialActive = true;
+            currentGameState = GameState.TutorialDisplay;
+            Debug.Log("튜토리얼 모드 진입: 끼끼 손님. 게임 시작 대기 중.");
+
+            // 튜토리얼 패널 활성화 및 설명 표시
+            if (tutorialPanel_UI != null)
+            {
+                tutorialPanel_UI.SetActive(true);
+                if (tutorialMessageText_UI != null)
+                {
+                    // 여기에 끼끼 손님을 위한 초기 튜토리얼 메시지 설정
+                    tutorialMessageText_UI.text = "안녕하세요! 탕후루 가게에 오신 것을 환영합니다!\n첫 손님은 끼끼예요. 끼끼가 원하는 탕후루를 만들어주세요.\n화면 왼쪽 위에 보이는 주문서대로 과일을 꼬치에 꽂으면 됩니다.\n준비가 되면 아래 '게임 시작' 버튼을 눌러주세요!";
+                }
+            }
+
+            // 튜토리얼 중에는 과일 스포너 등 게임 요소를 비활성화 할 수 있음
+            if (FruitSpawner2D.Instance != null) // FruitSpawner2D가 싱글톤이라고 가정
+            {
+                FruitSpawner2D.Instance.PauseSpawning(true); // 스포너 일시정지 함수 필요
+            }
+            // 꼬치 움직임도 비활성화 할 수 있음 (Skewer2DController에 제어 함수 추가)
+            // Skewer2DController.Instance.SetControllable(false);
+
+        }
+        else // 튜토리얼이 아닌 일반 손님
+        {
+            isTutorialActive = false;
+            currentGameState = GameState.Playing;
+            if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false); // 튜토리얼 패널 숨김
+            LoadCustomerOrder(currentCustomerIndex); // 바로 주문 로드 및 게임 시작
+        }
+    }
+
+
+    // "게임 시작" 버튼을 눌렀을 때 호출될 함수
+    public void EndTutorialAndStartGame()
+    {
+        if (currentGameState == GameState.TutorialDisplay)
+        {
+            Debug.Log("튜토리얼 설명 종료. 게임을 시작합니다!");
+            currentGameState = GameState.Playing;
+
+            if (tutorialPanel_UI != null)
+            {
+                tutorialPanel_UI.SetActive(false); // 튜토리얼 패널 숨기기
+            }
+
+            // 첫 손님(튜토리얼 손님) 주문 로드
+            LoadCustomerOrder(currentCustomerIndex);
+
+            // 게임 요소 활성화
+            if (FruitSpawner2D.Instance != null)
+            {
+                FruitSpawner2D.Instance.PauseSpawning(false); // 스포너 다시 시작
+            }
+            // Skewer2DController.Instance.SetControllable(true); // 꼬치 움직임 활성화
+        }
     }
 
     public void LoadNextCustomerOrder()
@@ -91,7 +185,21 @@ public class CustomerOrderManager : MonoBehaviour
         }
 
         CurrentOrderData = allCustomerOrders[customerIndex];
+
+        if (customerIndex == 0) // 또는 CurrentOrderData.customerName == "끼끼" 등으로 확인
+        {
+            isTutorialActive = true;
+            Debug.Log("튜토리얼 모드 시작: 끼끼 손님");
+            // 여기에 튜토리얼 UI 설명(예: "화살표로 꼬치를 움직여 과일을 받으세요!")을 표시하는 로직 추가 가능
+            ShowTutorialMessage("화살표 키 또는 마우스를 사용해 꼬치를 움직여 떨어지는 과일을 순서대로 받으세요!");
+        }
+        else
+        {
+            isTutorialActive = false;
+        }
+
         CurrentRequiredFruits.Clear();
+
         if (CurrentOrderData != null && CurrentOrderData.skewerOrder != null)
         {
             foreach (OrderItem item in CurrentOrderData.skewerOrder)
@@ -111,6 +219,9 @@ public class CustomerOrderManager : MonoBehaviour
             if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(false);
             return;
         }
+
+        CurrentOrderData = allCustomerOrders[currentCustomerIndex];
+        CurrentRequiredFruits.Clear();
 
         if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(true);
 
@@ -166,6 +277,9 @@ public class CustomerOrderManager : MonoBehaviour
         {
             Debug.LogWarning("CustomerOrderManager: " + CurrentOrderData.customerName + " 손님의 주문 내용(skewerOrder)이 비어있거나 없습니다.");
         }
+
+        Debug.Log(CurrentOrderData.customerName + " 손님의 주문 로드 완료.");
+        DisplayOrderOnUI(); // 주문서 UI 표시
     }
 
     public bool CheckOrder(List<FruitType> collectedPlayerFruits)
@@ -181,23 +295,24 @@ public class CustomerOrderManager : MonoBehaviour
         if (orderMatch)
         {
             Debug.Log("주문 성공! (" + CurrentOrderData.customerName + ")");
+            if (isTutorialActive)
+            {
+                Debug.Log("튜토리얼 모드 종료.");
+                isTutorialActive = false; // 튜토리얼 종료
+                // ShowTutorialMessage("훌륭해요! 이제 다음 손님을 맞이해볼까요?");
+                if (tutorialMessageText_UI != null) tutorialMessageText_UI.gameObject.SetActive(false); // 튜토리얼 메시지 숨김
+            }
             LoadNextCustomerOrder();
         }
-        else
-        {
-            string playerOrderStr = string.Join(", ", collectedPlayerFruits.Select(f => f.ToString()));
-            string correctOrderStr = string.Join(", ", CurrentRequiredFruits.Select(f => f.ToString()));
-            Debug.Log("주문 실패! (" + CurrentOrderData.customerName + ")\n플레이어 제출: [" + playerOrderStr + "]\n정답: [" + correctOrderStr + "]");
-
-            if (HeartManager.Instance != null)
-            {
-                HeartManager.Instance.LoseHeart();
-            }
-            else
-            {
-                Debug.LogError("CustomerOrderManager: HeartManager 인스턴스를 찾을 수 없어 하트를 차감할 수 없습니다.");
-            }
-        }
+        // ... (실패 로직은 HeartManager에서 튜토리얼 여부 판단) ...
         return orderMatch;
+    }
+
+    public void ShowTutorialMessage(string message)
+    {
+        if (tutorialMessageText_UI != null && tutorialPanel_UI != null && tutorialPanel_UI.activeSelf) // 튜토리얼 패널이 활성화 되어있을 때만
+        {
+            tutorialMessageText_UI.text = message;
+        }
     }
 }

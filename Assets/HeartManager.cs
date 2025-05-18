@@ -52,14 +52,13 @@ public class HeartManager : MonoBehaviour
     // HeartManager.cs - LoseHeart() 함수 수정
     public void LoseHeart()
     {
-        // GameManager 또는 CustomerOrderManager를 통해 튜토리얼 상태 확인
-        // 예시: if (GameManager.Instance.isTutorialActive)
-        if (CustomerOrderManager.Instance.isTutorialActive) // CustomerOrderManager에 isTutorialActive가 있다고 가정
+        if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.isTutorialActive)
         {
             Debug.Log("튜토리얼 중이므로 하트가 차감되지 않습니다.");
-            // 튜토리얼 중 실패 피드백은 줄 수 있지만, 실제 게임오버로 이어지지 않음
-            // 예를 들어, 실패했다는 UI 메시지만 잠깐 보여주고 계속 진행
-            return; // 하트 차감 및 게임오버 로직 실행 안 함
+            // 여기에 "이런! 순서가 틀렸어요. 주문서를 다시 보고 만들어주세요!" 같은
+            // 튜토리얼용 피드백 UI를 잠시 보여주는 로직을 추가할 수 있습니다.
+            // CustomerOrderManager.Instance.ShowTutorialMessage("이런! 과일 순서가 다른 것 같아요. 주문서를 잘 보고 다시 시도해보세요!");
+            return;
         }
 
         currentHearts--;
