@@ -14,6 +14,10 @@ public class DialogueEntry
 
 public class CustomerDialogueManager : MonoBehaviour
 {
+    [Header("씬 전환 설정")]
+    public string fruitCatchingSceneName = "FruitCatchingGameScene"; // Inspector에서 과일 꽂기 씬 이름 설정
+    public int customerIndexForThisDialogue = 0; // 이 대화가 어떤 손님을 위한 것인지 Inspector에서 설정 (0: 끼끼, 1: 뭉뭉 등)
+
     [Header("말풍선 설정")]
     public CanvasGroup kikiSpeechBubbleGroup;
     public TextMeshProUGUI kikiSpeechText;
@@ -80,14 +84,35 @@ public class CustomerDialogueManager : MonoBehaviour
                 yield return ShowSpeechBubbleAndText(pupuSpeechBubbleGroup, pupuSpeechText, entry.line, pupuNextButton);
             }
 
-            yield return WaitForNextButtonClick();
+            yield return WaitForNextButtonClick(); // 버튼 클릭 대기
+            // 현재 말풍선 숨기기 (OnNextButtonClicked에서 이미 처리하고 있다면 이 부분은 필요 없을 수 있음)
+            if(currentBubbleGroup != null && currentBubbleGroup.alpha > 0)
+            {
+                StartCoroutine(FadeOut(currentBubbleGroup));
+            }
             currentDialogueIndex++;
         }
 
         isDialoguePlaying = false;
-        Debug.Log("모든 대화 종료!");
+        Debug.Log("모든 대화 종료! (" + (dialogueSequence.Count > 0 ? dialogueSequence[0].speaker.ToString() : "Unknown") + " 손님)");
+
+        // 대화 종료 후 다음 씬으로 전환하고, 어떤 손님의 주문을 로드할지 정보 전달
+        GameInfoHolder.CustomerIndexToLoad = customerIndexForThisDialogue; // ★★★ 정보 저장
+        Debug.Log("다음 로드할 손님 인덱스 저장: " + GameInfoHolder.CustomerIndexToLoad);
+
+        // SceneSwitcher를 통해 씬 로드
+        if (SceneSwitcher.Instance != null)
+        {
+            SceneSwitcher.Instance.LoadFruitCatchingScene(fruitCatchingSceneName);
+        }
+        else
+        {
+            Debug.LogError("SceneSwitcher 인스턴스를 찾을 수 없습니다!");
+            // 대체 방법: 직접 씬 로드 (하지만 SceneSwitcher 사용 권장)
+            // UnityEngine.SceneManagement.SceneManager.LoadScene(fruitCatchingSceneName);
+        }
+
         // 대화 종료 후 로직
-        // SceneSwitcher.Instance.LoadFruitCatchingScene(); // SceneSwitcher 스크립트 사용 가정
     }
 
     IEnumerator ShowSpeechBubbleAndText(CanvasGroup bubbleGroup, TextMeshProUGUI textComponent, string message, Button nextBtn)

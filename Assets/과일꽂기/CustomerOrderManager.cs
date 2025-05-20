@@ -73,7 +73,7 @@ public class CustomerOrderManager : MonoBehaviour
 
     void Start()
     {
-        if (allCustomerOrders == null || allCustomerOrders.Count == 0)
+         if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
             Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다!");
             if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false);
@@ -85,10 +85,14 @@ public class CustomerOrderManager : MonoBehaviour
         {
             startGameButton_UI.onClick.AddListener(EndTutorialAndStartGame);
         }
-        
-        SetupInitialGameState();
-    }
 
+        // ★★★ GameInfoHolder에서 로드할 손님 인덱스 가져오기 ★★★
+        currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
+        Debug.Log("과일 꽂기 씬 시작 - 로드할 손님 인덱스: " + currentCustomerIndex);
+
+        SetupInitialGameState(); // 이 함수가 currentCustomerIndex를 사용하여 튜토리얼 또는 일반 게임 시작
+    }
+    
     void SetupInitialGameState()
     {
         // 첫 번째 손님(currentCustomerIndex == 0)일 때 튜토리얼 시작

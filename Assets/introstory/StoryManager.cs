@@ -1,3 +1,4 @@
+// StoryManager.cs
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,7 +12,7 @@ public class StoryManager : MonoBehaviour
         [TextArea(3, 5)]
         public string text;
         public Sprite backgroundImage;
-        public AudioClip soundEffect;
+        public AudioClip soundEffect; // 각 스텝별 효과음 AudioClip 직접 참조
     }
 
     public StoryStep[] storySteps;
@@ -21,17 +22,19 @@ public class StoryManager : MonoBehaviour
     public GameObject nextButton;
     public GameObject ribbonObj;
     public GameObject mouseTrailObj;
-    // 다음 버튼 클릭 사운드 추가
-    public AudioClip nextButtonSound;
+    public AudioClip nextButtonSound; // 다음 버튼 클릭 효과음 AudioClip 직접 참조
 
     private int currentStep = 0;
-    private AudioSource audioSource;
+    private AudioSource audioSource; // StoryManager 자체의 AudioSource
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
+            // AudioSource가 없다면 하나 추가해줍니다. (선택적, 오류 대신 자동 추가)
+            // Debug.LogWarning("StoryManager: AudioSource 컴포넌트가 없어 새로 추가합니다.", this.gameObject);
+            // audioSource = gameObject.AddComponent<AudioSource>();
             Debug.LogError("StoryManager Error: AudioSource 컴포넌트가 연결되지 않았습니다!", this.gameObject);
             enabled = false;
             return;
@@ -49,13 +52,11 @@ public class StoryManager : MonoBehaviour
         if (mouseTrailObj != null) mouseTrailObj.SetActive(false);
 
         currentStep = 0;
-        ShowStep(currentStep); // 첫 번째 스텝 보여주기
+        ShowStep(currentStep);
 
-        // 첫 스텝에서는 다음 버튼 활성화 (만약 스텝이 하나뿐이라면 ShowStep에서 바로 비활성화됨)
         if (nextButton != null && storySteps.Length > 1) {
             nextButton.SetActive(true);
         } else if (nextButton != null) {
-            // 스토리가 1개 뿐이면 시작부터 다음 버튼 숨김 (또는 ShowStep에서 처리)
             nextButton.SetActive(false);
         }
     }
@@ -63,40 +64,52 @@ public class StoryManager : MonoBehaviour
     // "다음" 버튼 클릭 시 호출
     public void OnNextClicked()
     {
-        // 다음 버튼 클릭 시 사운드 재생
-        if (audioSource != null && nextButtonSound != null)
+        // ★★★ 다음 버튼 클릭 시 사운드 재생 수정 ★★★
+        if (nextButtonSound != null) // AudioClip이 할당되어 있는지 먼저 확인
         {
-            audioSource.PlayOneShot(nextButtonSound);
-        }
-        else if (nextButtonSound != null)
-        {
-            Debug.LogWarning("StoryManager Warning: 다음 버튼 클릭 사운드가 설정되었지만 AudioSource가 없거나 비활성화되어 재생할 수 없습니다.");
+            // AudioManager가 있고, SFX가 활성화되어 있을 때만 재생
+            if (AudioManager.Instance != null && AudioManager.Instance.IsSfxEnabled)
+            {
+                if (audioSource != null) // StoryManager의 AudioSource가 있는지 확인
+                {
+                    audioSource.PlayOneShot(nextButtonSound);
+                }
+                else
+                {
+                    Debug.LogWarning("StoryManager Warning: 다음 버튼 사운드를 재생할 AudioSource가 없습니다 (StoryManager에).");
+                }
+            }
+            else if (AudioManager.Instance != null && !AudioManager.Instance.IsSfxEnabled)
+            {
+                Debug.Log("StoryManager: SFX 비활성화됨, 다음 버튼 사운드 재생 안 함.");
+            }
+            else if (AudioManager.Instance == null)
+            {
+                Debug.LogWarning("StoryManager Warning: AudioManager 인스턴스를 찾을 수 없어 다음 버튼 사운드 설정을 확인할 수 없습니다.");
+                // AudioManager가 없는 경우, 그냥 재생하거나 재생하지 않는 정책을 정할 수 있습니다.
+                // if (audioSource != null) audioSource.PlayOneShot(nextButtonSound); // 예: AudioManager 없으면 그냥 재생
+            }
         }
 
         currentStep++;
 
-        // 다음 스텝 보여주기 (ShowStep 함수가 마지막 스텝 처리를 함)
         if (currentStep < storySteps.Length)
         {
             ShowStep(currentStep);
         }
         else
         {
-            // 이 부분은 이제 ShowStep에서 처리되므로 비워두거나 로그만 남김
             Debug.Log("StoryManager: OnNextClicked에서 모든 스텝 완료 확인 (실제 처리는 ShowStep에서).");
         }
     }
 
-    // 특정 인덱스의 스토리 단계를 화면에 표시
     void ShowStep(int index)
     {
-        
         if (index < 0 || index >= storySteps.Length) { Debug.LogError($"StoryManager Error: 잘못된 스토리 스텝 인덱스입니다: {index}"); return; }
 
         Debug.Log($"StoryManager: 스텝 {index} 표시 중.");
         StoryStep step = storySteps[index];
 
-        // --- 텍스트 및 배경 업데이트 (이전과 동일) ---
         if (storyText != null) { storyText.text = step.text; }
         if (backgroundRenderer != null) {
             if (step.backgroundImage != null) {
@@ -107,16 +120,33 @@ public class StoryManager : MonoBehaviour
             } else { Debug.LogWarning($"StoryManager Warning: 스텝 {index}의 배경 이미지가 null입니다."); }
         }
 
-        // ★★★ 장면 사운드 재생 로직 (이전과 동일) ★★★
-        if (audioSource != null && step.soundEffect != null)
+        // ★★★ 장면 사운드(step.soundEffect) 재생 로직 수정 ★★★
+        if (step.soundEffect != null) // AudioClip이 할당되어 있는지 먼저 확인
         {
-            audioSource.PlayOneShot(step.soundEffect);
-            Debug.Log($"StoryManager: 스텝 {index}의 사운드 '{step.soundEffect.name}' 재생.");
+            // AudioManager가 있고, SFX가 활성화되어 있을 때만 재생
+            if (AudioManager.Instance != null && AudioManager.Instance.IsSfxEnabled)
+            {
+                if (audioSource != null) // StoryManager의 AudioSource가 있는지 확인
+                {
+                    audioSource.PlayOneShot(step.soundEffect);
+                    Debug.Log($"StoryManager: 스텝 {index}의 사운드 '{step.soundEffect.name}' 재생 시도 (SFX 활성화됨).");
+                }
+                else
+                {
+                     Debug.LogWarning($"StoryManager Warning: 스텝 {index} 사운드를 재생할 AudioSource가 없습니다 (StoryManager에).");
+                }
+            }
+            else if (AudioManager.Instance != null && !AudioManager.Instance.IsSfxEnabled)
+            {
+                Debug.Log($"StoryManager: 스텝 {index}의 사운드 '{step.soundEffect.name}' 재생 안 함 (SFX 비활성화됨).");
+            }
+            else if (AudioManager.Instance == null)
+            {
+                 Debug.LogWarning($"StoryManager Warning: AudioManager 인스턴스를 찾을 수 없어 스텝 {index} 사운드 설정을 확인할 수 없습니다.");
+                // if (audioSource != null) audioSource.PlayOneShot(step.soundEffect); // 예: AudioManager 없으면 그냥 재생
+            }
         }
-        else if (step.soundEffect != null)
-        {
-            Debug.LogWarning($"StoryManager Warning: 스텝 {index}에 사운드가 설정되었지만 AudioSource가 없거나 비활성화되어 재생할 수 없습니다.");
-        }
+
 
         // ★★★ 마지막 스텝인지 확인하고 리본/트레일 활성화 (이전과 동일) ★★★
         if (index == storySteps.Length - 1)
@@ -124,13 +154,10 @@ public class StoryManager : MonoBehaviour
             Debug.Log("StoryManager: 마지막 스텝 표시 완료. 리본 커팅 단계 진입.");
             if (nextButton != null)
             {
-                nextButton.SetActive(false); // 다음 버튼 숨기기
+                nextButton.SetActive(false);
                 Debug.Log("StoryManager: 다음 버튼 비활성화됨.");
             }
-             // 스토리 텍스트 숨기기 (선택 사항)
-             // if (storyText != null) storyText.gameObject.SetActive(false);
 
-            // 리본과 마우스 트레일 활성화
             if (ribbonObj != null)
             {
                 ribbonObj.SetActive(true);
@@ -140,17 +167,13 @@ public class StoryManager : MonoBehaviour
             {
                 mouseTrailObj.SetActive(true);
                 Debug.Log("StoryManager: MouseTrailObj 활성화됨.");
-                // 필요 시 여기서 트레일 초기화
-                // TrailRenderer tr = mouseTrailObj.GetComponent<TrailRenderer>();
-                // if (tr != null) tr.Clear();
             }
         }
         else
         {
-             // 마지막 스텝이 아니면 다음 버튼 활성화 (혹시 비활성화 상태였다면)
              if (nextButton != null && !nextButton.activeSelf)
              {
-                 nextButton.SetActive(true);
+                  nextButton.SetActive(true);
              }
         }
     }

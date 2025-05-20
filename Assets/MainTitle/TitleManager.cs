@@ -236,28 +236,38 @@ public class TitleManager : MonoBehaviour
     // --- 오디오 설정 관련 함수들 ---
     void LoadAudioSettings()
     {
-        // BGM 설정 불러오기 (기본값은 true, 즉 켜짐)
-        bool bgmOn = PlayerPrefs.GetInt(BGM_KEY, 1) == 1;
-        if (bgmToggle != null) bgmToggle.isOn = bgmOn;
-        ApplyBGMSetting(bgmOn); // 실제 오디오 매니저에 적용하는 로직 (아래에 예시)
-
-        // SFX 설정 불러오기 (기본값은 true, 즉 켜짐)
-        bool sfxOn = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
-        if (sfxToggle != null) sfxToggle.isOn = sfxOn;
-        ApplySFXSetting(sfxOn); // 실제 오디오 매니저에 적용하는 로직 (아래에 예시)
-    }
-
-    void LoadAudioSettingsToUI()
-    {
+        bool bgmOn = PlayerPrefs.GetInt(BGM_KEY, 1) == 1; // 기본값 1 (ON)
         if (bgmToggle != null)
         {
-            bgmToggle.isOn = PlayerPrefs.GetInt(BGM_KEY, 1) == 1;
+            // 리스너를 임시로 제거하여 OnBgmToggleChanged가 불필요하게 호출되는 것을 방지
+            bgmToggle.onValueChanged.RemoveListener(OnBgmToggleChanged);
+            bgmToggle.isOn = bgmOn;
+            // 리스너를 다시 추가
+            bgmToggle.onValueChanged.AddListener(OnBgmToggleChanged);
         }
+        ApplyBGMSetting(bgmOn);
+
+        bool sfxOn = PlayerPrefs.GetInt(SFX_KEY, 1) == 1; // 기본값 1 (ON)
         if (sfxToggle != null)
         {
-            sfxToggle.isOn = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
+            sfxToggle.onValueChanged.RemoveListener(OnSfxToggleChanged);
+            sfxToggle.isOn = sfxOn;
+            sfxToggle.onValueChanged.AddListener(OnSfxToggleChanged);
         }
+        ApplySFXSetting(sfxOn);
     }
+
+        void LoadAudioSettingsToUI()
+        {
+            if (bgmToggle != null)
+            {
+                bgmToggle.isOn = PlayerPrefs.GetInt(BGM_KEY, 1) == 1;
+            }
+            if (sfxToggle != null)
+            {
+                sfxToggle.isOn = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
+            }
+        }
 
     // BGM 토글 값 변경 시 호출될 함수
     public void OnBgmToggleChanged(bool isOn)
@@ -280,19 +290,21 @@ public class TitleManager : MonoBehaviour
     // 실제 BGM 설정을 오디오 시스템에 적용하는 부분 (예시)
     void ApplyBGMSetting(bool isOn)
     {
-        // 여기에 실제 BGM을 켜고 끄는 코드를 작성합니다.
-        // 예: FindObjectOfType<AudioManager>()?.SetBGM(isOn);
-        // 지금은 AudioManager가 없으므로, 콘솔에 로그만 남깁니다.
-        Debug.Log("ApplyBGMSetting 호출됨: " + isOn);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetBgmEnabled(isOn); // AudioManager의 함수 호출
+        }
+        // Debug.Log("TitleManager -> ApplyBGMSetting 호출됨: " + isOn); // 로그는 AudioManager에서 찍히므로 중복 필요 X
     }
 
     // 실제 SFX 설정을 오디오 시스템에 적용하는 부분 (예시)
     void ApplySFXSetting(bool isOn)
     {
-        // 여기에 실제 효과음을 켜고 끄는 코드를 작성합니다.
-        // 예: FindObjectOfType<AudioManager>()?.SetSFX(isOn);
-        // 지금은 AudioManager가 없으므로, 콘솔에 로그만 남깁니다.
-        Debug.Log("ApplySFXSetting 호출됨: " + isOn);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetSfxEnabled(isOn); // AudioManager의 함수 호출
+        }
+        // Debug.Log("TitleManager -> ApplySFXSetting 호출됨: " + isOn);
     }
 
 
