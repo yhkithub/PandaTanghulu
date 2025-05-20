@@ -39,6 +39,9 @@ public enum GameState
     Paused,
     GameOver
 }
+
+
+
 public enum MiniGameStep
 {
     NotStarted,

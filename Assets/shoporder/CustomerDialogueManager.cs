@@ -1,356 +1,288 @@
+// CustomerOrderManager.cs
 using UnityEngine;
-using System.Collections;
-using TMPro;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Linq;
+using TMPro;
 
-[System.Serializable]
-public class DialogueEntry
+// GameState Enum은 이 파일 최상단 또는 GameEnums.cs 같은 별도 파일에 위치
+// public enum GameState { TutorialDisplay, Playing, Paused, GameOver }
+
+public class CustomerOrderManager : MonoBehaviour
 {
-    public enum Speaker { Kiki, Pupu }
-    public Speaker speaker;
-    [TextArea(3, 10)] public string line;
-}
+    [System.Serializable]
+    public struct FruitSpriteMapping
+    {
+        public FruitType fruitType;
+        public Sprite sprite;
+    }
 
-public class CustomerDialogueManager : MonoBehaviour
-{
-    [Header("씬 전환 설정")]
-    public string fruitCatchingSceneName = "FruitCatchingGameScene"; // 과일 꽂기 씬 이름
+    [Header("UI 구성 요소")]
+    public GameObject orderDisplayBackgroundPanel;
+    public GameObject fruitsContainerForOrderUI;
+    public Image skewerStickImagePrefab_UI;
+    public Image fruitImagePrefab_UI;
 
-    // private List<DialogueEntry> dialogueSequence = new List<DialogueEntry>(); // 이 부분은 이제 외부에서 받아옴
-    private CustomerOrderData currentCustomerDataForDialogue; // 현재 대화할 손님의 전체 데이터
+    [Header("튜토리얼 UI 요소")]
+    public GameObject tutorialPanel_UI;
+    public TextMeshProUGUI tutorialMessageText_UI;
+    public Button startGameButton_UI;
 
-    private int currentDialogueIndex = 0;
-    private bool isDialoguePlaying = false;
-    public int customerIndexForThisDialogue = 0; // 이 대화가 어떤 손님을 위한 것인지 Inspector에서 설정 (0: 끼끼, 1: 뭉뭉 등)
+    [Header("데이터")]
+    public List<FruitSpriteMapping> fruitSpritesForOrderUI;
+    public List<CustomerOrderData> allCustomerOrders;
 
-    [Header("말풍선 설정")]
-    public CanvasGroup kikiSpeechBubbleGroup;
-    public TextMeshProUGUI kikiSpeechText;
-    public Button kikiNextButton;
+    private Dictionary<FruitType, Sprite> fruitSpriteDic;
+    public CustomerOrderData CurrentOrderData { get; private set; }
+    public List<FruitType> CurrentRequiredFruits { get; private set; } = new List<FruitType>();
+    private int currentCustomerIndex = 0;
 
-    public CanvasGroup pupuSpeechBubbleGroup;
-    public TextMeshProUGUI pupuSpeechText;
-    public Button pupuNextButton;
+    public GameState currentGameState = GameState.TutorialDisplay; // 초기 상태는 튜토리얼 표시로 설정
+    public bool isTutorialActive = false;
 
-    [Header("오디오 설정")]
-    public string bubbleOpenSoundName = "BubbleOpen"; // Inspector에서 연결할 사운드 이름
-    public string textSoundName = "Text";         // Inspector에서 연결할 사운드 이름
+    public static CustomerOrderManager Instance { get; private set; }
 
-    [Header("대화 순서 및 내용")]
-    public List<DialogueEntry> dialogueSequence = new List<DialogueEntry>();
-    private bool isTextTyping = false;
-    private CanvasGroup currentBubbleGroup;
-    private Button currentNextButton;
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        fruitSpriteDic = new Dictionary<FruitType, Sprite>();
+        if (fruitSpritesForOrderUI != null)
+        {
+            foreach (var mapping in fruitSpritesForOrderUI)
+            {
+                if (mapping.sprite != null && !fruitSpriteDic.ContainsKey(mapping.fruitType))
+                {
+                    fruitSpriteDic.Add(mapping.fruitType, mapping.sprite);
+                }
+                else if (mapping.sprite == null)
+                {
+                    Debug.LogWarning("FruitSpriteMapping: " + mapping.fruitType + "에 대한 Sprite가 할당되지 않았습니다.");
+                }
+            }
+        }
+    }
 
     void Start()
     {
-        if (kikiNextButton != null)
+        if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
-            kikiNextButton.onClick.AddListener(OnNextButtonClicked);
-            kikiNextButton.gameObject.SetActive(false);
-        }
-        if (pupuNextButton != null)
-        {
-            pupuNextButton.onClick.AddListener(OnNextButtonClicked);
-            pupuNextButton.gameObject.SetActive(false);
-        }
-
-        if (kikiSpeechBubbleGroup != null) kikiSpeechBubbleGroup.alpha = 0f;
-        if (pupuSpeechBubbleGroup != null) pupuSpeechBubbleGroup.alpha = 0f;
-
-        if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.allCustomerOrders.Count > GameInfoHolder.CustomerIndexToLoad)
-        {
-            currentCustomerDataForDialogue = CustomerOrderManager.Instance.allCustomerOrders[GameInfoHolder.CustomerIndexToLoad];
-            if (currentCustomerDataForDialogue.dialogueSequence != null && currentCustomerDataForDialogue.dialogueSequence.Count > 0)
-            {
-                StartDialogueForCustomer(currentCustomerDataForDialogue);
-            }
-            else
-            {
-                Debug.LogWarning(currentCustomerDataForDialogue.customerName + " 손님의 대화 내용이 없습니다. 바로 게임으로 넘어갑니다.");
-                ProceedToGame(); // 대화 없이 바로 게임으로
-            }
-        }
-        else
-        {
-            Debug.LogError("CustomerDialogueManager: 유효한 손님 정보를 찾을 수 없습니다. (CustomerOrderManager 또는 GameInfoHolder 확인)");
-            // 오류 처리 또는 기본 게임 시작 등
-            ProceedToGame(); // 예: 오류 시 바로 게임으로 (또는 메인 화면으로)
-        }
-    }
-
-    public void StartDialogueForCustomer(CustomerOrderData customerData)
-    {
-        if (isDialoguePlaying || customerData == null || customerData.dialogueSequence == null || customerData.dialogueSequence.Count == 0)
-        {
-            if (customerData != null)
-                Debug.LogWarning(customerData.customerName + "의 대화를 시작할 수 없거나 대화 내용이 없습니다.");
-            else
-                Debug.LogWarning("CustomerData가 null입니다.");
-            ProceedToGame(); // 대화 시작 불가 시 게임으로
+            Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다!");
+            if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false);
+            currentGameState = GameState.Playing; // 데이터 없으면 바로 플레이 (또는 오류 처리)
             return;
         }
-        currentCustomerDataForDialogue = customerData;
-        currentDialogueIndex = 0;
-        StartCoroutine(ProceedDialogueInternal(customerData.dialogueSequence));
+
+        if (startGameButton_UI != null)
+        {
+            startGameButton_UI.onClick.AddListener(EndTutorialAndStartGame);
+        }
+        
+        SetupInitialGameState();
     }
 
-    IEnumerator ProceedDialogueInternal(List<DialogueEntry> dialogueEntries)
+    void SetupInitialGameState()
     {
-        isDialoguePlaying = true;
-        // 푸푸와 손님 말풍선 초기화
-        if (kikiSpeechBubbleGroup != null) { kikiSpeechBubbleGroup.alpha = 0f; kikiSpeechBubbleGroup.gameObject.SetActive(false); }
-        if (pupuSpeechBubbleGroup != null) { pupuSpeechBubbleGroup.alpha = 0f; pupuSpeechBubbleGroup.gameObject.SetActive(false); }
-
-
-        while (currentDialogueIndex < dialogueEntries.Count)
+        // 첫 번째 손님(currentCustomerIndex == 0)일 때 튜토리얼 시작
+        if (currentCustomerIndex == 0)
         {
-            DialogueEntry entry = dialogueEntries[currentDialogueIndex];
-            CanvasGroup targetBubbleGroup = null;
-            TextMeshProUGUI targetTextComponent = null;
-            Button targetNextButton = null;
+            isTutorialActive = true;
+            currentGameState = GameState.TutorialDisplay;
+            Debug.Log("튜토리얼 모드 진입: 끼끼 손님. 게임 시작 대기 중.");
 
-            // 현재 대화 상대가 아닌 쪽 말풍선은 확실히 숨김
-            if (entry.speaker == DialogueEntry.Speaker.Kiki) // 끼끼 또는 다른 동물 손님
+            if (tutorialPanel_UI != null)
             {
-                targetBubbleGroup = kikiSpeechBubbleGroup;
-                targetTextComponent = kikiSpeechText;
-                targetNextButton = kikiNextButton;
-                if (pupuSpeechBubbleGroup != null && pupuSpeechBubbleGroup.alpha > 0) yield return StartCoroutine(FadeOut(pupuSpeechBubbleGroup));
+                tutorialPanel_UI.SetActive(true);
+                if (tutorialMessageText_UI != null)
+                {
+                    tutorialMessageText_UI.text = " ";
+                }
             }
-            else if (entry.speaker == DialogueEntry.Speaker.Pupu) // 푸푸
+            else
             {
-                targetBubbleGroup = pupuSpeechBubbleGroup;
-                targetTextComponent = pupuSpeechText;
-                targetNextButton = pupuNextButton;
-                if (kikiSpeechBubbleGroup != null && kikiSpeechBubbleGroup.alpha > 0) yield return StartCoroutine(FadeOut(kikiSpeechBubbleGroup));
+                Debug.LogWarning("CustomerOrderManager: TutorialPanel_UI가 연결되지 않았습니다.");
             }
 
-            currentBubbleGroup = targetBubbleGroup; // OnNextButtonClicked에서 사용하기 위함
-            currentNextButton = targetNextButton;   // OnNextButtonClicked에서 사용하기 위함
-
-            if (targetBubbleGroup != null && targetTextComponent != null)
+            if (FruitSpawner2D.Instance != null)
             {
-                yield return ShowSpeechBubbleAndText(targetBubbleGroup, targetTextComponent, entry.line, targetNextButton);
+                FruitSpawner2D.Instance.StopSpawningCompletely(); // 과일 스폰 완전 중지
             }
-
-            // 다음 버튼 클릭 대기 (클릭되면 OnNextButtonClicked에서 currentNextButton이 비활성화됨)
-            while (currentNextButton != null && currentNextButton.gameObject.activeSelf)
-            {
-                yield return null;
-            }
-            // isTextTyping이 false가 될 때까지 추가로 기다릴 수도 있음 (클릭 스킵 방지)
-            while(isTextTyping) yield return null;
-
-
-            currentDialogueIndex++;
         }
-
-        // 모든 대화가 끝나면 현재 열려있는 말풍선도 FadeOut
-        if(currentBubbleGroup != null && currentBubbleGroup.alpha > 0)
+        else // 튜토리얼이 아닌 일반 손님
         {
-            yield return StartCoroutine(FadeOut(currentBubbleGroup));
+            isTutorialActive = false;
+            currentGameState = GameState.Playing;
+            if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false);
+            LoadOrderForCurrentCustomer(); // 함수 이름 변경 및 호출
         }
+    }
 
-        isDialoguePlaying = false;
-        Debug.Log("모든 대화 종료!");
-        ProceedToGame();
+    public void EndTutorialAndStartGame()
+    {
+        if (currentGameState == GameState.TutorialDisplay)
+        {
+            Debug.Log("튜토리얼 설명 종료. 게임을 시작합니다!");
+            currentGameState = GameState.Playing; // 게임 상태 변경
+
+            if (tutorialPanel_UI != null)
+            {
+                tutorialPanel_UI.SetActive(false);
+            }
+            LoadOrderForCurrentCustomer(); // 주문 로드 및 UI 표시, 스포너 시작
+        }
     }
     
-    void ProceedToGame()
+    // LoadCustomerOrder에서 스포너 시작 로직 분리하여 재사용성 높임
+    void LoadOrderForCurrentCustomer()
     {
-        // GameInfoHolder.CustomerIndexToLoad는 이미 Start에서 설정되었거나,
-        // 또는 이 DialogueManager가 특정 스테이지 전용이라면 해당 인덱스를 사용.
-        // CustomerOrderManager가 다음 씬에서 이 값을 읽어 해당 손님의 주문을 로드.
-        Debug.Log("과일 꽂기 게임 씬으로 전환 준비. 로드할 손님 인덱스: " + GameInfoHolder.CustomerIndexToLoad);
-
-        if (SceneSwitcher.Instance != null)
+        LoadCustomerOrder(currentCustomerIndex);
+        if (FruitSpawner2D.Instance != null)
         {
-            SceneSwitcher.Instance.LoadFruitCatchingScene(fruitCatchingSceneName);
+            FruitSpawner2D.Instance.StartSpawning();
+        }
+    }
+
+    public void LoadNextCustomerOrder()
+    {
+        currentCustomerIndex++;
+        if (currentCustomerIndex >= allCustomerOrders.Count)
+        {
+            Debug.Log("모든 손님의 주문을 완료했습니다!");
+            currentCustomerIndex = 0; 
+            SetupInitialGameState(); // 게임 사이클 다시 시작 (튜토리얼 포함)
+            return;
+        }
+        isTutorialActive = false; 
+        currentGameState = GameState.Playing; 
+        if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false); 
+
+        LoadOrderForCurrentCustomer();
+    }
+
+    void LoadCustomerOrder(int customerIndex)
+    {
+        if (customerIndex < 0 || customerIndex >= allCustomerOrders.Count)
+        {
+            Debug.LogError("CustomerOrderManager: 유효하지 않은 손님 인덱스입니다: " + customerIndex);
+            return;
+        }
+        CurrentOrderData = allCustomerOrders[customerIndex];
+        CurrentRequiredFruits.Clear();
+        if (CurrentOrderData != null && CurrentOrderData.skewerOrder != null)
+        {
+            foreach (OrderItem item in CurrentOrderData.skewerOrder)
+            {
+                CurrentRequiredFruits.Add(item.fruit);
+            }
+        }
+        Debug.Log(CurrentOrderData.customerName + " 손님의 주문 로드 완료. 주문: " + string.Join(", ", CurrentRequiredFruits.Select(f => f.ToString())) + (isTutorialActive ? " (튜토리얼 진행중)" : ""));
+        DisplayOrderOnUI();
+    }
+
+    void DisplayOrderOnUI()
+    {
+        if (fruitsContainerForOrderUI == null || fruitImagePrefab_UI == null || CurrentOrderData == null)
+        {
+            Debug.LogError("주문서 표시에 필요한 UI 요소가 없습니다!");
+            if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(false);
+            return;
+        }
+
+        if (orderDisplayBackgroundPanel != null) orderDisplayBackgroundPanel.SetActive(true);
+
+        foreach (Transform child in fruitsContainerForOrderUI.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        Image stickInstance = null;
+        if (skewerStickImagePrefab_UI != null)
+        {
+            stickInstance = Instantiate(skewerStickImagePrefab_UI, fruitsContainerForOrderUI.transform);
+            stickInstance.name = "SkewerStick_InOrderUI";
+            stickInstance.transform.SetAsFirstSibling();
+        }
+
+        if (CurrentOrderData.skewerOrder != null && CurrentOrderData.skewerOrder.Count > 0)
+        {
+            List<OrderItem> orderItemsToDisplay = CurrentOrderData.skewerOrder;
+            // 주문서 UI 표시 순서 로직 (필요시 orderItemsToDisplay.Reverse(); 등 사용)
+
+            foreach (OrderItem item in orderItemsToDisplay)
+            {
+                if (fruitSpriteDic.TryGetValue(item.fruit, out Sprite fruitSpriteToShow))
+                {
+                    Image fruitUI = Instantiate(fruitImagePrefab_UI, fruitsContainerForOrderUI.transform);
+                    fruitUI.sprite = fruitSpriteToShow;
+                    fruitUI.name = item.fruit.ToString() + "_OrderUI";
+                }
+                else
+                {
+                    Debug.LogWarning("CustomerOrderManager: 주문서 UI에 표시할 " + item.fruit.ToString() + " 타입의 스프라이트를 찾을 수 없습니다.");
+                }
+            }
+            //Debug.Log(CurrentOrderData.customerName + " 손님의 주문을 UI에 동적으로 표시했습니다."); // 한번만 로깅되도록 위치 이동
         }
         else
         {
-            Debug.LogError("SceneSwitcher 인스턴스를 찾을 수 없습니다!");
-            UnityEngine.SceneManagement.SceneManager.LoadScene(fruitCatchingSceneName); // 대체
+            // Debug.LogWarning("CustomerOrderManager: " + CurrentOrderData.customerName + " 손님의 주문 내용(skewerOrder)이 비어있거나 없습니다.");
         }
     }
 
-    public void StartFirstDialogue()
+    public bool CheckOrder(List<FruitType> collectedPlayerFruits)
     {
-        if (isDialoguePlaying) return;
-        StartCoroutine(ProceedDialogue());
-    }
-
-    IEnumerator ProceedDialogue()
-    {
-        isDialoguePlaying = true;
-
-        while (currentDialogueIndex < dialogueSequence.Count)
+        if (CurrentOrderData == null || CurrentRequiredFruits.Count == 0)
         {
-            DialogueEntry entry = dialogueSequence[currentDialogueIndex];
-
-            if (entry.speaker == DialogueEntry.Speaker.Kiki)
-            {
-                currentBubbleGroup = kikiSpeechBubbleGroup;
-                currentNextButton = kikiNextButton;
-                yield return ShowSpeechBubbleAndText(kikiSpeechBubbleGroup, kikiSpeechText, entry.line, kikiNextButton);
-            }
-            else if (entry.speaker == DialogueEntry.Speaker.Pupu)
-            {
-                currentBubbleGroup = pupuSpeechBubbleGroup;
-                currentNextButton = pupuNextButton;
-                yield return ShowSpeechBubbleAndText(pupuSpeechBubbleGroup, pupuSpeechText, entry.line, pupuNextButton);
-            }
-
-            yield return WaitForNextButtonClick(); // 버튼 클릭 대기
-            // 현재 말풍선 숨기기 (OnNextButtonClicked에서 이미 처리하고 있다면 이 부분은 필요 없을 수 있음)
-            if(currentBubbleGroup != null && currentBubbleGroup.alpha > 0)
-            {
-                StartCoroutine(FadeOut(currentBubbleGroup));
-            }
-            currentDialogueIndex++;
+            Debug.LogWarning("CustomerOrderManager: 현재 생성된 주문이 없어서 확인할 수 없습니다.");
+            return false;
         }
 
-        isDialoguePlaying = false;
-        Debug.Log("모든 대화 종료! (" + (dialogueSequence.Count > 0 ? dialogueSequence[0].speaker.ToString() : "Unknown") + " 손님)");
+        bool orderMatch = collectedPlayerFruits.SequenceEqual(CurrentRequiredFruits);
 
-        // 대화 종료 후 다음 씬으로 전환하고, 어떤 손님의 주문을 로드할지 정보 전달
-        GameInfoHolder.CustomerIndexToLoad = customerIndexForThisDialogue; // ★★★ 정보 저장
-        Debug.Log("다음 로드할 손님 인덱스 저장: " + GameInfoHolder.CustomerIndexToLoad);
-
-        // SceneSwitcher를 통해 씬 로드
-        if (SceneSwitcher.Instance != null)
+        if (orderMatch)
         {
-            SceneSwitcher.Instance.LoadFruitCatchingScene(fruitCatchingSceneName);
+            Debug.Log("주문 성공! (" + CurrentOrderData.customerName + ")");
+            if (isTutorialActive)
+            {
+                Debug.Log("튜토리얼 모드 종료.");
+                isTutorialActive = false;
+                if (tutorialPanel_UI != null && tutorialPanel_UI.activeSelf)
+                {
+                     // tutorialMessageText_UI.text = "훌륭해요! 첫 주문을 완벽하게 만들었어요!";
+                     // Invoke("HideTutorialPanel", 2f);
+                }
+                 if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false);
+            }
+            LoadNextCustomerOrder();
         }
         else
         {
-            Debug.LogError("SceneSwitcher 인스턴스를 찾을 수 없습니다!");
-            // 대체 방법: 직접 씬 로드 (하지만 SceneSwitcher 사용 권장)
-            // UnityEngine.SceneManagement.SceneManager.LoadScene(fruitCatchingSceneName);
-        }
-
-        // 대화 종료 후 로직
-    }
-
-    IEnumerator ShowSpeechBubbleAndText(CanvasGroup bubbleGroup, TextMeshProUGUI textComponent, string message, Button nextBtn)
-    {
-        if (bubbleGroup != null)
-        {
-            bubbleGroup.gameObject.SetActive(true);
-            // 말풍선 등장 사운드를 FadeIn 시작 전에 재생
-            if (AudioManager.Instance != null && !string.IsNullOrEmpty(bubbleOpenSoundName))
+            if (HeartManager.Instance != null)
             {
-                AudioManager.Instance.PlaySound(bubbleOpenSoundName);
+                HeartManager.Instance.LoseHeart();
             }
-            yield return StartCoroutine(FadeIn(bubbleGroup));
-            textComponent.text = "";
-            yield return StartCoroutine(TypeText(textComponent, message));
-            if (nextBtn != null)
+            else
             {
-                nextBtn.gameObject.SetActive(true);
+                Debug.LogError("CustomerOrderManager: HeartManager 인스턴스를 찾을 수 없어 하트를 차감할 수 없습니다.");
+            }
+
+            string playerOrderStr = string.Join(", ", collectedPlayerFruits.Select(f => f.ToString()));
+            string correctOrderStr = string.Join(", ", CurrentRequiredFruits.Select(f => f.ToString()));
+            Debug.Log("주문 실패! (" + CurrentOrderData.customerName + ")\n플레이어 제출: [" + playerOrderStr + "]\n정답: [" + correctOrderStr + "]");
+
+            if (isTutorialActive && tutorialMessageText_UI != null && tutorialPanel_UI.activeSelf)
+            {
+                tutorialMessageText_UI.text = "이런! 주문과 조금 다른 것 같아요. 다시 한번 만들어 볼까요?";
             }
         }
-    }
-
-    IEnumerator TypeText(TextMeshProUGUI textComponent, string message)
-    {
-        isTextTyping = true;
-        textComponent.text = ""; // 텍스트 초기화
-        if (AudioManager.Instance != null && !string.IsNullOrEmpty(textSoundName))
-        {
-            // PlayOneShot 대신 Play를 사용하고, StopTextSound로 제어
-            Sound s = AudioManager.Instance.sounds.Find(sound => sound.name == textSoundName);
-            if (s != null)
-            {
-                s.source.Play();
-            }
-        }
-        foreach (char c in message)
-        {
-            textComponent.text += c;
-            yield return new WaitForSeconds(0.02f); // 타이핑 속도 약간 빠르게 조정
-        }
-        isTextTyping = false;
-        // 타이핑이 끝나면 텍스트 사운드 정지
-        AudioManager.Instance?.StopTextSound();
-    }
-
-
-    //IEnumerator TypeText(TextMeshProUGUI textComponent, string message)
-    //{
-    //    isTextTyping = true;
-    //    textComponent.text = "";
-    //    foreach (char c in message)
-    //    {
-    //        textComponent.text += c;
-    //        // AudioManager를 통해 사운드 재생
-    //        AudioManager.Instance?.PlayOneShotSound(textSoundName);
-    //        yield return new WaitForSeconds(0.02f);
-    //    }
-    //    isTextTyping = false;
-    //}
-
-    IEnumerator FadeIn(CanvasGroup canvasGroup, float duration = 0.2f)
-    {
-        float time = 0f;
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(0f, 1f, time / duration);
-            yield return null;
-        }
-        canvasGroup.alpha = 1f;
-    }
-
-    IEnumerator FadeOut(CanvasGroup canvasGroup, float duration = 0.2f)
-    {
-        float time = 0f;
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(1f, 0f, time / duration);
-            yield return null;
-        }
-        canvasGroup.alpha = 0f;
-        if (canvasGroup == kikiSpeechBubbleGroup && kikiNextButton != null)
-        {
-            kikiNextButton.gameObject.SetActive(false);
-        }
-        else if (canvasGroup == pupuSpeechBubbleGroup && pupuNextButton != null)
-        {
-            pupuNextButton.gameObject.SetActive(false);
-        }
-    }
-
-    IEnumerator WaitForNextButtonClick()
-    {
-        while (currentNextButton != null && currentNextButton.gameObject.activeSelf)
-        {
-            yield return null;
-        }
-    }
-
-    void OnNextButtonClicked()
-    {
-        if (isTextTyping) // 타이핑 중이면 텍스트 전체 표시
-        {
-            StopAllCoroutines(); // 현재 진행중인 TypeText 코루틴 강제 종료
-            if (currentBubbleGroup == kikiSpeechBubbleGroup) kikiSpeechText.text = dialogueSequence[currentDialogueIndex].line;
-            else if (currentBubbleGroup == pupuSpeechBubbleGroup) pupuSpeechText.text = dialogueSequence[currentDialogueIndex].line;
-            isTextTyping = false;
-             AudioManager.Instance?.StopTextSound();
-            // nextButton은 계속 활성화 상태 유지
-        }
-        else // 타이핑 완료 후 클릭
-        {
-            if (currentNextButton != null)
-            {
-                currentNextButton.gameObject.SetActive(false); // 버튼 비활성화하여 WaitForNextButtonClick 코루틴을 진행시킴
-            }
-             // FadeOut은 ProceedDialogueInternal 루프에서 다음 대사 시작 전에 처리하거나, 여기서 명시적으로 해도 됨.
-             // StartCoroutine(FadeOut(currentBubbleGroup)); // 여기서 바로 숨기면 다음 대사 FadeIn과 겹칠 수 있음
-        }
+        return orderMatch;
     }
 }

@@ -12,20 +12,21 @@ public class OrderItem
     // 여기서는 완성된 꼬치 스프라이트를 CustomerOrderData에 직접 연결할 겁니다.
 }
 
-
-
 // 아래 부분이 ScriptableObject를 만드는 핵심입니다.
 // [CreateAssetMenu(...)] 를 통해 Unity 에디터에서 이 데이터 파일을 쉽게 만들 수 있게 됩니다.
-[CreateAssetMenu(fileName = "NewCustomerOrder", menuName = "Game/Customer Order")]
+[CreateAssetMenu(fileName = "새로운손님주문", menuName = "탕후루게임/손님 주문 데이터")]
 public class CustomerOrderData : ScriptableObject
 {
-    public string customerName;
-    public Sprite customerSprite; // 손님 캐릭터 이미지 (선택)
-    // public Sprite completedSkewerSprite; // 주문서 UI에 완성된 꼬치 이미지를 직접 할당하는 방식 (이전 방식)
+    public string customerName; // 손님 이름 (예: "끼끼", "뭉뭉")
+    // public Sprite customerCharacterSprite; // 손님 캐릭터 이미지 (필요하다면)
 
     [Header("탕후루 주문 내용")]
-    public List<OrderItem> skewerOrder; // 탕후루 과일/아이템 순서
+    public List<OrderItem> skewerOrder; // 이 손님이 주문한 탕후루 꼬치의 과일/아이템 순서 목록
 
-    [Header("손님 대화 내용")]     // ★★★ 추가된 부분 ★★★
-    public List<DialogueEntry> dialogueSequence; // 이 손님과의 대화 순서
+    [Header("주문서 UI 용")]
+    public Sprite completedSkewerSprite; // 완성된 탕후루 꼬치 이미지 (이것을 UI에 보여줄 겁니다!)
+                                         // (예: image_e052a8.png 처럼 과일들이 순서대로 꽂힌 이미지)
+
+    // [TextArea(3, 5)] // 여러 줄 텍스트 입력을 위해
+    // public string[] dialogueLines; // 손님 대사 (필요하다면)
 }
