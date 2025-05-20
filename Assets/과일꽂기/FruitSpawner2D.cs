@@ -1,18 +1,17 @@
 // FruitSpawner2D.cs
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections; // IEnumerator 사용
+using System.Collections;
 
 public class FruitSpawner2D : MonoBehaviour
 {
-    
-    public static FruitSpawner2D Instance { get; private set; } // 싱글톤으로 만들기 (선택 사항)
+    public static FruitSpawner2D Instance { get; private set; }
     private bool isSpawningPaused = false;
 
     [Header("생성 위치 설정")]
-    public float minSpawnX = -2f;  // 과일이 생성될 월드 X 좌표 최소값
-    public float maxSpawnX = 5f;   // 과일이 생성될 월드 X 좌표 최대값
-    public float spawnHeight = 7f;   // 과일이 생성될 Y축 높이 (스포너의 Y 위치 기준)
+    public float minSpawnX = -2f;
+    public float maxSpawnX = 5f;
+    public float spawnHeight = 7f;
 
     [Header("생성할 과일 프리팹")]
     public List<FruitPrefabChance> fruitPrefabsWithChance;
@@ -21,10 +20,10 @@ public class FruitSpawner2D : MonoBehaviour
     public float minSpawnDelay = 0.5f;
     public float maxSpawnDelay = 1.5f;
     public int maxFruitsToSpawnAtOnce = 1;
-    // public float fruitFallingSpeed = 5f; // 이 변수는 현재 코드에서 직접 사용되지 않고, Rigidbody2D의 Gravity Scale로 제어 권장
+    public float fruitGravityScale = 1f; // ★★★ 새로 추가: 과일 낙하 속도(Gravity Scale) 조절용 ★★★
 
     [Header("여러 개 동시 생성 시 설정")]
-    public float multipleSpawnXOffset = 0.8f; // 과일 사이의 X축 간격
+    public float multipleSpawnXOffset = 0.8f;
 
     [System.Serializable]
     public struct FruitPrefabChance
@@ -37,69 +36,9 @@ public class FruitSpawner2D : MonoBehaviour
     [Header("특별 아이템 등장 빈도 조절")]
     public float specialItemChanceModifier = 0.2f;
 
-    // private List<GameObject> activeFallingFruits = new List<GameObject>(); // 현재는 사용하지 않으므로 주석 처리 또는 삭제
+    private Coroutine spawnCoroutine;
 
-    private Coroutine spawnCoroutine; // 스폰 코루틴 참조
-
-    void Start()
-    {
-        // StartCoroutine(SpawnFruitsRoutine()); // 여기서 바로 시작하지 않음
-    }
-
-    public bool IsSpawningActive() // ★★★ 새로운 함수 추가 ★★★
-    {
-        // 코루틴이 실행 중이고, 일시정지 상태가 아니면 활성 상태로 간주
-        return spawnCoroutine != null && !isSpawningPaused;
-    }
-
-    public void StartSpawning()
-    {
-        if (spawnCoroutine == null) // 이미 실행 중이지 않을 때만 새로 시작
-        {
-            isSpawningPaused = false;
-            spawnCoroutine = StartCoroutine(SpawnFruitsRoutine());
-            Debug.Log("FruitSpawner2D: 스폰 시작됨.");
-        }
-        else if (isSpawningPaused) // 이미 코루틴은 있지만 멈춰있다면 재개
-        {
-            isSpawningPaused = false;
-            Debug.Log("FruitSpawner2D: 스폰 재개됨 (이미 코루틴 존재).");
-        }
-    }
-
-    public void StopSpawningCompletely() // 완전히 멈추고 코루틴도 종료
-    {
-        if (spawnCoroutine != null)
-        {
-            StopCoroutine(spawnCoroutine);
-            spawnCoroutine = null;
-            isSpawningPaused = true; // 상태도 확실히 멈춤으로
-            Debug.Log("FruitSpawner2D: 스폰 완전 중지됨.");
-        }
-    }
-
-    public void PauseSpawning(bool pause)
-    {
-        isSpawningPaused = pause;
-        if (pause)
-        {
-            Debug.Log("FruitSpawner2D: 스폰 일시정지됨.");
-            // StopSpawningCompletely(); // 필요에 따라 코루틴을 완전히 멈출 수도 있음
-        }
-        else
-        {
-            Debug.Log("FruitSpawner2D: 스폰 재개됨.");
-            // 이미 StartSpawning()이 호출되어 spawnCoroutine이 null이 아니거나,
-            // 또는 게임 상태에 따라 여기서 StartSpawning()을 다시 호출할 수도 있습니다.
-            // 현재 CustomerOrderManager에서 명시적으로 StartSpawning을 부르므로 여기서는 isSpawningPaused만 변경.
-            if (spawnCoroutine == null && CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.currentGameState == GameState.Playing)
-            {
-                StartSpawning();
-            }
-        }
-    }
-
-    void Awake() // 만약 싱글톤으로 만든다면
+    void Awake() // 싱글톤 패턴은 Awake에 유지
     {
         if (Instance == null)
         {
@@ -109,15 +48,67 @@ public class FruitSpawner2D : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        // isSpawningPaused = true; // 필요하다면 여기서 true로 초기화하여 CustomerOrderManager가 명시적으로 StartSpawning() 호출하도록 유도
     }
+
+    // Start에서는 CustomerOrderManager의 제어를 기다립니다.
+    // void Start() { }
+
+
+    public bool IsSpawningActive()
+    {
+        return spawnCoroutine != null && !isSpawningPaused;
+    }
+
+    public void StartSpawning()
+    {
+        if (spawnCoroutine == null)
+        {
+            isSpawningPaused = false;
+            spawnCoroutine = StartCoroutine(SpawnFruitsRoutine());
+            Debug.Log("FruitSpawner2D: 스폰 시작됨.");
+        }
+        else if (isSpawningPaused)
+        {
+             isSpawningPaused = false;
+             Debug.Log("FruitSpawner2D: 스폰 재개됨 (이미 코루틴 존재).");
+        }
+    }
+
+    public void StopSpawningCompletely()
+    {
+        if (spawnCoroutine != null)
+        {
+            StopCoroutine(spawnCoroutine);
+            spawnCoroutine = null;
+        }
+        isSpawningPaused = true; // isSpawningPaused도 true로 설정하여 확실히 멈춤
+        Debug.Log("FruitSpawner2D: 스폰 완전 중지됨.");
+    }
+
+    public void PauseSpawning(bool pause)
+    {
+        isSpawningPaused = pause;
+        if (pause) Debug.Log("FruitSpawner2D: 스폰 일시정지됨.");
+        else
+        {
+            Debug.Log("FruitSpawner2D: 스폰 재개됨.");
+            // CustomerOrderManager에서 게임 상태 확인 후 StartSpawning()을 호출하므로, 여기서는 isSpawningPaused만 관리
+            // if (spawnCoroutine == null && CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.currentGameState == GameState.Playing)
+            // {
+            //     StartSpawning();
+            // }
+        }
+    }
+
 
     IEnumerator SpawnFruitsRoutine()
     {
         while (true)
         {
-            if (isSpawningPaused) // 일시정지 상태이면 대기
+            if (isSpawningPaused)
             {
-                yield return null; // 다음 프레임까지 대기하고 다시 체크
+                yield return null;
                 continue;
             }
 
@@ -125,70 +116,42 @@ public class FruitSpawner2D : MonoBehaviour
             yield return new WaitForSeconds(delay);
 
             int countToSpawn = Random.Range(1, maxFruitsToSpawnAtOnce + 1);
-            // 한 묶음의 전체 예상 너비
             float estimatedBundleWidth = (countToSpawn - 1) * multipleSpawnXOffset;
-
-            // 생성될 묶음의 중앙 X 위치를 계산합니다.
-            // minSpawnX와 maxSpawnX 사이에서, 묶음 전체가 범위 내에 들어올 수 있는 중앙 지점을 찾습니다.
             float validMinBundleCenterX = minSpawnX + (estimatedBundleWidth / 2);
             float validMaxBundleCenterX = maxSpawnX - (estimatedBundleWidth / 2);
-
-            // 만약 묶음 너비가 너무 커서 유효 범위가 없다면 (예: min > max), 생성 위치를 minSpawnX나 maxSpawnX 근처로 고정하거나,
-            // 묶음 개수를 줄이는 등의 처리가 필요할 수 있습니다. 여기서는 일단 minSpawnX로 설정합니다.
             float bundleCenterX;
-            if (validMinBundleCenterX > validMaxBundleCenterX)
-            {
-                // 이 경우는 묶음이 너무 넓어서 전체 범위에 다 들어가지 못하는 상황입니다.
-                // 단순하게 minSpawnX ~ maxSpawnX 사이에서 중앙점을 잡도록 수정하거나,
-                // countToSpawn을 줄이는 로직을 고려해야 합니다.
-                // 여기서는 가장 왼쪽 또는 오른쪽에 붙도록 하거나, 단일 생성처럼 처리합니다.
-                // 또는, 항상 범위 내에 생성되도록 보장하는 Random.Range를 사용합니다.
-                // bundleCenterX = Random.Range(minSpawnX, maxSpawnX); // 이렇게 하면 묶음이 잘릴 수 있음
-                // 아래는 묶음의 중앙이 minSpawnX와 maxSpawnX 사이에 있도록 보장하는 방식
-                bundleCenterX = Random.Range(Mathf.Max(minSpawnX, validMinBundleCenterX), Mathf.Min(maxSpawnX, validMaxBundleCenterX));
-                if (countToSpawn == 1) // 하나만 생성할 경우, 전체 범위에서 랜덤
-                {
-                    bundleCenterX = Random.Range(minSpawnX, maxSpawnX);
-                }
-                else if (validMinBundleCenterX > validMaxBundleCenterX)
-                {
-                    // 묶음이 너무 넓어 minSpawnX ~ maxSpawnX 범위에 전체가 들어갈 수 없는 경우,
-                    // 묶음의 일부가 잘리더라도 중앙을 minSpawnX ~ maxSpawnX 사이에 둠.
-                    // 혹은 단일 과일처럼 생성되도록 처리할 수 있음.
-                    // 여기서는 묶음의 중앙이 minSpawnX와 maxSpawnX 사이에 오도록 하되, 묶음이 잘릴 수 있음을 인지.
-                    // 좀 더 나은 방법은 countToSpawn을 줄이거나, multipleSpawnXOffset을 줄이는 것.
-                    // 간단히 처리하기 위해, 그냥 중앙값을 사용.
-                    bundleCenterX = (minSpawnX + maxSpawnX) / 2;
-                }
 
+            if (countToSpawn == 1 || validMinBundleCenterX >= validMaxBundleCenterX)
+            {
+                bundleCenterX = Random.Range(minSpawnX, maxSpawnX);
             }
             else
             {
                 bundleCenterX = Random.Range(validMinBundleCenterX, validMaxBundleCenterX);
             }
 
-
             for (int i = 0; i < countToSpawn; i++)
             {
+                if (isSpawningPaused) break; // 루프 중에도 멈출 수 있도록
+
                 float currentFruitX;
                 if (countToSpawn > 1)
                 {
-                    // 묶음의 중앙을 기준으로 각 과일의 X 위치 계산
                     currentFruitX = bundleCenterX - (estimatedBundleWidth / 2) + (i * multipleSpawnXOffset);
                 }
                 else
                 {
-                    currentFruitX = bundleCenterX; // 하나일 때는 bundleCenterX (이미 minSpawnX, maxSpawnX 범위 내 랜덤)
+                    currentFruitX = bundleCenterX;
                 }
 
-                // 스포너의 Y 위치를 기준으로 spawnHeight만큼 위에서 생성
                 float currentFruitY = transform.position.y + spawnHeight;
-                Vector3 spawnPos = new Vector3(currentFruitX, currentFruitY, 0f); // X 좌표는 월드 좌표 사용
+                Vector3 spawnPos = new Vector3(currentFruitX, currentFruitY, 0f);
 
                 SpawnSpecificFruit(spawnPos);
 
                 if (countToSpawn > 1 && i < countToSpawn - 1)
                 {
+                     if (isSpawningPaused) break;
                     yield return new WaitForSeconds(0.05f);
                 }
             }
@@ -204,13 +167,21 @@ public class FruitSpawner2D : MonoBehaviour
             return;
         }
 
-        // 최종 생성 위치 X 좌표를 minSpawnX와 maxSpawnX 사이로 제한 (월드 좌표 기준)
         positionToSpawn.x = Mathf.Clamp(positionToSpawn.x, minSpawnX, maxSpawnX);
+        GameObject spawnedFruit = Instantiate(fruitToSpawnPrefab, positionToSpawn, Quaternion.identity);
 
-        Instantiate(fruitToSpawnPrefab, positionToSpawn, Quaternion.identity);
+        // ★★★ 생성된 과일의 Rigidbody2D를 가져와 Gravity Scale 설정 ★★★
+        Rigidbody2D rb = spawnedFruit.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.gravityScale = fruitGravityScale;
+        }
+        else
+        {
+            Debug.LogWarning(spawnedFruit.name + " 프리팹에 Rigidbody2D 컴포넌트가 없습니다. Gravity Scale을 조절할 수 없습니다.");
+        }
     }
 
-    // GetRandomFruitPrefab() 함수는 이전과 동일
     GameObject GetRandomFruitPrefab()
     {
         if (fruitPrefabsWithChance == null || fruitPrefabsWithChance.Count == 0) return null;
@@ -229,9 +200,10 @@ public class FruitSpawner2D : MonoBehaviour
             cumulativeWeights.Add(totalWeight);
         }
 
-        if (totalWeight == 0) // 모든 가중치가 0이거나 리스트가 비었을 때 예외 처리
+        if (totalWeight == 0)
         {
-            Debug.LogWarning("모든 과일의 생성 확률 가중치가 0입니다. GetRandomFruitPrefab()을 실행할 수 없습니다.");
+            Debug.LogWarning("모든 과일의 생성 확률 가중치가 0입니다.");
+            if(fruitPrefabsWithChance.Count > 0) return fruitPrefabsWithChance[Random.Range(0, fruitPrefabsWithChance.Count)].prefab; // 가중치 없으면 랜덤하게 하나라도 반환
             return null;
         }
 
@@ -244,7 +216,6 @@ public class FruitSpawner2D : MonoBehaviour
                 return fruitPrefabsWithChance[i].prefab;
             }
         }
-        // 만약의 경우 (부동소수점 오류 등으로 루프를 빠져나올 경우) 마지막 아이템 반환
-        return fruitPrefabsWithChance[fruitPrefabsWithChance.Count - 1].prefab;
+        return fruitPrefabsWithChance[fruitPrefabsWithChance.Count - 1].prefab; // 만약의 경우
     }
 }

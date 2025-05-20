@@ -254,13 +254,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50aa185d1946c8c468355ccb26267715, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHearts: 5
+  maxHearts: 3
   heartImages:
   - {fileID: 1010295142}
   - {fileID: 993926170}
   - {fileID: 47053742}
-  - {fileID: 1548042000}
-  - {fileID: 860058774}
   fullHeart: {fileID: 21300000, guid: 8fb67f62923d87e4687494e0344535f3, type: 3}
   emptyHeart: {fileID: 21300000, guid: d7d01e1815877974eaa4dd70fdff148c, type: 3}
   gameOverSceneName: GameOverScene
@@ -529,8 +527,6 @@ RectTransform:
   - {fileID: 1010295144}
   - {fileID: 993926168}
   - {fileID: 47053740}
-  - {fileID: 1548041998}
-  - {fileID: 860058776}
   - {fileID: 1574855321}
   - {fileID: 1340366489}
   m_Father: {fileID: 0}
@@ -843,9 +839,6 @@ MonoBehaviour:
   - prefab: {fileID: 7920758798566931249, guid: a85d9c8f0676cfb429c84f92d3ad779e, type: 3}
     chanceWeight: 10
     isSpecialItem: 0
-  - prefab: {fileID: 7920758798566931249, guid: f69bd44fe8315574cae2c929d269033d, type: 3}
-    chanceWeight: 10
-    isSpecialItem: 1
   - prefab: {fileID: 7920758798566931249, guid: 2b557ca179a7eef4f95129111cff3d12, type: 3}
     chanceWeight: 10
     isSpecialItem: 0
@@ -858,6 +851,7 @@ MonoBehaviour:
   minSpawnDelay: 0.2
   maxSpawnDelay: 0.4
   maxFruitsToSpawnAtOnce: 2
+  fruitGravityScale: 0.5
   multipleSpawnXOffset: 4
   specialItemChanceModifier: 0.4
 --- !u!4 &819641857
@@ -875,81 +869,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &860058773
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 860058776}
-  - component: {fileID: 860058775}
-  - component: {fileID: 860058774}
-  m_Layer: 5
-  m_Name: Heart (4)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &860058774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860058773}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &860058775
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860058773}
-  m_CullTransparentMesh: 1
---- !u!224 &860058776
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860058773}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 244671435}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 86.772, y: 207.05}
-  m_SizeDelta: {x: 46.8818, y: 46.8818}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &890626742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1237,6 +1156,50 @@ RectTransform:
   m_AnchoredPosition: {x: 275.19, y: 206.31}
   m_SizeDelta: {x: 46.8314, y: 46.831}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1267361800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1267361802}
+  - component: {fileID: 1267361801}
+  m_Layer: 0
+  m_Name: SceneSwitcher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1267361801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267361800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1c000f1042f4a44b8d3995ad9f8d39c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1267361802
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267361800}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 314.46915, y: 214.48473, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1340366488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1450,81 +1413,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1533518248}
   m_CullTransparentMesh: 1
---- !u!1 &1548041997
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1548041998}
-  - component: {fileID: 1548041999}
-  - component: {fileID: 1548042000}
-  m_Layer: 5
-  m_Name: Heart (3)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1548041998
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1548041997}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 244671435}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 133.65, y: 207.05}
-  m_SizeDelta: {x: 46.8818, y: 46.8818}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1548041999
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1548041997}
-  m_CullTransparentMesh: 1
---- !u!114 &1548042000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1548041997}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1574855317
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,6 +1667,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f0693b2cce75645a96aa600767ec56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGameState: 0
+  isTutorialActive: 1
+  SugarBoiling: SugarBoiling
+  nextCustomerSceneName: ShopScene
   orderDisplayBackgroundPanel: {fileID: 1574855317}
   fruitsContainerForOrderUI: {fileID: 475174412}
   skewerStickImagePrefab_UI: {fileID: 0}
@@ -1789,8 +1681,6 @@ MonoBehaviour:
   fruitSpritesForOrderUI:
   - fruitType: 1
     sprite: {fileID: 21300000, guid: 5145922006e5ed14fb470e4900ad7d34, type: 3}
-  - fruitType: 2
-    sprite: {fileID: 21300000, guid: 7a0de223bf9fe814eb03694365f502eb, type: 3}
   - fruitType: 9
     sprite: {fileID: 21300000, guid: 0456dd12df7a8374280d3034d9f29b69, type: 3}
   - fruitType: 5
@@ -1799,8 +1689,6 @@ MonoBehaviour:
     sprite: {fileID: -6511435452147127883, guid: 2825719cc3d234544b7344d5dfd921d2, type: 3}
   allCustomerOrders:
   - {fileID: 11400000, guid: 51355b39dedd2f14f862940f6745987b, type: 2}
-  currentGameState: 0
-  isTutorialActive: 1
 --- !u!4 &1657626926
 Transform:
   m_ObjectHideFlags: 0
@@ -2220,7 +2108,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 8}
+  m_Size: {x: 0.5, y: 8}
   m_EdgeRadius: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -2235,3 +2123,4 @@ SceneRoots:
   - {fileID: 1657626926}
   - {fileID: 1792325298}
   - {fileID: 369091968}
+  - {fileID: 1267361802}

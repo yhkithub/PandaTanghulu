@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class CustomerOrderManager : MonoBehaviour
 {
@@ -13,7 +14,9 @@ public class CustomerOrderManager : MonoBehaviour
 
     public static CustomerOrderManager Instance { get; private set; }
     [Header("씬 전환 설정")]
-    public string fruitCatchingSceneName = "FruitCatchingGameScene"; // 과일 꽂기 씬 이름
+    // public string fruitCatchingSceneName = "FruitCatchingGameScene"; // 이 변수는 현재 씬이므로 CustomerOrderManager에서는 불필요할 수 있음
+    public string SugarBoiling = "SugarBoiling";
+    public string nextCustomerSceneName = "ShopScene"; // 모든 미니게임 완료 후 다음 손님을 위해 돌아갈 씬 (예: 대화 씬)
 
     private CustomerOrderData currentCustomerDataForDialogue; // 현재 대화할 손님의 전체 데이터
 
@@ -50,8 +53,9 @@ public class CustomerOrderManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            // DontDestroyOnLoad(gameObject); // CustomerOrderManager가 씬마다 새로 로드된다면 필요 없음
         }
-        else
+        else if (Instance != this) // 이미 다른 인스턴스가 있다면 현재 것을 파괴
         {
             Destroy(gameObject);
             return;
@@ -76,14 +80,13 @@ public class CustomerOrderManager : MonoBehaviour
 
     void Start()
     {
-        if (Instance == null) Instance = this;
-        else { Destroy(gameObject); return; }
+        // Awake에서 Instance가 이미 설정되었으므로 Start에서는 Instance 관련 로직 제거
 
-         if (allCustomerOrders == null || allCustomerOrders.Count == 0)
+        if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
             Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다!");
             if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false);
-            currentGameState = GameState.Playing; // 데이터 없으면 바로 플레이 (또는 오류 처리)
+            currentGameState = GameState.Playing;
             return;
         }
 
@@ -92,13 +95,12 @@ public class CustomerOrderManager : MonoBehaviour
             startGameButton_UI.onClick.AddListener(EndTutorialAndStartGame);
         }
 
-        SetupInitialGameState(); // 이 함수가 currentCustomerIndex를 사용하여 튜토리얼 또는 일반 게임 시작
-        
-        // ★★★ GameInfoHolder에서 로드할 손님 인덱스 가져오기 ★★★
+        // GameInfoHolder에서 로드할 손님 인덱스를 먼저 가져옵니다.
         currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
-        Debug.Log("과일 꽂기 씬 시작 - 로드할 손님 인덱스: " + currentCustomerIndex);
+        Debug.Log("CustomerOrderManager (FruitCatchingGameScene): 로드할 손님 인덱스: " + currentCustomerIndex);
 
-        SetupInitialGameState(); // 이 함수가 currentCustomerIndex를 사용하여 튜토리얼 또는 일반 게임 시작
+        // 그 다음에 SetupInitialGameState()를 한 번만 호출합니다.
+        SetupInitialGameState();
     }
     
     void SetupInitialGameState()
@@ -261,19 +263,21 @@ public class CustomerOrderManager : MonoBehaviour
 
         if (orderMatch)
         {
-            Debug.Log("주문 성공! (" + CurrentOrderData.customerName + ")");
-            if (isTutorialActive)
+            Debug.Log("과일 꽂기 성공! (" + CurrentOrderData.customerName + ")");
+
+
+            Debug.Log(CurrentOrderData.customerName + " 손님의 설탕 끓이기 단계로 넘어갑니다.");
+
+
+            if (SceneSwitcher.Instance != null)
             {
-                Debug.Log("튜토리얼 모드 종료.");
-                isTutorialActive = false;
-                if (tutorialPanel_UI != null && tutorialPanel_UI.activeSelf)
-                {
-                     // tutorialMessageText_UI.text = "훌륭해요! 첫 주문을 완벽하게 만들었어요!";
-                     // Invoke("HideTutorialPanel", 2f);
-                }
-                 if (tutorialPanel_UI != null) tutorialPanel_UI.SetActive(false);
+                SceneSwitcher.Instance.LoadScene(SugarBoiling); // SceneSwitcher에 일반 LoadScene 함수 필요
             }
-            LoadNextCustomerOrder();
+            else
+            {
+                Debug.LogError("SceneSwitcher 인스턴스를 찾을 수 없습니다! 직접 씬 로드 시도.");
+                SceneManager.LoadScene(SugarBoiling);
+            }
         }
         else
         {

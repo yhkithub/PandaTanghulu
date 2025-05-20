@@ -46,7 +46,7 @@ public class DialogueEntry
     [TextArea(3, 10)] public string line;
 }
 
-public static class GameInfoHolder // GameInfoHolder도 여기에 같이 둘 수 있습니다.
+public static class GameInfoHolder
 {
     public static int CustomerIndexToLoad = 0;
 }
