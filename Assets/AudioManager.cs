@@ -33,6 +33,16 @@ public class AudioManager : MonoBehaviour
     public AudioSource bgmAudioSource; // 예시: BGM을 위한 별도 AudioSource, Inspector에서 할당
     private Sound bgmSound; // 또는 Sound 리스트에서 BGM으로 사용할 Sound 객체
 
+    public string bgmSoundName; // Inspector에서 BGM으로 사용할 Sound의 이름 지정
+    private AudioSource currentBgmSource;
+    private Sound currentBgmSoundObject; // 현재 BGM의 Sound 객체 참조
+
+    private const string BGM_VOLUME_KEY = "BGMVolume"; // BGM 볼륨 저장 키
+    private float masterBgmVolume = 1.0f; // 마스터 BGM 볼륨 (0.0 ~ 1.0)
+
+    private const string SFX_VOLUME_KEY = "SFXVolume";
+    private float masterSfxVolume = 1.0f;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -74,6 +84,15 @@ public class AudioManager : MonoBehaviour
                     // bgmSound.source.Play(); // 또는 여기서 직접 Play() 호출
                 }
             }
+
+            if (!string.IsNullOrEmpty(bgmSoundName) && s.name == bgmSoundName)
+            {
+                currentBgmSoundObject = s; // Sound 객체 저장
+                currentBgmSource = s.source;
+                // ... (기존 BGM 초기화 코드) ...
+                ApplyBgmVolume(); // BGM 볼륨 적용
+            }
+
         }
 
         // --- BGM 전용 AudioSource가 있다면 초기 음소거 상태 적용 ---
@@ -84,11 +103,106 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    void LoadAudioSettings()
+        void LoadAudioSettings()
     {
-        IsBgmEnabled = PlayerPrefs.GetInt(BGM_KEY, 1) == 1; // 기본값 1 (ON)
-        IsSfxEnabled = PlayerPrefs.GetInt(SFX_KEY, 1) == 1; // 기본값 1 (ON)
-        Debug.Log($"AudioManager Loaded Settings: BGM Enabled = {IsBgmEnabled}, SFX Enabled = {IsSfxEnabled}");
+        IsBgmEnabled = PlayerPrefs.GetInt(BGM_KEY, 1) == 1;
+        IsSfxEnabled = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
+        masterBgmVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 1.0f); // BGM 볼륨 로드, 기본값 1.0
+        // masterSfxVolume = PlayerPrefs.GetFloat(SFX_VOLUME_KEY, 1.0f); // SFX 볼륨도 유사하게 로드
+        masterBgmVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 1.0f);
+        masterSfxVolume = PlayerPrefs.GetFloat(SFX_VOLUME_KEY, 1.0f); // SFX 볼륨 로드
+        Debug.Log($"AudioManager Loaded: ... SFX Vol={masterSfxVolume}");
+    }
+
+    public void SetMasterSfxVolume(float volume)
+    {
+        masterSfxVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(SFX_VOLUME_KEY, masterSfxVolume);
+        PlayerPrefs.Save();
+        Debug.Log($"AudioManager: Master SFX Volume set to {masterSfxVolume}");
+        // 현재 재생중인 모든 SFX source의 볼륨을 업데이트 하기는 어려움 (특히 PlayOneShot)
+        // 루프 SFX가 있다면 여기서 볼륨 갱신 필요
+    }
+
+    public void PlayOneShotSound(string name)
+    {
+        if (!IsSfxEnabled) return;
+        Sound s = sounds.Find(sound => sound.name == name);
+        if (s == null) { /* ... 오류 ... */ return; }
+
+        // PlayOneShot은 AudioSource의 볼륨을 직접 변경하는 것이 아니라, 재생 시 볼륨 스케일을 인자로 받음
+        // s.source.PlayOneShot(s.clip, s.volume * masterSfxVolume);
+        // 단, 이렇게 하려면 PlayOneShot을 호출하는 s.source 자체의 볼륨이 1이어야 왜곡이 없음
+        // 또는, PlayOneShot을 위한 전용 AudioSource를 두고 그 볼륨을 masterSfxVolume으로 설정하는 방법도 있음
+        // 현재 구조에서는 s.source.volume을 미리 설정하고 PlayOneShot(s.clip)을 호출하는 것이 일관성 있음:
+        s.source.volume = s.volume * masterSfxVolume; // 재생 직전 볼륨 설정
+        s.source.PlayOneShot(s.clip);
+    }
+
+    // BGM 활성화/비활성화 (볼륨에도 영향)
+    public void SetBgmEnabled(bool isEnabled)
+    {
+        IsBgmEnabled = isEnabled;
+        PlayerPrefs.SetInt(BGM_KEY, IsBgmEnabled ? 1 : 0); // 오타 수정: isEnabled -> IsBgmEnabled
+        PlayerPrefs.Save();
+        Debug.Log($"AudioManager: BGM status set to {IsBgmEnabled}");
+        ApplyBgmSettings(); // 볼륨 및 재생 상태 모두 적용
+    }
+
+    // 새로운 마스터 BGM 볼륨 설정 메서드
+    public void SetMasterBgmVolume(float volume)
+    {
+        masterBgmVolume = Mathf.Clamp01(volume); // 0과 1 사이로 값 제한
+        PlayerPrefs.SetFloat(BGM_VOLUME_KEY, masterBgmVolume);
+        PlayerPrefs.Save();
+        Debug.Log($"AudioManager: Master BGM Volume set to {masterBgmVolume}");
+        ApplyBgmVolume(); // 현재 BGM에 새 볼륨 적용
+    }
+
+    // 현재 BGM AudioSource에 볼륨 적용
+    void ApplyBgmVolume()
+    {
+        if (currentBgmSource != null && currentBgmSoundObject != null)
+        {
+            // Sound 객체에 설정된 기본 볼륨과 마스터 볼륨을 곱함
+            currentBgmSource.volume = currentBgmSoundObject.volume * masterBgmVolume;
+        }
+    }
+
+    // BGM 재생 및 상태 전체 적용 (내부 헬퍼 함수)
+    void ApplyBgmSettings()
+    {
+        if (currentBgmSource != null)
+        {
+            currentBgmSource.mute = !IsBgmEnabled; // 음소거는 IsBgmEnabled로 직접 제어
+            ApplyBgmVolume(); // 볼륨 적용
+
+            if (IsBgmEnabled && !currentBgmSource.isPlaying && currentBgmSource.clip != null)
+            {
+                currentBgmSource.Play();
+            }
+            else if (!IsBgmEnabled && currentBgmSource.isPlaying)
+            {
+                currentBgmSource.Stop();
+            }
+        }
+    }
+
+    public void PlayBgm(string nameOfBgmSound)
+    {
+        // ... (기존 PlayBgm 코드) ...
+        // Sound 객체를 찾으면 currentBgmSoundObject = bgmToPlay; 추가
+        // currentBgmSource = bgmToPlay.source; 이후 ApplyBgmSettings(); 호출
+        Sound bgmToPlay = sounds.Find(sound => sound.name == nameOfBgmSound);
+        if (bgmToPlay == null) { /* ... 오류 처리 ... */ return; }
+
+        if (currentBgmSource != null && currentBgmSource.isPlaying && currentBgmSource != bgmToPlay.source)
+        {
+            currentBgmSource.Stop();
+        }
+        currentBgmSoundObject = bgmToPlay;
+        currentBgmSource = bgmToPlay.source;
+        ApplyBgmSettings(); // 모든 설정을 한 번에 적용
     }
 
     public void SetSfxEnabled(bool isEnabled)
@@ -118,28 +232,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void SetBgmEnabled(bool isEnabled)
-    {
-        IsBgmEnabled = isEnabled;
-        PlayerPrefs.SetInt(BGM_KEY, isEnabled ? 1 : 0);
-        PlayerPrefs.Save();
-        Debug.Log($"AudioManager: BGM status set to {IsBgmEnabled}");
-
-        // BGM AudioSource의 mute 상태 업데이트
-        if (bgmAudioSource != null) // Inspector에서 직접 할당한 BGM 소스
-        {
-            bgmAudioSource.mute = !IsBgmEnabled;
-            if (IsBgmEnabled && !bgmAudioSource.isPlaying && bgmAudioSource.clip != null) bgmAudioSource.Play(); // 꺼져있던 BGM 다시 켜기
-            else if (!IsBgmEnabled && bgmAudioSource.isPlaying) bgmAudioSource.Stop(); // BGM 즉시 중지
-        }
-        else if (bgmSound != null && bgmSound.source != null) // Sound 리스트에서 찾은 BGM 소스
-        {
-            bgmSound.source.mute = !IsBgmEnabled;
-             if (IsBgmEnabled && !bgmSound.source.isPlaying && bgmSound.source.clip != null) bgmSound.source.Play();
-             else if (!IsBgmEnabled && bgmSound.source.isPlaying) bgmSound.source.Stop();
-        }
-    }
-
     public void PlaySound(string name)
     {
         Sound s = sounds.Find(sound => sound.name == name);
@@ -162,31 +254,6 @@ public class AudioManager : MonoBehaviour
         }
 
         s.source.Play();
-    }
-
-    public void PlayOneShotSound(string name)
-    {
-        // SFX 전용으로 간주하고 IsSfxEnabled만 확인
-        if (!IsSfxEnabled)
-        {
-            // Debug.Log("SFX is disabled. Not playing oneshot: " + name); // 필요시 로그
-            return;
-        }
-
-        Sound s = sounds.Find(sound => sound.name == name);
-        if (s == null)
-        {
-            Debug.LogWarning("Sound: " + name + " not found!");
-            return;
-        }
-        // PlayOneShot은 해당 AudioSource의 현재 재생 상태에 영향을 주지 않고 독립적으로 재생합니다.
-        // AudioSource가 음소거 상태(s.source.mute == true)여도 PlayOneShot은 소리를 냅니다.
-        // 따라서, PlayOneShot을 호출하기 전에 s.source의 mute 상태를 직접 제어하거나,
-        // PlayOneShot 전용 AudioSource를 사용하고 그 AudioSource의 볼륨/뮤트를 IsSfxEnabled에 따라 조절해야 합니다.
-        // 여기서는 간단히 s.source를 사용하므로, s.source.mute 상태가 IsSfxEnabled에 의해 이미 설정되었다고 가정합니다.
-        // 하지만 PlayOneShot은 AudioSource의 mute 속성을 직접적으로 따르지 않을 수 있으므로 주의가 필요합니다.
-        // 가장 확실한 방법은 PlayOneShot 전에 IsSfxEnabled를 확인하는 것입니다. (이미 위에서 했음)
-        s.source.PlayOneShot(s.clip);
     }
 
     // BGM 재생/중지 메서드 (예시)

@@ -113,25 +113,88 @@ public class TitleManager : MonoBehaviour
     {
         Debug.Log("TitleAnimationAndSceneLoad 코루틴 시작. 로드할 씬: " + sceneToLoadAfterAnimation);
 
+        // --- 1. 로고가 현재 위치에서 페이드 아웃 ---
         if (logoImage != null && logoImage.gameObject.activeSelf)
         {
-            float currentAlpha = logoImage.color.a;
+            float currentAlpha = logoImage.color.a; // 현재 알파값 가져오기
             float timer = 0f;
-            Debug.Log("로고 페이드 아웃 시작.");
+            Debug.Log("로고 현재 위치에서 페이드 아웃 시작.");
+            while (timer < logoFadeDuration) // logoFadeDuration은 Inspector에서 설정한 페이드 시간
+            {
+                // 현재 색상의 RGB는 유지하고 알파만 변경
+                logoImage.color = new Color(logoImage.color.r, logoImage.color.g, logoImage.color.b, Mathf.Lerp(currentAlpha, 0f, timer / logoFadeDuration));
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            logoImage.color = new Color(logoImage.color.r, logoImage.color.g, logoImage.color.b, 0f); // 확실하게 알파 0으로
+            logoImage.gameObject.SetActive(false); // 일단 비활성화 (위치 변경 후 다시 활성화)
+            Debug.Log("로고 현재 위치에서 페이드 아웃 완료.");
+        }
+        else
+        {
+            Debug.LogWarning("로고 이미지가 없거나 이미 비활성화되어 있어 페이드 아웃을 건너뜁니다.");
+        }
+
+        // --- 2. 로고를 Canvas 중앙으로 이동시키고 투명하게 설정 ---
+        if (logoImage != null)
+        {
+            RectTransform logoRectTransform = logoImage.GetComponent<RectTransform>();
+            if (logoRectTransform != null)
+            {
+                logoRectTransform.anchoredPosition = Vector2.zero; // Canvas 중앙 (앵커/피벗이 중앙으로 설정되어 있다고 가정)
+                Debug.Log("로고를 Canvas 중앙으로 이동시킴.");
+            }
+            else
+            {
+                Debug.LogWarning("로고에 RectTransform이 없어 중앙으로 이동시킬 수 없습니다.");
+            }
+            // initialLogoColor는 Start()에서 이미 원본 색상을 저장해두었으므로, 알파만 0으로 설정
+            logoImage.color = new Color(initialLogoColor.r, initialLogoColor.g, initialLogoColor.b, 0f);
+            logoImage.gameObject.SetActive(true); // 페이드 인을 위해 다시 활성화
+        }
+
+        // --- 3. 로고가 Canvas 중앙에서 페이드 인 ---
+        if (logoImage != null)
+        {
+            float timer = 0f;
+            Debug.Log("로고 중앙에서 페이드 인 시작.");
             while (timer < logoFadeDuration)
             {
-                logoImage.color = new Color(initialLogoColor.r, initialLogoColor.g, initialLogoColor.b, Mathf.Lerp(currentAlpha, 0f, timer / logoFadeDuration));
+                // initialLogoColor의 RGB 값과 계산된 알파 값을 사용
+                logoImage.color = new Color(initialLogoColor.r, initialLogoColor.g, initialLogoColor.b, Mathf.Lerp(0f, initialLogoColor.a, timer / logoFadeDuration));
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            logoImage.color = initialLogoColor; // 원래 색상(알파 포함)으로 복원
+            Debug.Log("로고 중앙에서 페이드 인 완료.");
+        }
+
+        yield return new WaitForSeconds(0.5f); // 로고가 잠시 중앙에 표시될 시간 (조절 가능)
+
+        // --- 4. (선택 사항) 중앙 로고 다시 페이드 아웃 후 과일 롤 ---
+        // 만약 중앙에 나타난 로고가 과일 롤 전에 다시 사라지길 원한다면 이 부분을 활성화합니다.
+        /*
+        if (logoImage != null && logoImage.gameObject.activeSelf)
+        {
+            float timer = 0f;
+            Color currentColor = logoImage.color;
+            Debug.Log("중앙 로고 페이드 아웃 시작.");
+            while (timer < logoFadeDuration)
+            {
+                logoImage.color = new Color(currentColor.r, currentColor.g, currentColor.b, Mathf.Lerp(currentColor.a, 0f, timer / logoFadeDuration));
                 timer += Time.deltaTime;
                 yield return null;
             }
             logoImage.color = new Color(initialLogoColor.r, initialLogoColor.g, initialLogoColor.b, 0f);
             logoImage.gameObject.SetActive(false);
-            Debug.Log("로고 페이드 아웃 완료.");
+            Debug.Log("중앙 로고 페이드 아웃 완료.");
         }
-        else { Debug.LogWarning("로고 이미지가 없거나 비활성화되어 페이드 아웃을 건너뜁니다."); }
+        */
 
+        // --- 5. 과일 롤 애니메이션 ---
         yield return StartCoroutine(RollFruitsAnimation());
 
+        // --- 6. 씬 전환 ---
         Debug.Log(sceneToLoadAfterAnimation + " 씬으로 전환합니다.");
         SceneManager.LoadScene(sceneToLoadAfterAnimation);
     }
@@ -204,13 +267,9 @@ public class TitleManager : MonoBehaviour
         float longestRollTime = (screenWorldWidth / fruitRollSpeed) + 2f; // 화면 전체를 가로지르는 시간 + 여유
         if (fruitRollSpeed <= 0) longestRollTime = 5f; // 속도가 0이거나 음수일 때 기본 대기 시간
 
+        
         yield return new WaitForSeconds(longestRollTime);
 
-        foreach (GameObject fruit in generatedRolledFruits)
-        {
-            if (fruit != null) Destroy(fruit);
-        }
-        Debug.Log("과일 롤 애니메이션 완료 및 과일 제거.");
     }
 
     List<GameObject> GenerateFruitListForRoll(int totalFruitsToGenerate)

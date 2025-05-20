@@ -12,7 +12,8 @@ public class CustomerSquishyBounce : MonoBehaviour
     public Vector3 initialScale = Vector3.one;
 
     private CustomerDialogueManager dialogueManager;
-    public AudioSource arrivalAudioSource; // Inspector에서 연결
+    public string arrivalSoundName = "CustomerArrival"; // ★ Inspector에서 AudioManager에 등록한 사운드 이름을 입력합니다.
+
 
     void Start()
     {
@@ -24,16 +25,25 @@ public class CustomerSquishyBounce : MonoBehaviour
         {
             Debug.LogError("CustomerDialogueManager 스크립트를 찾을 수 없습니다!");
         }
-
-        // Inspector에서 AudioSource가 연결되었는지 확인 (선택 사항)
-        if (arrivalAudioSource == null)
+        
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(arrivalSoundName))
         {
-            Debug.LogError("Arrival AudioSource가 연결되지 않았습니다!");
+            // PlayOneShotSound는 일회성 효과음에 더 적합합니다.
+            // PlaySound는 루프되거나 좀 더 제어가 필요한 사운드에 사용될 수 있습니다.
+            // 등장 효과음은 보통 일회성이므로 PlayOneShotSound를 추천합니다.
+            AudioManager.Instance.PlayOneShotSound(arrivalSoundName);
+            Debug.Log($"Arrival sound '{arrivalSoundName}' requested from AudioManager.");
         }
         else
         {
-            // 등장 시 바로 사운드 재생 시작
-            arrivalAudioSource.Play();
+            if (AudioManager.Instance == null)
+            {
+                Debug.LogWarning("AudioManager 인스턴스를 찾을 수 없어 등장 사운드를 재생할 수 없습니다!");
+            }
+            if (string.IsNullOrEmpty(arrivalSoundName))
+            {
+                Debug.LogWarning("Arrival Sound Name이 지정되지 않아 등장 사운드를 재생할 수 없습니다!");
+            }
         }
 
         StartCoroutine(AfterBounce());
