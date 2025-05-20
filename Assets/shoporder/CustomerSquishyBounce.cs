@@ -70,7 +70,7 @@ public class CustomerSquishyBounce : MonoBehaviour
         // DialogueManager에 첫 번째 대화를 시작하라고 알립니다.
         if (dialogueManager != null)
         {
-            dialogueManager.StartFirstDialogue();
+            dialogueManager.StartDialogue();
         }
     }
 }

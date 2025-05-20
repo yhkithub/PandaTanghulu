@@ -5,19 +5,18 @@ using UnityEngine.UI;
 using System.Linq;
 using TMPro;
 
-// GameState Enum은 이 파일 최상단 또는 GameEnums.cs 같은 별도 파일에 위치
-// public enum GameState { TutorialDisplay, Playing, Paused, GameOver }
-
 public class CustomerOrderManager : MonoBehaviour
 {
+
+    public GameState currentGameState = GameState.TutorialDisplay; // 초기 상태
+    public bool isTutorialActive = false;
+
+    public static CustomerOrderManager Instance { get; private set; }
     [Header("씬 전환 설정")]
     public string fruitCatchingSceneName = "FruitCatchingGameScene"; // 과일 꽂기 씬 이름
 
-    // private List<DialogueEntry> dialogueSequence = new List<DialogueEntry>(); // 이 부분은 이제 외부에서 받아옴
     private CustomerOrderData currentCustomerDataForDialogue; // 현재 대화할 손님의 전체 데이터
 
-    private int currentDialogueIndex = 0;
-    private bool isDialoguePlaying = false;
 
     [System.Serializable]
     public struct FruitSpriteMapping
@@ -45,11 +44,6 @@ public class CustomerOrderManager : MonoBehaviour
     public CustomerOrderData CurrentOrderData { get; private set; }
     public List<FruitType> CurrentRequiredFruits { get; private set; } = new List<FruitType>();
     private int currentCustomerIndex = 0;
-
-    public GameState currentGameState = GameState.TutorialDisplay; // 초기 상태는 튜토리얼 표시로 설정
-    public bool isTutorialActive = false;
-
-    public static CustomerOrderManager Instance { get; private set; }
 
     void Awake()
     {
