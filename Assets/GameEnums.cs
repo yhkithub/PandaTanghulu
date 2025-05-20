@@ -39,3 +39,11 @@ public enum GameState
     Paused,
     GameOver
 }
+public enum MiniGameStep
+{
+    NotStarted,
+    FruitSkewering, // 과일 꽂기
+    SugarBoiling,   // 설탕 끓이기
+    SugarCoating,   // 설탕 묻히기
+    ToppingPlacement // 상징 아이템 꽂기
+}

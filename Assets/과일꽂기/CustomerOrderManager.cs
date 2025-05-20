@@ -10,6 +10,15 @@ using TMPro;
 
 public class CustomerOrderManager : MonoBehaviour
 {
+    [Header("씬 전환 설정")]
+    public string fruitCatchingSceneName = "FruitCatchingGameScene"; // 과일 꽂기 씬 이름
+
+    // private List<DialogueEntry> dialogueSequence = new List<DialogueEntry>(); // 이 부분은 이제 외부에서 받아옴
+    private CustomerOrderData currentCustomerDataForDialogue; // 현재 대화할 손님의 전체 데이터
+
+    private int currentDialogueIndex = 0;
+    private bool isDialoguePlaying = false;
+
     [System.Serializable]
     public struct FruitSpriteMapping
     {
@@ -73,6 +82,9 @@ public class CustomerOrderManager : MonoBehaviour
 
     void Start()
     {
+        if (Instance == null) Instance = this;
+        else { Destroy(gameObject); return; }
+
          if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
             Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다!");
@@ -86,6 +98,8 @@ public class CustomerOrderManager : MonoBehaviour
             startGameButton_UI.onClick.AddListener(EndTutorialAndStartGame);
         }
 
+        SetupInitialGameState(); // 이 함수가 currentCustomerIndex를 사용하여 튜토리얼 또는 일반 게임 시작
+        
         // ★★★ GameInfoHolder에서 로드할 손님 인덱스 가져오기 ★★★
         currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
         Debug.Log("과일 꽂기 씬 시작 - 로드할 손님 인덱스: " + currentCustomerIndex);

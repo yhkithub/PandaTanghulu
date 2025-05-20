@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: -406
-    y: 262
+    x: 8
+    y: 51
     width: 1904
     height: 973
   m_ShowMode: 4
@@ -43,8 +43,8 @@ MonoBehaviour:
     y: 0
     width: 397
     height: 917
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 76}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 13}
   m_Panes:
   - {fileID: 13}
@@ -345,7 +345,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 06b60000
     m_LastClickedID: 46598
-    m_ExpandedIDs: 0000000006b6000000ca9a3bffffff7f
+    m_ExpandedIDs: 000000000eb60000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -374,7 +374,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000006b60000
+    m_ExpandedIDs: 000000000eb60000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
