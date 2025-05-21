@@ -36,15 +36,29 @@ public class CustomerSquishyBounce : MonoBehaviour
         }
         else
         {
-            if (AudioManager.Instance == null)
+            Debug.Log($"ShopScene Start: AudioManager.Instance is {(AudioManager.Instance != null ? "NOT NULL" : "NULL")}");
+            if (AudioManager.Instance != null)
             {
-                Debug.LogWarning("AudioManager 인스턴스를 찾을 수 없어 등장 사운드를 재생할 수 없습니다!");
+                Debug.Log($"ShopScene Start: AudioManager SFX Enabled = {AudioManager.Instance.IsSfxEnabled}");
+                // AudioManager에 MasterSfxVolume 같은 프로퍼티를 만들어두었다면 함께 로깅
+                // Debug.Log($"ShopScene Start: AudioManager Master SFX Volume = {AudioManager.Instance.MasterSfxVolume}");
+
+                if (!string.IsNullOrEmpty(arrivalSoundName)) // arrivalSoundName 변수가 이 스크립트에 있다고 가정
+                {
+                    Sound arrivalSound = AudioManager.Instance.sounds.Find(s => s.name == arrivalSoundName);
+                    if (arrivalSound != null && arrivalSound.source != null)
+                    {
+                        Debug.Log($"ShopScene Start: '{arrivalSoundName}' AudioSource mute state: {arrivalSound.source.mute}, volume: {arrivalSound.source.volume}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"ShopScene Start: AudioManager에 '{arrivalSoundName}' 사운드 또는 AudioSource가 없습니다.");
+                    }
+                    AudioManager.Instance.PlayOneShotSound(arrivalSoundName); // 여기서 요청
+                    Debug.Log($"Arrival sound '{arrivalSoundName}' requested from AudioManager in CustomerSquishyBounce.Start().");
+                }
             }
-            if (string.IsNullOrEmpty(arrivalSoundName))
-            {
-                Debug.LogWarning("Arrival Sound Name이 지정되지 않아 등장 사운드를 재생할 수 없습니다!");
-            }
-        }
+        }        
 
         StartCoroutine(AfterBounce());
     }

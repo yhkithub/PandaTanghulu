@@ -49,23 +49,25 @@ public class CustomerDialogueManager : MonoBehaviour
         InitializeButtons();
         HideAllBubbles();
 
+        // GameInfoHolder에서 로드할 손님 인덱스를 가져옵니다.
         int customerIndexToLoad = GameInfoHolder.CustomerIndexToLoad;
         Debug.Log("CustomerDialogueManager: 로드할 손님 인덱스 from GameInfoHolder: " + customerIndexToLoad);
 
         if (allCustomerOrdersForDialogue != null && allCustomerOrdersForDialogue.Count > customerIndexToLoad && allCustomerOrdersForDialogue[customerIndexToLoad] != null)
         {
-            CustomerOrderData currentCustomerData = allCustomerOrdersForDialogue[customerIndexToLoad]; // 지역 변수로 변경
-            activeDialogueSequence = currentCustomerData.dialogueSequence;
+            CustomerOrderData currentCustomerData = allCustomerOrdersForDialogue[customerIndexToLoad];
+            activeDialogueSequence = currentCustomerData.dialogueSequence; // 대화 데이터만 준비
 
-            if (activeDialogueSequence != null && activeDialogueSequence.Count > 0)
+            if (activeDialogueSequence == null || activeDialogueSequence.Count == 0)
             {
-                Debug.Log(currentCustomerData.customerName + " 손님의 대화 시작 준비.");
-                StartDialogue();
+                Debug.LogWarning(currentCustomerData.customerName + " 손님의 대화 내용(dialogueSequence)이 없습니다. 바로 게임으로 넘어갑니다.");
+                ProceedToGame(); // 대화 없으면 게임으로 바로 전환
             }
             else
             {
-                Debug.LogWarning(currentCustomerData.customerName + " 손님의 대화 내용(dialogueSequence)이 없습니다. 바로 게임으로 넘어갑니다.");
-                ProceedToGame();
+                Debug.Log(currentCustomerData.customerName + " 손님 대화 준비 완료. CustomerSquishyBounce에서 대화 시작 대기 중.");
+                // 여기서 StartDialogue() 직접 호출을 제거합니다.
+                // StartDialogue(); // CustomerSquishyBounce에서 호출하도록 변경
             }
         }
         else
@@ -99,12 +101,20 @@ public class CustomerDialogueManager : MonoBehaviour
 
     public void StartDialogue()
     {
-        if (isDialoguePlaying || activeDialogueSequence == null || activeDialogueSequence.Count == 0)
+        if (isDialoguePlaying) // 이미 대화가 진행 중이면 중복 실행 방지
         {
-            Debug.LogWarning("대화를 시작할 수 없거나 대화 내용이 없습니다.");
-            if (activeDialogueSequence == null || activeDialogueSequence.Count == 0) ProceedToGame();
+            Debug.LogWarning("StartDialogue: 이미 대화가 진행 중입니다.");
             return;
         }
+
+        if (activeDialogueSequence == null || activeDialogueSequence.Count == 0)
+        {
+            Debug.LogWarning("StartDialogue: 대화를 시작할 수 없거나 대화 내용이 없습니다.");
+            // 이 경우 Start()에서 이미 ProceedToGame()으로 처리했을 가능성이 높지만, 방어 코드로 추가
+            ProceedToGame();
+            return;
+        }
+
         currentDialogueIndex = 0;
         StartCoroutine(ProceedDialogueInternal());
     }

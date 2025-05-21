@@ -439,8 +439,8 @@ MonoBehaviour:
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: Arrival
-    clip: {fileID: 8300000, guid: 6739daf52b0cf6d4eb3c8183b29009d2, type: 3}
+  - name: CustomerArrival
+    clip: {fileID: 8300000, guid: 7c726b9b4c49b3e439ff5b1a198f7476, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -1752,7 +1752,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2141690275}
   - component: {fileID: 2141690274}
-  - component: {fileID: 2141690273}
   - component: {fileID: 2141690276}
   m_Layer: 0
   m_Name: CustomerMonkey
@@ -1761,18 +1760,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2141690273
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141690272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5529876a5d6e3b3469a83918012f063f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!212 &2141690274
 SpriteRenderer:
   m_ObjectHideFlags: 0
