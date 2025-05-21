@@ -18,7 +18,9 @@ MonoBehaviour:
   - fruit: 1
   - fruit: 1
   - fruit: 1
-  - fruit: 1
+  toppingItem: 2
+  toppingItemSpriteForHint: {fileID: 0}
+  completedSkewerSprite: {fileID: 0}
   dialogueSequence:
   - speaker: 0
     line: "\r\uD478\uD478~!! \uC5EC\uAE30 \uB9DE\uC9C0?! \uC6B0\uC640, \uC9C4\uC9DC
@@ -53,7 +55,7 @@ MonoBehaviour:
       \uD1B5\uC77C\uD574\uC11C \uBA39\uB294 \uAC70\uC9C0! \uCCAB \uC190\uB2D8\uC774\uB2C8\uAE4C
       \uD2B9\uBCC4\uD788 \uB0B4\uAC00 \uD1B5\uADE4\uB85C \uAC00\uB4DD \uCC44\uC6CC\uC11C
       \uC904\uAC8C."
-  - speaker: 1
+  - speaker: 0
     line: "\uC624\uC624\uC624! \uADF8\uAC70 \uC644\uC804 \uBE44\uD0C0\uBBFC \uD3ED\uBC1C
       \uC870\uD569\uC774\uC796\uC544!! \uC88B\uC544! \uD1B5\uADE4 4\uAC1C\uB85C \uAF49
       \uCC44\uC6CC\uC918! \uC774\uB984\uC740\u2026 \uB07C\uB07C \uC5D0\uB108\uC9C0

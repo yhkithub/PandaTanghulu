@@ -5,6 +5,8 @@ using System.Linq;
 
 public class SkewerManager : MonoBehaviour
 {
+    public static SkewerManager Instance { get; private set; }
+
     public List<FruitType> collectedFruitsOnSkewer = new List<FruitType>();
 
     [Header("과일 꽂히는 시각적 설정")]
@@ -15,10 +17,32 @@ public class SkewerManager : MonoBehaviour
     private List<GameObject> attachedFruitObjects = new List<GameObject>();
     private CustomerOrderManager orderManager;
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            // 이 오브젝트가 여러 씬에 걸쳐 유지되어야 한다면 아래 주석 해제
+            // DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        // Start()에 있던 내용을 Awake()로 옮기거나, Start()는 그대로 두어도 됨.
+        // orderManager 참조는 Start()에서 하는 것이 안전할 수 있음 (CustomerOrderManager.Instance가 Awake에서 설정되므로)
+    }
+
     void Start()
     {
-        orderManager = CustomerOrderManager.Instance;
-        if (orderManager == null)
+        // orderManager는 CustomerOrderManager.Instance가 확실히 설정된 후인 Start에서 가져오는 것이 좋음
+        if (CustomerOrderManager.Instance != null)
+        {
+            orderManager = CustomerOrderManager.Instance;
+        }
+        else
         {
             Debug.LogError("SkewerManager: CustomerOrderManager 인스턴스를 찾을 수 없습니다!");
         }
@@ -103,17 +127,20 @@ public class SkewerManager : MonoBehaviour
                 originalWorldScale.z / parentWorldScale.z
             );
         }
-        
+
         // Sorting Layer 및 Order in Layer 설정 (이전 답변 참고하여 필요시 추가)
         SpriteRenderer fruitRenderer = fruitObject.GetComponent<SpriteRenderer>();
         if (fruitRenderer != null)
         {
             SpriteRenderer skewerRenderer = GetComponentInParent<SpriteRenderer>(); // 꼬치 자체의 SpriteRenderer 또는 fruitAttachPoint의 부모 등에서 찾아야 함
-            if(skewerRenderer != null) { // 꼬치 막대 SpriteRenderer가 있다면
-                 fruitRenderer.sortingLayerID = skewerRenderer.sortingLayerID;
-                 fruitRenderer.sortingOrder = skewerRenderer.sortingOrder + attachedFruitObjects.Count; // 꼬치보다 앞에, 그리고 겹치도록
-            } else { // 없다면 기본값 또는 다른 기준
-                 // fruitRenderer.sortingOrder = attachedFruitObjects.Count; // 예시
+            if (skewerRenderer != null)
+            { // 꼬치 막대 SpriteRenderer가 있다면
+                fruitRenderer.sortingLayerID = skewerRenderer.sortingLayerID;
+                fruitRenderer.sortingOrder = skewerRenderer.sortingOrder + attachedFruitObjects.Count; // 꼬치보다 앞에, 그리고 겹치도록
+            }
+            else
+            { // 없다면 기본값 또는 다른 기준
+              // fruitRenderer.sortingOrder = attachedFruitObjects.Count; // 예시
             }
         }
 

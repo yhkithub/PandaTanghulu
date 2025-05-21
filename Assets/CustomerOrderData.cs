@@ -1,23 +1,29 @@
 // CustomerOrderData.cs
 using UnityEngine;
-using System.Collections.Generic; // List를 사용하기 위해 필요합니다.
-
+using System.Collections.Generic;
 
 [System.Serializable]
-public class OrderItem
+public class OrderItem // 이 부분은 FruitType만 가지도록 단순화될 수 있음 (개수가 항상 1이라면)
 {
-    public FruitType fruit; // FruitType 참조 (GameEnums.cs에 정의)
+    public FruitType fruit;
 }
 
-[CreateAssetMenu(fileName = "NewCustomerOrder", menuName = "Game/Customer Order")]
+[CreateAssetMenu(fileName = "새로운손님주문", menuName = "탕후루게임/손님 주문 데이터")]
 public class CustomerOrderData : ScriptableObject
 {
     public string customerName;
     public Sprite customerSprite;
 
-    [Header("탕후루 주문 내용")]
-    public List<OrderItem> skewerOrder;
+    [Header("과일 꽂기 단계 주문")]
+    public List<OrderItem> skewerOrder; // ★★★ 과일 꽂기 단계에서 꽂을 기본 과일들 ★★★
+
+    [Header("토핑 아이템 단계 주문")]
+    public FruitType toppingItem;       // ★★★ 토핑/상징 아이템 (하나만) ★★★
+    public Sprite toppingItemSpriteForHint; // UI에 힌트로 보여줄 토핑 아이템 이미지 (선택 사항)
+
+    [Header("주문서 UI 용")]
+    public Sprite completedSkewerSprite; // 전체 완성된 탕후루 꼬치 이미지 (주문서 표시용)
 
     [Header("손님 대화 내용")]
-    public List<DialogueEntry> dialogueSequence; // DialogueEntry 참조 (GameEnums.cs에 정의)
+    public List<DialogueEntry> dialogueSequence;
 }

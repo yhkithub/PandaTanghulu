@@ -834,7 +834,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minSpawnX: -4
   maxSpawnX: 7
-  spawnHeight: 7
+  spawnHeight: 6.4
   fruitPrefabsWithChance:
   - prefab: {fileID: 7920758798566931249, guid: a85d9c8f0676cfb429c84f92d3ad779e, type: 3}
     chanceWeight: 10
@@ -1669,8 +1669,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentGameState: 0
   isTutorialActive: 1
-  SugarBoiling: SugarBoiling
-  nextCustomerSceneName: ShopScene
+  sugarBoilingSceneName: SugarBoilingScene
+  sugarCoatingSceneName: SugarCoatingScene
+  toppingPlacementSceneName: ToppingPlacementScene
+  stageSelectSceneName: TitleScene
   orderDisplayBackgroundPanel: {fileID: 1574855317}
   fruitsContainerForOrderUI: {fileID: 475174412}
   skewerStickImagePrefab_UI: {fileID: 0}
@@ -1998,7 +2000,7 @@ Transform:
   m_GameObject: {fileID: 2044003946}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.79, z: 0}
+  m_LocalPosition: {x: 0.003, y: -3.792, z: 0}
   m_LocalScale: {x: 0.32085463, y: 0.32085463, z: 0.32085463}
   m_ConstrainProportionsScale: 0
   m_Children:
