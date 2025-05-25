@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: -215
-    y: 332
+    x: 8
+    y: 51
     width: 1904
     height: 973
   m_ShowMode: 4
@@ -345,7 +345,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: eeba0000
     m_LastClickedID: 47854
-    m_ExpandedIDs: 0000000072b5000000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000eeb30000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -374,7 +374,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000072b50000
+    m_ExpandedIDs: 00000000eeb30000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -520,23 +520,23 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 24aeffff
-      m_LastClickedID: -20956
+      m_SelectedIDs: 
+      m_LastClickedID: 0
       m_ExpandedIDs: 1664ffff24aeffff72baffff2acffffff6d1ffff96d2ffffead4ffff66d7ffff3adbffffd8dbffffcadfffffeaefffffe4f3ffff04fbfffff4ffffffacc10000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: Main Camera
-        m_OriginalName: Main Camera
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 53880
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 4}
@@ -1166,7 +1166,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 10.262979
     speed: 2
-    m_Value: 10.746574
+    m_Value: 10.262979
   m_Ortho:
     m_Target: 1
     speed: 2
