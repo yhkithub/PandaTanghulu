@@ -57,7 +57,7 @@ public class CustomerOrderManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // DontDestroyOnLoad(gameObject); // CustomerOrderManager가 씬마다 새로 로드된다면 필요 없음
+            DontDestroyOnLoad(gameObject); // CustomerOrderManager가 씬마다 새로 로드된다면 필요 없음
         }
         else if (Instance != this) // 이미 다른 인스턴스가 있다면 현재 것을 파괴
         {

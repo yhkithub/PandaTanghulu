@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SugarBoilingScene.unity
     guid: b3b827b9a4da2684495439d6c643b2ba
+  - enabled: 1
+    path: Assets/Scenes/SugarCoatingScene.unity
+    guid: 845b9ed29e59fb94bbac3387df9c999f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
