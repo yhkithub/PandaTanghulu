@@ -2319,11 +2319,11 @@ MonoBehaviour:
   trailTime: 10
   fixedTrailWidth: 1
   prologueSceneName: StoryScene
-  dialogueSceneName: DialogueScene
+  dialogueSceneName: ShopScene
   stageSelectPanel_UI: {fileID: 1664243891}
   stageButtonPrefab_UI: {fileID: 5409037475099993533, guid: 566e03e8ba3b6f448a1eaec664944314, type: 3}
   stageButtonContainer_UI: {fileID: 752661731}
-  lockedStageSprite: {fileID: 21300000, guid: 814d072040ebb5a4bb1975266f5e0204, type: 3}
+  lockedStageSprite: {fileID: 0}
   bgmToggle: {fileID: 44851948}
   sfxToggle: {fileID: 1407305723}
   customerOrderDataListForTitle:
@@ -3031,7 +3031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1664243892
 RectTransform:
   m_ObjectHideFlags: 0
