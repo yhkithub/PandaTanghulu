@@ -20,6 +20,7 @@ public class CustomerOrderManager : MonoBehaviour
     public string sugarCoatingSceneName = "SugarCoatingScene";
     public string toppingPlacementSceneName = "ToppingPlacementScene";
     public string stageSelectSceneName = "TitleScene"; // 또는 ShopScene 등 스테이지 선택 화면
+    public string customerPresentationSceneName = "CustomerPresentationScene";
     // public string fruitCatchingSceneName = "FruitCatchingGameScene"; // 현재 씬이므로 불필요할 수 있음
 
     [Header("데이터 에셋")]
@@ -281,28 +282,36 @@ public class CustomerOrderManager : MonoBehaviour
         if (CurrentOrderData == null)
         {
             Debug.LogError("AllMiniGamesCompletedForCurrentCustomer: CurrentOrderData가 null입니다. 오류 발생.");
-            if (SceneSwitcher.Instance != null) SceneSwitcher.Instance.LoadScene(stageSelectSceneName);
-            else SceneManager.LoadScene(stageSelectSceneName);
+            LoadTitleScene(); // 예외 처리로 타이틀/스테이지 선택 씬으로
             return;
         }
 
-        Debug.Log($"{CurrentOrderData.customerName} 손님의 모든 탕후루 제작 단계 완료! 도감 등록 및 스테이지 선택 화면으로 이동합니다.");
+        Debug.Log($"{CurrentOrderData.customerName} 손님의 모든 탕후루 제작 단계 완료!");
 
         if (StageDataManager.Instance != null)
         {
             StageDataManager.Instance.SetStageCleared(currentCustomerIndex);
         }
 
-        // 다음 손님으로 넘어가거나, 스테이지 선택 화면으로 돌아갑니다.
-        // 여기서는 스테이지 선택 화면으로 돌아가는 것으로 가정합니다.
-        // LoadNextCustomerOrder(); // 만약 바로 다음 손님으로 진행하고 싶다면 이 함수 호출
-        if (SceneSwitcher.Instance != null)
+        // ★★★ 손님에게 전달하는 씬으로 이동 ★★★
+        if (!string.IsNullOrEmpty(customerPresentationSceneName))
         {
-            SceneSwitcher.Instance.LoadScene(stageSelectSceneName);
+            Debug.Log($"손님에게 전달하는 씬 ({customerPresentationSceneName})으로 이동합니다.");
+            // GameInfoHolder.CustomerIndexToLoad는 이미 현재 손님 인덱스로 설정되어 있을 것입니다.
+            // CustomerPresentationScene에서 이 인덱스를 사용하여 해당 손님과 완성된 탕후루를 보여줄 수 있습니다.
+            if (SceneSwitcher.Instance != null)
+            {
+                SceneSwitcher.Instance.LoadScene(customerPresentationSceneName);
+            }
+            else
+            {
+                SceneManager.LoadScene(customerPresentationSceneName);
+            }
         }
         else
         {
-            SceneManager.LoadScene(stageSelectSceneName);
+            Debug.LogWarning("customerPresentationSceneName이 설정되지 않았습니다. 스테이지 선택 화면으로 이동합니다.");
+            LoadTitleScene(); // 전달 씬이 없으면 기존 로직대로 타이틀(스테이지 선택) 씬으로
         }
     }
 
@@ -408,7 +417,7 @@ public class CustomerOrderManager : MonoBehaviour
     {
         if (SceneSwitcher.Instance != null)
         {
-            SceneSwitcher.Instance.LoadScene(stageSelectSceneName); // stageSelectSceneName이 타이틀 씬이라고 가정
+            SceneSwitcher.Instance.LoadScene(stageSelectSceneName);
         }
         else
         {

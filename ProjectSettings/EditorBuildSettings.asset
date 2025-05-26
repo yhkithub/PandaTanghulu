@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/InitializerScene.unity
-    guid: 1c74bc14cf29a8549982c9e2367c8710
-  - enabled: 1
     path: Assets/Scenes/TitleScene.unity
     guid: bccac254c65bff54ca8e7c0a3a46068d
   - enabled: 1
@@ -26,6 +23,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SugarCoatingScene.unity
     guid: 845b9ed29e59fb94bbac3387df9c999f
+  - enabled: 1
+    path: Assets/Scenes/ToppingPlacementScene.unity
+    guid: ed85ee50f42e91c46a605b0d94b33f54
+  - enabled: 1
+    path: Assets/Scenes/CustomerPresentationScene.unity
+    guid: fec33a8921612eb4da6f1d92fd4abef3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

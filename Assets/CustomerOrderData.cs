@@ -22,8 +22,9 @@ public class CustomerOrderData : ScriptableObject
     public Sprite toppingItemSpriteForHint; // UI에 힌트로 보여줄 토핑 아이템 이미지 (선택 사항)
 
     [Header("주문서 및 게임 내 이미지")]
-    public Sprite completedSkewerSprite; // 과일 꽂기 완료 후 (설탕 코팅 전) 꼬치 이미지
-    public Sprite sugarCoatedSkewerSprite; // ★★★ 새로 추가: 설탕 코팅 완료 후 꼬치 이미지 ★★★
+    public Sprite completedSkewerSprite;     // 과일 꽂기 완료 후 (설탕 코팅 전) 꼬치 이미지
+    public Sprite sugarCoatedSkewerSprite;   // 설탕 코팅 완료 후 (토핑 전) 꼬치 이미지
+    public Sprite skewerWithToppingSprite; // ★★★ 새로 추가: 토핑까지 완료된 최종 꼬치 이미지 ★★★
 
 
     [Header("손님 대화 내용")]

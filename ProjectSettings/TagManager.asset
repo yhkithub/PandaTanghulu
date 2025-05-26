@@ -9,6 +9,7 @@ TagManager:
   - TrashCan
   - SugarPot
   - TanghuluSkewer
+  - TanghuluDropZone
   layers:
   - Default
   - TransparentFX
