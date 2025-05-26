@@ -11,8 +11,10 @@ public class OrderItem // 이 부분은 FruitType만 가지도록 단순화될 �
 [CreateAssetMenu(fileName = "새로운손님주문", menuName = "탕후루게임/손님 주문 데이터")]
 public class CustomerOrderData : ScriptableObject
 {
+    [Header("캐릭터")]
     public string customerName;
     public Sprite customerSprite;
+    public Sprite smilingCustomerSprite;
 
     [Header("과일 꽂기 단계 주문")]
     public List<OrderItem> skewerOrder; // ★★★ 과일 꽂기 단계에서 꽂을 기본 과일들 ★★★
@@ -29,4 +31,6 @@ public class CustomerOrderData : ScriptableObject
 
     [Header("손님 대화 내용")]
     public List<DialogueEntry> dialogueSequence;
+    [Header("탕후루 전달 후 대화")]
+    public List<DialogueEntry> presentationDialogueSequence;
 }

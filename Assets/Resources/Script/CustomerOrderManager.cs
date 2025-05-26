@@ -129,10 +129,13 @@ public class CustomerOrderManager : MonoBehaviour
         {
             SetTutorialState(true);
             SetGameState(GameState.TutorialDisplay);
+            Debug.Log("튜토리얼 모드입니다. 첫 번째 손님의 주문 데이터를 로드합니다.");
+            LoadOrderForCurrentCustomer(); 
 
             // ★★★ 추가된 로직 시작 ★★★
             // 직접 테스트하는 씬들에서 튜토리얼 모드일 때도 첫 번째 주문 데이터를 로드하도록 함
             string currentSceneName = SceneManager.GetActiveScene().name;
+            
             if (currentSceneName == sugarBoilingSceneName ||
                 currentSceneName == sugarCoatingSceneName ||
                 currentSceneName == toppingPlacementSceneName ||
