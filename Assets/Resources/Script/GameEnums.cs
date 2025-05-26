@@ -49,4 +49,5 @@ public class DialogueEntry
 public static class GameInfoHolder
 {
     public static int CustomerIndexToLoad = 0;
+    public static bool OpenStageSelectPanelOnLoad = false; // 새로 추가된 플래그
 }

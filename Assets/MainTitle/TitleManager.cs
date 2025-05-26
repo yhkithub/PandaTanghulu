@@ -83,6 +83,11 @@ public class TitleManager : MonoBehaviour
 
         if (settingsPanel != null) settingsPanel.SetActive(false);
         if (stageSelectPanel_UI != null) stageSelectPanel_UI.SetActive(false);
+        if (GameInfoHolder.OpenStageSelectPanelOnLoad)
+        {
+            OpenStageSelectPanel(); // 스테이지 선택 패널을 여는 함수
+            GameInfoHolder.OpenStageSelectPanelOnLoad = false; // 플래그 리셋
+        }
 
         LoadAudioSettings();
     }

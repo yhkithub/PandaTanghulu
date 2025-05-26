@@ -46,7 +46,7 @@ public class AudioManager : MonoBehaviour
     private void Awake()
     {
         Debug.Log("AudioManager Awake() called");
-        
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -105,7 +105,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-        void LoadAudioSettings()
+    void LoadAudioSettings()
     {
         IsBgmEnabled = PlayerPrefs.GetInt(BGM_KEY, 1) == 1;
         IsSfxEnabled = PlayerPrefs.GetInt(SFX_KEY, 1) == 1;
@@ -228,7 +228,7 @@ public class AudioManager : MonoBehaviour
                 s.source.mute = !IsSfxEnabled;
                 if (!IsSfxEnabled && s.source.isPlaying && !s.loop) // SFX가 꺼졌고, 재생 중인 일회성 사운드면 중지
                 {
-                   // s.source.Stop(); // 일회성 사운드 즉시 중지 (선택적)
+                    // s.source.Stop(); // 일회성 사운드 즉시 중지 (선택적)
                 }
             }
         }
@@ -305,4 +305,6 @@ public class AudioManager : MonoBehaviour
             textSource.Stop();
         }
     }
+    
+    
 }
