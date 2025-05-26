@@ -1519,7 +1519,7 @@ GameObject:
   - component: {fileID: 752661731}
   - component: {fileID: 752661732}
   m_Layer: 5
-  m_Name: StageButtonGrid
+  m_Name: stageButtonContainer_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1541,8 +1541,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -113}
-  m_SizeDelta: {x: 1011.51, y: 492.29}
+  m_AnchoredPosition: {x: 2.53, y: -84.83}
+  m_SizeDelta: {x: 1161.41, y: 674.85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &752661732
 MonoBehaviour:
@@ -1564,9 +1564,9 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 0, y: 0}
-  m_Constraint: 2
+  m_CellSize: {x: 260, y: 320}
+  m_Spacing: {x: 35, y: 100}
+  m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!1 &753721832
 GameObject:
@@ -2062,7 +2062,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 539.76996, y: 404.01752}
+  m_AnchoredPosition: {x: 566.71, y: 439}
   m_SizeDelta: {x: 121.91, y: 81.38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1046347287
@@ -2134,15 +2134,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 7359406104502096708, guid: 5d1aea8b5459746418bab144c9fe3768, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2321,12 +2321,14 @@ MonoBehaviour:
   prologueSceneName: StoryScene
   dialogueSceneName: DialogueScene
   stageSelectPanel_UI: {fileID: 1664243891}
-  stageButtonPrefab_UI: {fileID: 4683117207113798639, guid: c2f2daa8d2d81df4095f9e742534b362, type: 3}
+  stageButtonPrefab_UI: {fileID: 5409037475099993533, guid: 566e03e8ba3b6f448a1eaec664944314, type: 3}
   stageButtonContainer_UI: {fileID: 752661731}
   lockedStageSprite: {fileID: 21300000, guid: 814d072040ebb5a4bb1975266f5e0204, type: 3}
   bgmToggle: {fileID: 44851948}
   sfxToggle: {fileID: 1407305723}
-  customerOrderDataListForTitle: []
+  customerOrderDataListForTitle:
+  - {fileID: 11400000, guid: 51355b39dedd2f14f862940f6745987b, type: 2}
+  - {fileID: 11400000, guid: d0b27841ecf79f24097e3487652b9c04, type: 2}
 --- !u!1 &1228914018
 GameObject:
   m_ObjectHideFlags: 0
@@ -3029,7 +3031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1664243892
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3048,8 +3050,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 4.289978, y: -4.017517}
-  m_SizeDelta: {x: -131.11, y: -98.335}
+  m_AnchoredPosition: {x: -0.22998047, y: 0.08441162}
+  m_SizeDelta: {x: -0.22, y: -0.16882}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1664243893
 MonoBehaviour:
@@ -3071,7 +3073,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8303134325678568995, guid: 28a14d31117f11e4b9f07aa1492c9240, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 41c5a605e25bf9c42a00a8771c910fc4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

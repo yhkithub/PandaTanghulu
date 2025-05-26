@@ -107,11 +107,10 @@ public class CustomerOrderManager : MonoBehaviour
         if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
             Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다! 게임을 진행할 수 없습니다.");
-            // 필요한 경우 여기서 즉시 TitleScene 등으로 이동 처리
-            // if (SceneSwitcher.Instance != null) SceneSwitcher.Instance.LoadScene(stageSelectSceneName);
-            // else SceneManager.LoadScene(stageSelectSceneName);
+            LoadTitleScene(); // 예외 처리 강화
             return;
         }
+        
 
         // PlayerPrefs에서 튜토리얼 완료 여부 확인
         if (PlayerPrefs.HasKey(TUTORIAL_COMPLETED_KEY))
@@ -162,21 +161,22 @@ public class CustomerOrderManager : MonoBehaviour
     // 튜토리얼 UI의 시작 버튼 등에서 호출될 함수
     public void EndTutorialAndStartGame()
     {
-        if (currentGameState == GameState.TutorialDisplay && isTutorialActive) // 튜토리얼 상태일 때만 작동
+        if (currentGameState == GameState.TutorialDisplay && isTutorialActive)
         {
             Debug.Log("튜토리얼 종료. 게임을 시작합니다!");
-            SetTutorialState(false);
-            SetGameState(GameState.Playing);
+            SetTutorialState(false); // isTutorialActive를 false로 변경
+            SetGameState(GameState.Playing); // 게임 상태를 Playing으로 변경
 
-            // 튜토리얼 완료 상태 저장!
             PlayerPrefs.SetInt(TUTORIAL_COMPLETED_KEY, 1);
             PlayerPrefs.Save();
             Debug.Log("튜토리얼 완료 상태 저장됨.");
 
-            if (currentCustomerIndex == 0) // 튜토리얼 대상이었던 첫 손님의 주문 로드
-            {
-                LoadOrderForCurrentCustomer();
-            }
+            // 현재 손님 (튜토리얼 손님, 즉 0번 인덱스)의 주문을 다시 로드하거나,
+            // 이미 로드된 주문 정보를 바탕으로 게임 플레이 상태에 맞는 처리를 시작합니다.
+            // LoadOrderForCurrentCustomer()를 호출하면 내부에서 스폰 로직이 트리거될 수 있습니다.
+            LoadOrderForCurrentCustomer(); // 이 함수는 내부적으로 OnOrderLoaded를 호출하고,
+                                        // isTutorialActive가 false이고 currentGameState가 Playing이므로
+                                        // FruitSpawner2D.Instance.StartSpawning();을 호출할 것입니다.
         }
     }
 

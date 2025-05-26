@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd6ecd571eea26c4cb4fbe964bebecad, type: 3}
   m_Name: MungMung_Order
   m_EditorClassIdentifier: 
-  customerName: MungMung
+  customerName: "\uBB49\uBB49"
   customerSprite: {fileID: 21300000, guid: c4205a2848e20764fa3e4329ec3c966a, type: 3}
+  smilingCustomerSprite: {fileID: 0}
   skewerOrder:
   - fruit: 1
   - fruit: 3
@@ -23,4 +24,6 @@ MonoBehaviour:
   toppingItemSpriteForHint: {fileID: 0}
   completedSkewerSprite: {fileID: 21300000, guid: 7a8e9d557139d02489e055388676f785, type: 3}
   sugarCoatedSkewerSprite: {fileID: 21300000, guid: 8531a45a1696e634181908fd66b45e49, type: 3}
+  skewerWithToppingSprite: {fileID: 0}
   dialogueSequence: []
+  presentationDialogueSequence: []

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd6ecd571eea26c4cb4fbe964bebecad, type: 3}
   m_Name: Kiki_Order
   m_EditorClassIdentifier: 
-  customerName: kiki
+  customerName: "\uB07C\uB07C"
   customerSprite: {fileID: 21300000, guid: 0c1af4f2557c64a4d91eee4df5a02b54, type: 3}
   smilingCustomerSprite: {fileID: 21300000, guid: 67af83096f27c61469fe250cd1c02279, type: 3}
   skewerOrder:
@@ -87,7 +87,7 @@ MonoBehaviour:
   - speaker: 1
     line: "\uC88B\uC544, \uADF8\uB7FC \uB2E4\uC74C\uC5D4 \uB07C\uB07C \uCC54\uD53C\uC5B8
       \uC870\uD569\uC73C\uB85C \uC900\uBE44\uD574\uB458\uAC8C!"
-  - speaker: 1
+  - speaker: 0
     line: "\uC74C\uC74C, \uC88B\uC544! \uB2E4\uC74C\uC5D4 \uCE5C\uAD6C\uB4E4\uB3C4
       \uB370\uB824\uC62C\uAC8C! \uC6B0\uB9AC \uB3D9\uB124\uC758 \uBA85\uBB3C\uB85C
       \uB9CC\uB4E4\uC5B4\uC8FC\uACE0 \uB9D0\uACA0\uC5B4! "

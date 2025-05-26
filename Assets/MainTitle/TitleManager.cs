@@ -34,7 +34,7 @@ public class TitleManager : MonoBehaviour
     [Header("과일 롤 트레일 상세 설정")]
     public float trailTime = 8f; // 지속 시간 충분히 길게
     public float fixedTrailWidth = 1.0f; // ★★★ Inspector에서 트레일의 고정 Y축 너비 설정 (예: 1.0f) ★★★
-        
+
 
     [Header("씬 이름 설정")]
     public string prologueSceneName = "StoryScene";
@@ -54,6 +54,7 @@ public class TitleManager : MonoBehaviour
     public List<CustomerOrderData> customerOrderDataListForTitle;
 
 
+    private const string GAME_STARTED_KEY = "GameStarted"; // 새로하기를 한 번이라도 눌렀는지 확인하는 키
     private Color initialLogoColor;
     private const string BGM_KEY = "BGMOn";
     private const string SFX_KEY = "SFXOn";
@@ -89,6 +90,18 @@ public class TitleManager : MonoBehaviour
             GameInfoHolder.OpenStageSelectPanelOnLoad = false; // 플래그 리셋
         }
 
+        if (PlayerPrefs.GetInt(GAME_STARTED_KEY, 0) == 0) // 아직 새로하기를 한 번도 안 눌렀다면
+        {
+            if (stageSelectButton != null) stageSelectButton.SetActive(false); // 스테이지 선택 버튼 비활성화
+            if (animalBookButton != null) animalBookButton.SetActive(false); // 동물도감 버튼도 비활성화 (선택적)
+            Debug.Log("첫 플레이로 간주하여 스테이지 선택 및 동물도감 버튼을 비활성화합니다.");
+        }
+        else
+        {
+            if (stageSelectButton != null) stageSelectButton.SetActive(true);
+            if (animalBookButton != null) animalBookButton.SetActive(true);
+        }
+
         LoadAudioSettings();
     }
 
@@ -106,6 +119,8 @@ public class TitleManager : MonoBehaviour
         PlayerPrefs.DeleteKey("TutorialCompleted"); // CustomerOrderManager에서 사용하는 키와 동일해야 함
         PlayerPrefs.Save();
         Debug.Log("튜토리얼 완료 상태 초기화됨.");
+
+        PlayerPrefs.SetInt(GAME_STARTED_KEY, 1); // 새로하기를 눌렀음을 저장
 
         GameInfoHolder.CustomerIndexToLoad = 0;
         Debug.Log("GameInfoHolder.CustomerIndexToLoad를 0으로 설정.");
@@ -227,14 +242,15 @@ public class TitleManager : MonoBehaviour
         // targetYPositions.Length를 기준으로 과일 목록 생성
         List<GameObject> fruitsToRoll = GenerateFruitListForRoll(targetYPositions.Length);
 
-        if (fruitsToRoll.Count == 0) {
+        if (fruitsToRoll.Count == 0)
+        {
             Debug.LogWarning("롤 애니메이션에 생성할 과일이 없습니다. (GenerateFruitListForRoll 결과가 비어있음)");
             yield return new WaitForSeconds(1f);
             yield break;
         }
         if (fruitsToRoll.Count != targetYPositions.Length)
         {
-             Debug.LogWarning("생성된 과일 수(" + fruitsToRoll.Count + ")와 targetYPositions 개수(" + targetYPositions.Length + ")가 다릅니다. Y 위치가 정확하지 않을 수 있습니다.");
+            Debug.LogWarning("생성된 과일 수(" + fruitsToRoll.Count + ")와 targetYPositions 개수(" + targetYPositions.Length + ")가 다릅니다. Y 위치가 정확하지 않을 수 있습니다.");
         }
 
 
@@ -277,7 +293,7 @@ public class TitleManager : MonoBehaviour
         float longestRollTime = (screenWorldWidth / fruitRollSpeed) + 2f; // 화면 전체를 가로지르는 시간 + 여유
         if (fruitRollSpeed <= 0) longestRollTime = 5f; // 속도가 0이거나 음수일 때 기본 대기 시간
 
-        
+
         yield return new WaitForSeconds(longestRollTime);
 
     }
@@ -324,14 +340,16 @@ public class TitleManager : MonoBehaviour
                 weightedList.Add(new KeyValuePair<GameObject, float>(fruitInfo.prefab, fruitInfo.chanceWeight));
             }
 
-            if (totalWeight <= 0 || weightedList.Count == 0) {
-                 Debug.LogWarning("더 이상 추가할 과일이 없거나 모든 과일의 가중치가 0입니다. (남은 슬롯 채우기 중단)");
-                 // 남은 슬롯이 있다면, 가장 첫번째 유효한 프리팹으로 채우거나 다른 정책 사용
-                 if (fruitList.Count < totalFruitsToGenerate && fruitPrefabsWithChanceForRoll.Any(f => f.prefab != null)) {
-                     fruitList.Add(fruitPrefabsWithChanceForRoll.First(f => f.prefab != null).prefab);
-                     continue;
-                 }
-                 break;
+            if (totalWeight <= 0 || weightedList.Count == 0)
+            {
+                Debug.LogWarning("더 이상 추가할 과일이 없거나 모든 과일의 가중치가 0입니다. (남은 슬롯 채우기 중단)");
+                // 남은 슬롯이 있다면, 가장 첫번째 유효한 프리팹으로 채우거나 다른 정책 사용
+                if (fruitList.Count < totalFruitsToGenerate && fruitPrefabsWithChanceForRoll.Any(f => f.prefab != null))
+                {
+                    fruitList.Add(fruitPrefabsWithChanceForRoll.First(f => f.prefab != null).prefab);
+                    continue;
+                }
+                break;
             }
 
             float randomPoint = Random.Range(0, totalWeight);
@@ -347,15 +365,17 @@ public class TitleManager : MonoBehaviour
                     break;
                 }
             }
-            
+
             if (selectedPrefab != null)
             {
                 fruitList.Add(selectedPrefab);
             }
             else if (weightedList.Count > 0) // 만약 위 로직에서 선택이 안된 경우 (매우 드묾)
             {
-                 fruitList.Add(weightedList[Random.Range(0, weightedList.Count)].Key);
-            } else { // 추가할 후보가 아예 없으면 종료
+                fruitList.Add(weightedList[Random.Range(0, weightedList.Count)].Key);
+            }
+            else
+            { // 추가할 후보가 아예 없으면 종료
                 break;
             }
         }
@@ -368,7 +388,7 @@ public class TitleManager : MonoBehaviour
             fruitList[i] = fruitList[randomIndex];
             fruitList[randomIndex] = temp;
         }
-        
+
         Debug.Log("생성될 과일 롤 목록 (" + fruitList.Count + "개)");
         // currentCounts 로깅은 필요시 다시 활성화
 
@@ -399,7 +419,7 @@ public class TitleManager : MonoBehaviour
         {
             Shader shaderToUse = Shader.Find("Sprites/Default");
             if (shaderToUse == null) shaderToUse = Shader.Find("Unlit/Color"); // 대체 쉐이더
-            
+
             if (shaderToUse != null)
             {
                 trailRenderer.material = new Material(shaderToUse);
@@ -474,7 +494,6 @@ public class TitleManager : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        // ★★★ customerOrderDataListForTitle 사용 ★★★
         int numberOfStages = (customerOrderDataListForTitle != null) ? customerOrderDataListForTitle.Count : StageDataManager.Instance.totalStages;
 
         if (numberOfStages <= 0)
@@ -488,41 +507,90 @@ public class TitleManager : MonoBehaviour
             Button stageButtonInstance = Instantiate(stageButtonPrefab_UI, stageButtonContainer_UI);
             stageButtonInstance.name = "StageButton_" + (i + 1);
 
+            // --- 프리팹 내부의 UI 요소들 참조 가져오기 (이름으로 찾는 예시, 실제 이름에 맞게 수정 필요) ---
+            Image buttonBackgroundImage = stageButtonInstance.GetComponent<Image>(); // 버튼 자체의 배경 이미지(나무 프레임)
+            Image characterIconImage = stageButtonInstance.transform.Find("CharacterIcon")?.GetComponent<Image>();
+            Image lockIconImage = stageButtonInstance.transform.Find("LockIcon")?.GetComponent<Image>();
             TextMeshProUGUI buttonText = stageButtonInstance.GetComponentInChildren<TextMeshProUGUI>();
-            Image buttonImage = stageButtonInstance.GetComponent<Image>();
-            // 자식 Image (아이콘용)이 있다면 여기서 찾아 설정
-            // Image iconImage = stageButtonInstance.transform.Find("IconImageName")?.GetComponent<Image>(); 
+
+            // 마우스 오버 효과를 위한 테두리 이미지 참조 (이 스크립트에서 직접 제어하지 않고, StageButtonHoverEffect.cs에서 제어)
+            // Image hoverBorderImage = stageButtonInstance.transform.Find("HoverBorderImage")?.GetComponent<Image>();
+            // if (hoverBorderImage != null) hoverBorderImage.gameObject.SetActive(false); // 기본적으로 비활성화
 
             int stageIndex = i;
             CustomerOrderData stageSpecificData = (customerOrderDataListForTitle != null && customerOrderDataListForTitle.Count > stageIndex) ? customerOrderDataListForTitle[stageIndex] : null;
 
             if (StageDataManager.Instance.IsStageUnlocked(stageIndex))
             {
+                // --- 활성화된 (잠금 해제된) 스테이지 ---
                 if (buttonText != null)
                 {
                     buttonText.text = (stageSpecificData != null && !string.IsNullOrEmpty(stageSpecificData.customerName)) ? stageSpecificData.customerName : "스테이지 " + (stageIndex + 1);
                 }
-                if (buttonImage != null)
+
+                if (characterIconImage != null && stageSpecificData != null && stageSpecificData.customerSprite != null)
                 {
-                    buttonImage.color = StageDataManager.Instance.IsStageCleared(stageIndex) ? new Color(0.7f, 0.7f, 0.7f, 1f) : Color.white;
-                    // if (iconImage != null && stageSpecificData != null && stageSpecificData.customerSprite != null)
-                    // {
-                    //     iconImage.sprite = stageSpecificData.customerSprite;
-                    //     iconImage.gameObject.SetActive(true);
-                    // }
+                    characterIconImage.sprite = stageSpecificData.customerSprite;
+                    characterIconImage.color = Color.white; // ★ 원본 스프라이트 색상 그대로 (알파값도 원본 따름)
+                    characterIconImage.gameObject.SetActive(true);
                 }
+                else if (characterIconImage != null)
+                {
+                    characterIconImage.gameObject.SetActive(false);
+                }
+
+                if (lockIconImage != null)
+                {
+                    lockIconImage.gameObject.SetActive(false);
+                }
+
+                if (buttonBackgroundImage != null)
+                {
+                    // 클리어 여부에 따라 배경 처리
+                    if (StageDataManager.Instance.IsStageCleared(stageIndex))
+                    {
+                        buttonBackgroundImage.color = new Color(0.7f, 0.7f, 0.7f, 1f); // 예: 클리어 시 회색톤 (불투명)
+                    }
+                    else
+                    {
+                        buttonBackgroundImage.color = Color.white; // ★ 기본 상태 (원본 스프라이트 색상 및 알파, 불투명해야 함)
+                    }
+                }
+
                 stageButtonInstance.interactable = true;
                 stageButtonInstance.onClick.AddListener(() => OnStageButtonClicked(stageIndex));
             }
-            else
+            else // 잠긴 스테이지
             {
                 if (buttonText != null) buttonText.text = "???";
-                if (buttonImage != null)
+
+                if (characterIconImage != null)
                 {
-                    if (lockedStageSprite != null) buttonImage.sprite = lockedStageSprite;
-                    else buttonImage.color = new Color(0.5f, 0.5f, 0.5f, 0.7f);
+                    characterIconImage.gameObject.SetActive(false); // 잠금 시 컬러 캐릭터 아이콘은 비활성화
                 }
-                // if (iconImage != null) iconImage.gameObject.SetActive(false);
+
+                if (lockIconImage != null)
+                {
+                    if (stageSpecificData != null && stageSpecificData.customerSprite != null)
+                    {
+                        lockIconImage.sprite = stageSpecificData.customerSprite; // 캐릭터의 원본 스프라이트 할당
+                        lockIconImage.color = new Color(0, 0, 0, 1f); // ★ 검은색, 완전 불투명한 실루엣으로 표시
+                        lockIconImage.gameObject.SetActive(true);
+                        // Debug.Log($"스테이지 {stageIndex}: LockIcon에 [{stageSpecificData.customerSprite.name}] 실루엣 표시.");
+                    }
+                    else
+                    {
+                        lockIconImage.gameObject.SetActive(false); // 표시할 스프라이트가 없으면 비활성화
+                        // if (stageSpecificData == null) Debug.LogWarning($"스테이지 {stageIndex}: stageSpecificData is null. 실루엣을 표시할 수 없습니다.");
+                        // else Debug.LogWarning($"스테이지 {stageIndex} ({stageSpecificData.customerName}): customerSprite is null. 실루엣을 표시할 수 없습니다.");
+                    }
+                }
+
+                if (buttonBackgroundImage != null)
+                {
+                    // ★ 잠긴 스테이지 버튼 배경: 어둡게, 그리고 "불투명하게" (뒤가 안 비치도록 알파값을 1f로 설정)
+                    buttonBackgroundImage.color = new Color(0.4f, 0.4f, 0.4f, 1f); // 예시: 어두운 회색, 완전 불투명
+                }
                 stageButtonInstance.interactable = false;
             }
         }
@@ -602,4 +670,5 @@ public class TitleManager : MonoBehaviour
     {
         if (AudioManager.Instance != null) AudioManager.Instance.SetSfxEnabled(isOn);
     }
+    
 }
