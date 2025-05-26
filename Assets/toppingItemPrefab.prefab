@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec82d06e0c266342b7d58c7e85f5177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  toppingColliderRadius: 20
   toppingType: 0
 --- !u!114 &3636248162475786269
 MonoBehaviour:

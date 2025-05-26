@@ -1474,7 +1474,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 202.96, y: -118.3}
+  m_AnchoredPosition: {x: 260.6, y: -160.9}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &1569993578
@@ -1497,7 +1497,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 398348055
   m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!114 &1569993579
@@ -1967,6 +1967,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetVisualHeightInWorldUnits: 5
+  targetColliderWorldSize: {x: 1, y: 4}
+  targetColliderWorldOffset: {x: 0.1, y: 0}
   sugarCoatedSkewerRenderer: {fileID: 126976774}
   finalSkewerRenderer: {fileID: 750245334}
   toppingSelectionArea: {fileID: 2085641030}
@@ -1975,7 +1977,7 @@ MonoBehaviour:
   clearSprite: {fileID: 21300000, guid: f168d7049d271154c9f40f0e91983549, type: 3}
   failSprite: {fileID: 21300000, guid: 02ab0d0707af2cd42a5ecd0b9b8b1101, type: 3}
   toppingItemPrefab: {fileID: 6859095463996844769, guid: 6c353ffa8ae9adc43804a76c1deca7c8, type: 3}
-  skewerDropZoneTransform: {fileID: 520801926}
+  skewerDropZoneTransform: {fileID: 1148622909}
   allAvailableToppings:
   - toppingType: 2
     toppingSprite: {fileID: 738730679689280026, guid: 87147efa6ac70f2428b7224c423bf7b4, type: 3}
