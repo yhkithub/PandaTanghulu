@@ -92,10 +92,15 @@ public class TitleManager : MonoBehaviour
         Debug.Log("StartNewGame 호출됨");
         if (StageDataManager.Instance != null)
         {
-            StageDataManager.Instance.ResetAllStageProgress();
+            StageDataManager.Instance.ResetAllStageProgress(); // 기존 스테이지 클리어 정보 초기화
             Debug.Log("스테이지 진행 상황 초기화 완료.");
         }
         else { Debug.LogError("StageDataManager 인스턴스가 없어 새로하기 시 진행 상황 초기화 불가!"); }
+
+        // 튜토리얼 완료 상태도 초기화
+        PlayerPrefs.DeleteKey("TutorialCompleted"); // CustomerOrderManager에서 사용하는 키와 동일해야 함
+        PlayerPrefs.Save();
+        Debug.Log("튜토리얼 완료 상태 초기화됨.");
 
         GameInfoHolder.CustomerIndexToLoad = 0;
         Debug.Log("GameInfoHolder.CustomerIndexToLoad를 0으로 설정.");

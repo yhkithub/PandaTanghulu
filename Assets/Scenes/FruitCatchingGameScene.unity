@@ -225,58 +225,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &55034198
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 55034200}
-  - component: {fileID: 55034199}
-  m_Layer: 0
-  m_Name: HeartManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &55034199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 55034198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50aa185d1946c8c468355ccb26267715, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHearts: 3
-  heartImages:
-  - {fileID: 1010295142}
-  - {fileID: 993926170}
-  - {fileID: 47053742}
-  fullHeart: {fileID: 9142910626554334882, guid: 7e97774b3293b184a938f6bddbd7e31b, type: 3}
-  emptyHeart: {fileID: 3517076595940653921, guid: 28ab7abbbe3fddf4ebdbfb74c3526227, type: 3}
-  gameOverSceneName: GameOverScene
---- !u!4 &55034200
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 55034198}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -121.14531, y: 184.34271, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &197359074
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,6 +602,104 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &327787230
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 327787232}
+  - component: {fileID: 327787231}
+  m_Layer: 0
+  m_Name: HeartUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &327787231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327787230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39b50135fb9ed714c89678952f8ba336, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heartImagesInScene:
+  - {fileID: 1010295142}
+  - {fileID: 993926170}
+  - {fileID: 47053742}
+  fullHeartSpriteInScene: {fileID: 9142910626554334882, guid: 7e97774b3293b184a938f6bddbd7e31b, type: 3}
+  emptyHeartSpriteInScene: {fileID: 3517076595940653921, guid: 28ab7abbbe3fddf4ebdbfb74c3526227, type: 3}
+--- !u!4 &327787232
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327787230}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.00627, y: -0.18556, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &337793488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 337793490}
+  - component: {fileID: 337793489}
+  m_Layer: 0
+  m_Name: OrderDisplayUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &337793489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337793488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ff11565c2b561b48b92337b85e283f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orderDisplayBackgroundPanel_Scene: {fileID: 1574855317}
+  fruitsContainerForOrderUI_Scene: {fileID: 475174413}
+  skewerStickImagePrefab_SceneUI: {fileID: 0}
+  fruitImagePrefab_SceneUI: {fileID: 1618828892015123486, guid: a9b2ee763992988438c345d40058e65c, type: 3}
+--- !u!4 &337793490
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337793488}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.00627, y: -0.18556, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &369091966
 GameObject:
   m_ObjectHideFlags: 0
@@ -774,8 +820,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 67.8, y: -60.09999}
-  m_SizeDelta: {x: 43.882, y: 43.8823}
+  m_AnchoredPosition: {x: 66.203, y: -66.92999}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &475174414
 MonoBehaviour:
@@ -795,7 +841,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: -5
+  m_Spacing: 2
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -1150,50 +1196,6 @@ RectTransform:
   m_AnchoredPosition: {x: 275.19, y: 206.31}
   m_SizeDelta: {x: 46.8314, y: 46.831}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1267361800
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1267361802}
-  - component: {fileID: 1267361801}
-  m_Layer: 0
-  m_Name: SceneSwitcher
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1267361801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1267361800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1c000f1042f4a44b8d3995ad9f8d39c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1267361802
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1267361800}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 314.46915, y: 214.48473, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1340366488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1632,74 +1634,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -76.8}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1657626924
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1657626926}
-  - component: {fileID: 1657626925}
-  m_Layer: 0
-  m_Name: 'CustomerOrderManager '
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1657626925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1657626924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67f0693b2cce75645a96aa600767ec56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentGameState: 0
-  isTutorialActive: 1
-  sugarBoilingSceneName: SugarBoilingScene
-  sugarCoatingSceneName: SugarCoatingScene
-  toppingPlacementSceneName: ToppingPlacementScene
-  stageSelectSceneName: TitleScene
-  orderDisplayBackgroundPanel: {fileID: 1574855317}
-  fruitsContainerForOrderUI: {fileID: 475174412}
-  skewerStickImagePrefab_UI: {fileID: 0}
-  fruitImagePrefab_UI: {fileID: 850921211405526651, guid: 91b8c4b2775489d43ba082716f7bd4f6, type: 3}
-  tutorialPanel_UI: {fileID: 1340366488}
-  tutorialMessageText_UI: {fileID: 197359076}
-  startGameButton_UI: {fileID: 1603211143}
-  fruitSpritesForOrderUI:
-  - fruitType: 1
-    sprite: {fileID: 1145269190016207877, guid: f66abd0e3c9e90847a798a2af4db4e32, type: 3}
-  - fruitType: 9
-    sprite: {fileID: 21300000, guid: 0456dd12df7a8374280d3034d9f29b69, type: 3}
-  - fruitType: 5
-    sprite: {fileID: 21300000, guid: 2c8c2b84c9b7c0e4ebffdce67988dafc, type: 3}
-  - fruitType: 3
-    sprite: {fileID: -7897708528983486298, guid: 67864e0660da094419ba04bd3c040964, type: 3}
-  allCustomerOrders:
-  - {fileID: 11400000, guid: 51355b39dedd2f14f862940f6745987b, type: 2}
---- !u!4 &1657626926
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1657626924}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 114.68799, y: 374.5439, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1792325295
 GameObject:
   m_ObjectHideFlags: 0
@@ -1830,6 +1764,53 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.33, y: -3.44, z: 0}
   m_LocalScale: {x: 2.545602, y: 2.545602, z: 2.545602}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1795287761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1795287763}
+  - component: {fileID: 1795287762}
+  m_Layer: 0
+  m_Name: TutorialUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1795287762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795287761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3e41dce704b4346b65213e1926b9f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tutorialPanelObject: {fileID: 1340366488}
+  tutorialMessageTextObject: {fileID: 197359076}
+  startGameButtonObject: {fileID: 1603211143}
+--- !u!4 &1795287763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795287761}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.00627, y: -0.18556, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2094,7 +2075,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.1, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -2104,7 +2085,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5, y: 14}
+  m_Size: {x: 1, y: 14}
   m_EdgeRadius: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -2115,8 +2096,8 @@ SceneRoots:
   - {fileID: 244671435}
   - {fileID: 220891078}
   - {fileID: 819641857}
-  - {fileID: 55034200}
-  - {fileID: 1657626926}
   - {fileID: 1792325298}
   - {fileID: 369091968}
-  - {fileID: 1267361802}
+  - {fileID: 1795287763}
+  - {fileID: 327787232}
+  - {fileID: 337793490}

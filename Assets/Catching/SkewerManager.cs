@@ -149,16 +149,26 @@ public class SkewerManager : MonoBehaviour
 
         if (collectedFruitsOnSkewer.Count == maxFruitsForCurrentOrder)
         {
-            bool orderCorrect = orderManager.CheckOrder(new List<FruitType>(collectedFruitsOnSkewer));
+            // 메서드 이름을 CheckOrder에서 CheckSkewerOrder로 변경
+            bool orderCorrect = orderManager.CheckSkewerOrder(new List<FruitType>(collectedFruitsOnSkewer)); 
             if (orderCorrect)
             {
-                Debug.Log("SkewerManager: 주문 성공! 꼬치를 비웁니다.");
+                Debug.Log("SkewerManager: 과일 꽂기 주문 성공! 다음 단계로 진행합니다."); // 로그 메시지 명확화
             }
             else
             {
-                Debug.Log("SkewerManager: 주문 실패! 꼬치를 비웁니다.");
+                Debug.Log("SkewerManager: 과일 꽂기 주문 실패!"); // 로그 메시지 명확화
             }
-            ClearSkewer();
+            // CheckSkewerOrder 내부에서 ClearSkewer를 호출하거나, 
+            // 성공/실패 여부에 따라 여기서 ClearSkewer를 호출할지 결정할 수 있습니다.
+            // 현재 CustomerOrderManager.CheckSkewerOrder는 실패 시 SkewerManager.Instance.ClearSkewer()를 호출하므로,
+            // 여기서는 중복 호출을 피하거나, CustomerOrderManager에서 해당 호출을 제거하고 여기서 관리할 수 있습니다.
+            // 우선 CustomerOrderManager의 로직을 따른다고 가정하고 여기서는 ClearSkewer 호출을 유지하거나,
+            // CustomerOrderManager의 CheckSkewerOrder에서 ClearSkewer 호출 부분을 주석 처리하고 여기서 호출하는 것을 명확히 합니다.
+            // 현재 CustomerOrderManager.CheckSkewerOrder는 실패 시에만 꼬치를 비우므로, 성공 시에는 여기서 비워주는 것이 맞을 수 있습니다.
+            // 또는, CheckSkewerOrder가 성공/실패에 관계없이 꼬치를 비우도록 수정할 수도 있습니다.
+            // 현재 코드에서는 CheckSkewerOrder 후 무조건 ClearSkewer를 호출하고 있으므로 그대로 둡니다.
+            ClearSkewer(); 
         }
     }
 

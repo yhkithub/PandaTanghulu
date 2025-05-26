@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4349505458578950711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6552024221358509916}
+  - component: {fileID: 7580033822555891386}
+  m_Layer: 0
+  m_Name: CustomerOrderManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6552024221358509916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4349505458578950711}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 114.68799, y: 374.5439, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7580033822555891386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4349505458578950711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67f0693b2cce75645a96aa600767ec56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentGameState: 0
+  isTutorialActive: 1
+  sugarBoilingSceneName: SugarBoilingScene
+  sugarCoatingSceneName: SugarCoatingScene
+  toppingPlacementSceneName: ToppingPlacementScene
+  stageSelectSceneName: TitleScene
+  orderDisplayBackgroundPanel: {fileID: 0}
+  fruitsContainerForOrderUI: {fileID: 0}
+  skewerStickImagePrefab_UI: {fileID: 0}
+  fruitImagePrefab_UI: {fileID: 850921211405526651, guid: 91b8c4b2775489d43ba082716f7bd4f6, type: 3}
+  tutorialPanel_UI: {fileID: 0}
+  tutorialMessageText_UI: {fileID: 0}
+  startGameButton_UI: {fileID: 0}
+  fruitSpritesForOrderUI:
+  - fruitType: 1
+    sprite: {fileID: 1145269190016207877, guid: f66abd0e3c9e90847a798a2af4db4e32, type: 3}
+  - fruitType: 9
+    sprite: {fileID: 21300000, guid: 0456dd12df7a8374280d3034d9f29b69, type: 3}
+  - fruitType: 5
+    sprite: {fileID: 21300000, guid: 2c8c2b84c9b7c0e4ebffdce67988dafc, type: 3}
+  - fruitType: 3
+    sprite: {fileID: -7897708528983486298, guid: 67864e0660da094419ba04bd3c040964, type: 3}
+  allCustomerOrders:
+  - {fileID: 11400000, guid: 51355b39dedd2f14f862940f6745987b, type: 2}
+  currentCustomerIndex: 0
