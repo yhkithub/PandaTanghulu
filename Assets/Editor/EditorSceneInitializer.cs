@@ -1,40 +1,48 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // SceneManager를 사용하기 위해 추가
-
-#if UNITY_EDITOR // 에디터에서만 이 클래스가 컴파일되도록 합니다.
+using UnityEngine.SceneManagement;
+#if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 public static class EditorSceneInitializer
 {
-    // 각 매니저 프리팹의 Resources 폴더 내 경로를 정의합니다.
-    // 예: "Prefabs/Managers/CustomerOrderManager" (Assets/Resources/Prefabs/Managers/CustomerOrderManager.prefab)
     private const string CUSTOMER_ORDER_MANAGER_PREFAB_PATH = "Prefabs/Managers/CustomerOrderManager";
     private const string SCENE_SWITCHER_PREFAB_PATH = "Prefabs/Managers/SceneSwitcher";
     private const string AUDIO_MANAGER_PREFAB_PATH = "Prefabs/Managers/AudioManager";
     private const string HEART_MANAGER_PREFAB_PATH = "Prefabs/Managers/HeartManager";
     private const string STAGE_DATA_MANAGER_PREFAB_PATH = "Prefabs/Managers/StageDataManager";
-    // 필요에 따라 다른 매니저 프리팹 경로 추가
+
+    private const string TUTORIAL_COMPLETED_KEY = "TutorialCompleted"; // CustomerOrderManager와 동일한 키
 
 #if UNITY_EDITOR
+    private const string FORCE_TUTORIAL_MENU_ITEM = "Tools/PandaTanghulu/Force Run Tutorial on Play";
+    private static bool forceRunTutorial = false;
+
+    [MenuItem(FORCE_TUTORIAL_MENU_ITEM)]
+    private static void ToggleForceRunTutorial()
+    {
+        forceRunTutorial = !forceRunTutorial;
+        Menu.SetChecked(FORCE_TUTORIAL_MENU_ITEM, forceRunTutorial);
+        Debug.Log("Force Run Tutorial on Play: " + forceRunTutorial);
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void InitializeManagersBeforeSceneLoad()
     {
-        // 특정 씬(들)에서만 이 로직을 실행하고 싶다면 주석 해제 후 씬 이름 비교
-        // string currentSceneName = SceneManager.GetActiveScene().name;
-        // if (currentSceneName != "SugarBoilingScene" && currentSceneName != "FruitCatchingGameScene" /* && 다른 테스트 대상 씬들 */)
-        // {
-        //     return;
-        // }
+        Debug.Log("EditorSceneInitializer: Checking and initializing managers...");
 
-        Debug.Log("EditorSceneInitializer: Checking and initializing managers if needed...");
+        if (forceRunTutorial)
+        {
+            PlayerPrefs.DeleteKey(TUTORIAL_COMPLETED_KEY);
+            PlayerPrefs.Save();
+            Debug.Log("<color=orange>EDITOR MODE: Tutorial flag reset. Tutorial will run.</color>");
+        }
 
         EnsureManagerExists<CustomerOrderManager>(CUSTOMER_ORDER_MANAGER_PREFAB_PATH);
         EnsureManagerExists<SceneSwitcher>(SCENE_SWITCHER_PREFAB_PATH);
         EnsureManagerExists<AudioManager>(AUDIO_MANAGER_PREFAB_PATH);
         EnsureManagerExists<HeartManager>(HEART_MANAGER_PREFAB_PATH);
         EnsureManagerExists<StageDataManager>(STAGE_DATA_MANAGER_PREFAB_PATH);
-        // 필요에 따라 다른 EnsureManagerExists 호출 추가
     }
 
     private static void EnsureManagerExists<T>(string prefabPath) where T : MonoBehaviour
