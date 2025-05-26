@@ -97,6 +97,7 @@ public class CustomerOrderManager : MonoBehaviour
         }
     }
 
+    // 초기 게임 상태 설정 및 손님 주문 로드
     void SetupInitialGameState()
     {
         currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
@@ -105,31 +106,54 @@ public class CustomerOrderManager : MonoBehaviour
         if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
             Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다! 게임을 진행할 수 없습니다.");
+            // 필요한 경우 여기서 즉시 TitleScene 등으로 이동 처리
+            // if (SceneSwitcher.Instance != null) SceneSwitcher.Instance.LoadScene(stageSelectSceneName);
+            // else SceneManager.LoadScene(stageSelectSceneName);
             return;
         }
 
-        // 튜토리얼 완료 여부 확인
+        // PlayerPrefs에서 튜토리얼 완료 여부 확인
+        if (PlayerPrefs.HasKey(TUTORIAL_COMPLETED_KEY))
+        {
+            Debug.Log($"SetupInitialGameState: '{TUTORIAL_COMPLETED_KEY}' 키 존재. 값: {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY)}");
+        }
+        else
+        {
+            Debug.Log($"SetupInitialGameState: '{TUTORIAL_COMPLETED_KEY}' 키 존재하지 않음.");
+        }
         bool isTutorialAlreadyCompleted = PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0) == 1;
+        Debug.Log($"SetupInitialGameState: isTutorialAlreadyCompleted = {isTutorialAlreadyCompleted} (currentCustomerIndex: {currentCustomerIndex})");
 
-        // 첫 번째 손님이고, 튜토리얼이 아직 완료되지 않았을 때만 튜토리얼 진행
         if (currentCustomerIndex == 0 && !isTutorialAlreadyCompleted)
         {
             SetTutorialState(true);
             SetGameState(GameState.TutorialDisplay);
 
-            if (FruitSpawner2D.Instance != null)
+            // ★★★ 추가된 로직 시작 ★★★
+            // 직접 테스트하는 씬들에서 튜토리얼 모드일 때도 첫 번째 주문 데이터를 로드하도록 함
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            if (currentSceneName == sugarBoilingSceneName ||
+                currentSceneName == sugarCoatingSceneName ||
+                currentSceneName == toppingPlacementSceneName ||
+                currentSceneName == "FruitCatchingGameScene") // FruitCatchingGameScene도 포함할 수 있음
+            {
+                Debug.Log($"튜토리얼 모드에서 {currentSceneName} 직접 실행 감지. 첫 번째 주문 데이터를 로드합니다.");
+                LoadOrderForCurrentCustomer(); // CurrentOrderData를 설정
+            }
+            // ★★★ 추가된 로직 끝 ★★★
+            else if (FruitSpawner2D.Instance != null && SceneManager.GetActiveScene().name == "FruitCatchingGameScene") // 기존 과일 꽂기 튜토리얼 시작 시 스폰 중지 로직
             {
                 FruitSpawner2D.Instance.StopSpawningCompletely();
-                Debug.Log("FruitSpawner2D 스폰 중지됨 (튜토리얼 시작).");
+                Debug.Log("FruitSpawner2D 스폰 중지됨 (과일 꽂기 씬 튜토리얼 시작).");
             }
         }
-        else // 튜토리얼 조건이 아니면 일반 게임 진행
-        {
-            SetTutorialState(false); // 튜토리얼 비활성화 확실히
-            SetGameState(GameState.Playing);
-            LoadOrderForCurrentCustomer();
-        }
+        else
+    {
+        SetTutorialState(false);
+        SetGameState(GameState.Playing);
+        LoadOrderForCurrentCustomer(); // 일반 게임 시작 시 주문 로드
     }
+}
 
     // 튜토리얼 UI의 시작 버튼 등에서 호출될 함수
     public void EndTutorialAndStartGame()
