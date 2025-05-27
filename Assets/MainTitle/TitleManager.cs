@@ -69,6 +69,8 @@ public class TitleManager : MonoBehaviour
 
     void Start()
     {
+        Debug.Log($"TitleManager Start: TUTORIAL_COMPLETED_KEY = {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0)}");
+
         if (logoImage != null)
         {
             logoImage.gameObject.SetActive(true);
@@ -91,21 +93,33 @@ public class TitleManager : MonoBehaviour
             GameInfoHolder.OpenStageSelectPanelOnLoad = false; // 플래그 리셋
         }
 
+        bool tutorialCompletedByPrefs = PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0) == 1;
+        bool justCompletedOverride = false;
 
-        // 튜토리얼 완료 여부에 따라 버튼 활성화 상태 결정
-        if (PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0) == 0) // 튜토리얼 미완료
+        if (GameInfoHolder.TutorialWasJustCompleted)
+        {
+            Debug.Log("TitleManager Start: GameInfoHolder.TutorialWasJustCompleted is TRUE. 스테이지 버튼 표시를 위해 이 값을 우선합니다.");
+            justCompletedOverride = true;
+            GameInfoHolder.TutorialWasJustCompleted = false; // 플래그는 한 번 사용 후 리셋
+        }
+
+        Debug.Log($"TitleManager Start: TUTORIAL_COMPLETED_KEY (PlayerPrefs) = {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0)}, justCompletedOverride = {justCompletedOverride}");
+
+        bool shouldShowStageButtons = tutorialCompletedByPrefs || justCompletedOverride;
+
+        if (shouldShowStageButtons)
+        {
+            if (stageSelectButton != null) stageSelectButton.SetActive(true);
+            if (animalBookButton != null) animalBookButton.SetActive(true);
+            Debug.Log("튜토리얼 완료 상태(또는 방금 완료됨)이므로 스테이지 선택 및 동물도감 버튼을 활성화합니다.");
+        }
+        else
         {
             if (stageSelectButton != null) stageSelectButton.SetActive(false);
             if (animalBookButton != null) animalBookButton.SetActive(false);
             Debug.Log("튜토리얼 미완료 상태이므로 스테이지 선택 및 동물도감 버튼을 비활성화합니다.");
         }
-        else // 튜토리얼 완료
-        {
-            if (stageSelectButton != null) stageSelectButton.SetActive(true);
-            if (animalBookButton != null) animalBookButton.SetActive(true);
-            Debug.Log("튜토리얼 완료 상태이므로 스테이지 선택 및 동물도감 버튼을 활성화합니다.");
-        }
-
+        
         LoadAudioSettings();
     }
 
@@ -157,7 +171,6 @@ public class TitleManager : MonoBehaviour
         }
         else { Debug.LogError("StageDataManager 인스턴스가 없어 새로하기 시 진행 상황 초기화 불가!"); }
 
-        // 하트 초기화
         if (HeartManager.Instance != null)
         {
             HeartManager.Instance.InitializeHearts();
@@ -165,18 +178,23 @@ public class TitleManager : MonoBehaviour
         }
         else { Debug.LogError("HeartManager 인스턴스가 없어 새로하기 시 하트 초기화 불가!"); }
 
-        PlayerPrefs.DeleteKey(TUTORIAL_COMPLETED_KEY);
-        PlayerPrefs.SetInt(GAME_STARTED_KEY, 1); // "새로하기"를 한 번이라도 눌렀음을 기록
-        PlayerPrefs.Save(); // 변경사항 즉시 저장
-        Debug.Log("튜토리얼 완료 상태 삭제 및 게임 시작 키 설정 완료. PlayerPrefs 저장됨.");
+        // --- PlayerPrefs 초기화 부분 수정 ---
+        Debug.Log($"ProceedWithNewGame: PlayerPrefs TUTORIAL_COMPLETED_KEY 현재 값 (변경 전): {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, -1)} (HasKey: {PlayerPrefs.HasKey(TUTORIAL_COMPLETED_KEY)})");
 
-        GameInfoHolder.CustomerIndexToLoad = 0; // 항상 첫 번째 손님부터 시작
-        GameInfoHolder.OpenStageSelectPanelOnLoad = false; // 스테이지 선택 패널 자동 열림 방지
+        PlayerPrefs.SetInt(TUTORIAL_COMPLETED_KEY, 0); // 튜토리얼 미완료 상태로 명시적 설정
+        PlayerPrefs.SetInt(GAME_STARTED_KEY, 1); // 게임 시작 기록
+        PlayerPrefs.Save(); // 변경사항 즉시 저장
+        Debug.Log($"ProceedWithNewGame: TUTORIAL_COMPLETED_KEY is now {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, -99)} after setting to 0 and saving.");
+        Debug.Log($"ProceedWithNewGame: PlayerPrefs TUTORIAL_COMPLETED_KEY 값을 0으로 설정 후 저장. 현재 GetInt: {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, -1)}. GAME_STARTED_KEY: {PlayerPrefs.GetInt(GAME_STARTED_KEY, -1)}");
+        // --- PlayerPrefs 초기화 부분 수정 끝 ---
+
+        GameInfoHolder.CustomerIndexToLoad = 0;
+        GameInfoHolder.OpenStageSelectPanelOnLoad = false;
         Debug.Log("GameInfoHolder.CustomerIndexToLoad를 0으로 설정.");
 
         if (newGameButton != null) newGameButton.SetActive(false);
-        if (stageSelectButton != null) stageSelectButton.SetActive(false); // 새로하기 시작 시 비활성화
-        if (animalBookButton != null) animalBookButton.SetActive(false); // 새로하기 시작 시 비활성화
+        if (stageSelectButton != null) stageSelectButton.SetActive(false);
+        if (animalBookButton != null) animalBookButton.SetActive(false);
         if (settingsButton != null) settingsButton.SetActive(false);
         Debug.Log("타이틀 버튼 비활성화됨 (새로하기 진행 중).");
 

@@ -204,21 +204,25 @@ public class ToppingPlacementManager : MonoBehaviour
 
         List<ToppingInfo> toppingsToShow = new List<ToppingInfo>();
 
-        // CustomerOrderManager.Instance.isTutorialActive를 사용하여 튜토리얼 모드인지 확인
         if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.isTutorialActive)
         {
             Debug.Log("튜토리얼 모드: 현재 손님의 토핑만 표시합니다.");
             if (requiredTopping != FruitType.None)
             {
                 ToppingInfo requiredToppingInfo = allAvailableToppings.FirstOrDefault(t => t.toppingType == requiredTopping);
-                if (requiredToppingInfo.toppingSprite != null) // 스프라이트가 있는 경우에만 추가
+                if (requiredToppingInfo.toppingSprite != null && requiredToppingInfo.toppingType != FruitType.None) // toppingType도 None이 아닌지 확인
                 {
                     toppingsToShow.Add(requiredToppingInfo);
                 }
                 else
                 {
-                     Debug.LogWarning($"튜토리얼: 필수 토핑 '{requiredTopping}'에 대한 정보가 'allAvailableToppings' 리스트에 없거나 스프라이트가 없습니다.");
+                    Debug.LogWarning($"튜토리얼: 필수 토핑 '{requiredTopping}'에 대한 정보가 'allAvailableToppings' 리스트에 없거나 유효하지 않은 스프라이트/타입입니다. Inspector를 확인해주세요.");
+                    // 튜토리얼인데 필수 토핑을 못 찾으면, 비어있는 상태로 두거나, 에러 처리를 할 수 있습니다.
+                    // 여기서는 일단 비워두어 아무 토핑도 표시되지 않게 합니다.
                 }
+            }
+            else {
+                Debug.LogWarning("튜토리얼 모드이지만, 현재 손님에게 requiredTopping이 FruitType.None으로 설정되어 있습니다.");
             }
         }
         else

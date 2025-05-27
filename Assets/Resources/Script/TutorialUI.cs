@@ -21,25 +21,29 @@ public class TutorialUI : MonoBehaviour
 
     void Start()
     {
+        Debug.Log($"TutorialUI ({gameObject.scene.name}): Start() 호출됨. CustomerOrderManager.Instance 존재 여부: {(CustomerOrderManager.Instance != null)}");
         customerOrderManager = CustomerOrderManager.Instance;
 
         if (customerOrderManager != null)
         {
             customerOrderManager.OnGameStateChanged += HandleGameStateChanged;
-            // 초기 UI 상태 설정 (CustomerOrderManager의 현재 상태에 따라)
+            Debug.Log($"TutorialUI ({gameObject.scene.name}): OnGameStateChanged 이벤트 구독 완료.");
+            // Start 시점의 게임 상태로 즉시 UI 업데이트 시도
             HandleGameStateChanged(customerOrderManager.currentGameState, customerOrderManager.isTutorialActive);
-
-            if (startGameButtonObject != null)
-            {
-                startGameButtonObject.onClick.RemoveAllListeners();
-                startGameButtonObject.onClick.AddListener(OnTutorialButtonClicked);
-            }
         }
         else
         {
-            Debug.LogError("TutorialUI: CustomerOrderManager.Instance를 찾을 수 없습니다!");
+            Debug.LogError($"TutorialUI ({gameObject.scene.name}): CustomerOrderManager.Instance를 찾을 수 없습니다!");
             if (tutorialPanelObject != null) tutorialPanelObject.SetActive(false);
-            enabled = false; // CustomerOrderManager 없이는 정상 작동 불가
+            enabled = false;
+        }
+
+        if (startGameButtonObject != null)
+        {
+            startGameButtonObject.onClick.RemoveAllListeners();
+            startGameButtonObject.onClick.AddListener(OnTutorialButtonClicked);
+        } else {
+            Debug.LogWarning($"TutorialUI ({gameObject.scene.name}): startGameButtonObject가 연결되지 않았습니다.");
         }
     }
 

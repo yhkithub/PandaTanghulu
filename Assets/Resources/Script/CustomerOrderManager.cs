@@ -35,6 +35,8 @@ public class CustomerOrderManager : MonoBehaviour
     public event Action OnOrderLoaded;
     public event Action<GameState, bool> OnGameStateChanged;
 
+    private const string TUTORIAL_COMPLETED_PREF_KEY = "PandaTanghulu_TutorialCompleted";
+
     [System.Serializable]
     public struct FruitSpriteMapping
     {
@@ -50,6 +52,8 @@ public class CustomerOrderManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             InitializeSpriteDictionary();
+            SceneManager.sceneLoaded += OnSceneLoaded; // Awake에서 구독
+            Debug.Log("CustomerOrderManager: Awake에서 sceneLoaded 이벤트 구독.");
         }
         else if (Instance != this)
         {
@@ -60,21 +64,22 @@ public class CustomerOrderManager : MonoBehaviour
     }
 
     // Start 대신 OnEnable/OnDisable에서 씬 로드 이벤트 구독/해제
-    void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        // 게임 시작 시 한 번만 초기화 (혹은 첫 씬에서만)
-        if (SceneManager.GetActiveScene().name == "TitleScene") // 예시: TitleScene에서 처음 시작될 때만 초기화
-        {
-             currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
-             Debug.Log($"CustomerOrderManager: 활성화 시 GameInfoHolder로부터 로드할 손님 인덱스: {currentCustomerIndex}");
-             SetupInitialGameState();
-        }
-    }
+    // void OnEnable()
+    // {
+    //     SceneManager.sceneLoaded += OnSceneLoaded;
+    //     // 게임 시작 시 한 번만 초기화 (혹은 첫 씬에서만)
+    //     if (SceneManager.GetActiveScene().name == "TitleScene") // 예시: TitleScene에서 처음 시작될 때만 초기화
+    //     {
+    //          currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
+    //          Debug.Log($"CustomerOrderManager: 활성화 시 GameInfoHolder로부터 로드할 손님 인덱스: {currentCustomerIndex}");
+    //          SetupInitialGameState();
+    //     }
+    // }
 
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        Debug.Log("CustomerOrderManager: OnDisable에서 sceneLoaded 이벤트 구독 해제.");
     }
 
     // Start 메서드는 비워두거나 간단한 초기화만 남깁니다.
@@ -89,9 +94,16 @@ public class CustomerOrderManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"CustomerOrderManager: Scene '{scene.name}' loaded. Re-evaluating game state.");
+        Debug.Log($"CustomerOrderManager: Scene '{scene.name}' loaded. GameInfoHolder.CustomerIndexToLoad: {GameInfoHolder.CustomerIndexToLoad}");
         currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad; // 항상 GameInfoHolder 값으로 동기화
-        SetupInitialGameState(); // PlayerPrefs를 다시 읽어 튜토리얼 상태 등을 설정
+
+        // TitleScene으로 돌아왔을 때, 그리고 "새로하기" 직후가 아닐 때 OpenStageSelectPanelOnLoad 플래그 처리
+        if (scene.name == stageSelectSceneName && GameInfoHolder.OpenStageSelectPanelOnLoad)
+        {
+            // 이 플래그는 TitleManager에서 처리하므로 여기서는 CustomerOrderManager 상태 설정에 집중
+        }
+
+        SetupInitialGameState(); // 씬 로드 시에만 초기 게임 상태 설정
     }
 
 
@@ -120,49 +132,62 @@ public class CustomerOrderManager : MonoBehaviour
 
     void SetupInitialGameState()
     {
-        // currentCustomerIndex는 OnSceneLoaded 또는 Start에서 GameInfoHolder를 통해 이미 설정됨
-        Debug.Log($"CustomerOrderManager SetupInitialGameState: 현재 손님 인덱스: {currentCustomerIndex}");
+        Debug.Log($"CustomerOrderManager SetupInitialGameState - Current Scene: {SceneManager.GetActiveScene().name}, currentCustomerIndex: {currentCustomerIndex}");
 
         if (allCustomerOrders == null || allCustomerOrders.Count == 0)
         {
             Debug.LogError("CustomerOrderManager: 손님 주문 데이터(allCustomerOrders)가 설정되지 않았습니다! 게임을 진행할 수 없습니다.");
-            LoadTitleScene();
+            SceneSwitcher.Instance?.LoadScene("TitleScene");
             return;
         }
 
-        bool isTutorialAlreadyCompleted = PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0) == 1;
-        Debug.Log($"SetupInitialGameState: isTutorialAlreadyCompleted = {isTutorialAlreadyCompleted} (currentCustomerIndex: {currentCustomerIndex})");
+        int tutorialCompletedPrefValue = PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0);
+        bool hasTutorialKey = PlayerPrefs.HasKey(TUTORIAL_COMPLETED_KEY);
+        Debug.Log($"SetupInitialGameState - PlayerPrefs Check: TUTORIAL_COMPLETED_KEY HasKey = {hasTutorialKey}, Raw Value = {tutorialCompletedPrefValue}");
 
-        if (currentCustomerIndex == 0 && !isTutorialAlreadyCompleted)
+        bool isTutorialPermanentlyCompleted = tutorialCompletedPrefValue == 1;
+        Debug.Log($"SetupInitialGameState - Interpreted: isTutorialPermanentlyCompleted = {isTutorialPermanentlyCompleted} (for customerIndex: {currentCustomerIndex})");
+
+        // isTutorialActive 상태 설정
+        if (currentCustomerIndex == 0 && !isTutorialPermanentlyCompleted)
         {
-            SetTutorialState(true);
-            SetGameState(GameState.TutorialDisplay);
-            Debug.Log("튜토리얼 모드입니다. 첫 번째 손님의 주문 데이터를 로드합니다.");
-            LoadOrderForCurrentCustomer();
-
-            // FruitCatchingGameScene에서만 스포너를 특별히 제어하는 로직은 LoadOrderForCurrentCustomer 내부에서 처리
+            isTutorialActive = true; // 현재 세션이 튜토리얼임을 명시
+            SetGameState(GameState.TutorialDisplay); // 초기 상태는 튜토리얼 UI 표시
+            Debug.Log($"SetupInitialGameState: TUTORIAL ACTIVATED for customer 0. isTutorialActive: {isTutorialActive}, GameState: {currentGameState}");
         }
         else
         {
-            SetTutorialState(false);
+            isTutorialActive = false; // 첫 번째 손님이 아니거나, 영구적으로 튜토리얼 완료됨
             SetGameState(GameState.Playing);
-            LoadOrderForCurrentCustomer();
+            if (currentCustomerIndex == 0 && isTutorialPermanentlyCompleted) {
+                Debug.Log("SetupInitialGameState: Tutorial previously completed for customer 0. Starting normal play.");
+            } else if (currentCustomerIndex != 0) {
+                Debug.Log("SetupInitialGameState: Not customer 0, starting normal play.");
+            }
         }
+        LoadOrderForCurrentCustomer();
     }
 
     public void EndTutorialAndStartGame()
     {
+        // 튜토리얼 UI의 "시작" 버튼 클릭 시 호출
+        // isTutorialActive는 변경하지 않고 GameState만 Playing으로 변경하여 튜토리얼의 게임 플레이 부분 시작
         if (currentGameState == GameState.TutorialDisplay && isTutorialActive)
         {
-            Debug.Log("튜토리얼 버튼 클릭됨. 게임을 시작합니다!");
-            SetTutorialState(false);
+            Debug.Log("튜토리얼 UI의 시작 버튼 클릭됨. GameState를 Playing으로 변경합니다. isTutorialActive는 계속 true 입니다.");
             SetGameState(GameState.Playing);
-
-            // PlayerPrefs.SetInt(TUTORIAL_COMPLETED_KEY, 1); // 여기서 바로 완료 처리하지 않음
-            // PlayerPrefs.Save();
-            // Debug.Log("튜토리얼 완료 상태 저장됨."); // 아직 저장 안 함
-
-            LoadOrderForCurrentCustomer();
+            // LoadOrderForCurrentCustomer(); // 필요시 여기서 주문 재로드 또는 스포너 시작 등을 명시적 호출 가능
+                                        // 현재는 SetGameState 후 LoadOrderForCurrentCustomer가 이미 SetupInitialGameState의 일부로 호출됨.
+                                        // 만약 FruitSpawner 로직이 GameState.Playing 상태에만 반응한다면, 여기서 추가 호출이 필요 없을 수 있음.
+                                        // 명확성을 위해 FruitSpawner 시작을 여기서 직접 제어할 수도 있음.
+            if (SceneManager.GetActiveScene().name == fruitCatchingSceneName && FruitSpawner2D.Instance != null)
+            {
+                FruitSpawner2D.Instance.StartSpawning(); // 튜토리얼 게임 플레이 시작 시 스포너 가동
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"EndTutorialAndStartGame 호출되었으나, 조건 불일치. currentGameState: {currentGameState}, isTutorialActive: {isTutorialActive}");
         }
     }
 
@@ -185,13 +210,24 @@ public class CustomerOrderManager : MonoBehaviour
                 CurrentRequiredSkewerFruits.Add(item.fruit);
             }
             Debug.Log($"{CurrentOrderData.customerName} 손님의 주문 로드 완료. 필요한 꼬치 과일: {string.Join(", ", CurrentRequiredSkewerFruits.Select(f => f.ToString()))}");
+
         }
         else
         {
-            Debug.LogError($"CustomerOrderManager: 손님 인덱스 {currentCustomerIndex}에 대한 주문 데이터 또는 꼬치 주문 내용이 없습니다.");
+            Debug.LogError($"CustomerOrderManager: 손님 인덱스 {currentCustomerIndex}에 대한 주문 데이터를 찾을 수 없습니다!");
+            LoadTitleScene(); // 예외 처리
+            return;
+        }
+
+        if (CurrentOrderData.skewerOrder == null || CurrentOrderData.skewerOrder.Count == 0)
+        {
+            Debug.LogError($"CustomerOrderManager: 손님 '{CurrentOrderData.customerName}'의 꼬치 주문(skewerOrder) 데이터가 비어있습니다! 게임을 정상적으로 진행할 수 없습니다. TitleScene으로 이동합니다.");
+            // 대화가 없는 손님이라도 최소한의 주문은 있어야 게임 진행이 가능합니다.
+            // 또는, 이런 경우 특정 기본 주문으로 대체하거나 다른 처리를 할 수 있습니다.
             LoadTitleScene();
             return;
         }
+
 
         OnOrderLoaded?.Invoke();
 
@@ -260,11 +296,17 @@ public class CustomerOrderManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"과일 꽂기 실패! ({CurrentOrderData.customerName})");
-            if (HeartManager.Instance != null) HeartManager.Instance.LoseHeart(); // 하트 차감은 HeartManager 내부에서 튜토리얼 여부 판단
-
-            // 실패 시 꼬치 비우기는 SkewerManager에서 하도록 유도하거나, 여기서 직접 호출.
-            // SkewerManager.Instance?.ClearSkewer(); // 필요시 호출
+            // ▼▼▼ 로그 추가 ▼▼▼
+            Debug.Log($"과일 꽂기 실패! ({CurrentOrderData.customerName}). 현재 isTutorialActive 상태: {isTutorialActive} / currentGameState: {currentGameState}");
+            // ▲▲▲ 로그 추가 ▲▲▲
+            if (!isTutorialActive) 
+            {
+                if (HeartManager.Instance != null) HeartManager.Instance.LoseHeart();
+            }
+            else
+            {
+                Debug.Log("튜토리얼 중이므로 과일 꽂기 실패 시 하트가 차감되지 않습니다.");
+            }
         }
         return orderMatch;
     }
@@ -285,12 +327,20 @@ public class CustomerOrderManager : MonoBehaviour
             StageDataManager.Instance.SetStageCleared(currentCustomerIndex);
         }
 
-        // 튜토리얼 손님(첫 번째 손님)의 모든 미니게임을 완료했다면, 여기서 튜토리얼 완료 상태 저장
-        if (currentCustomerIndex == 0)
+        if (currentCustomerIndex == 0) // 첫 번째 손님(튜토리얼) 완료 시
         {
-            PlayerPrefs.SetInt(TUTORIAL_COMPLETED_KEY, 1);
-            PlayerPrefs.Save();
-            Debug.Log("첫 번째 손님(튜토리얼) 완료. TUTORIAL_COMPLETED_KEY 저장됨.");
+            Debug.Log($"AllMiniGamesCompletedForCurrentCustomer: About to set TUTORIAL_COMPLETED_KEY. Current PlayerPrefs value: {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, -99)}");
+            PlayerPrefs.SetInt(TUTORIAL_COMPLETED_KEY, 1); // 튜토리얼 완료로 저장
+            PlayerPrefs.Save();                           // 변경사항 저장
+
+            int 확인용값 = PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, -99);
+            Debug.Log($"첫 번째 손님(튜토리얼) 모든 미니게임 완료. TUTORIAL_COMPLETED_KEY를 1로 설정하고 저장했습니다. PlayerPrefs 저장 직후 확인된 값: {확인용값}");
+
+            GameInfoHolder.TutorialWasJustCompleted = true; // 정적 플래그 설정
+
+            if (확인용값 != 1) {
+                Debug.LogError("CRITICAL PREFS ERROR: TUTORIAL_COMPLETED_KEY가 1로 저장되지 않았습니다! GameInfoHolder.TutorialWasJustCompleted 플래그에 의존합니다.");
+            }
         }
 
         if (!string.IsNullOrEmpty(customerPresentationSceneName))
@@ -323,26 +373,35 @@ public class CustomerOrderManager : MonoBehaviour
         return null;
     }
 
+    // GameState를 설정하고 이벤트를 발생시키는 함수
     public void SetGameState(GameState newState)
     {
-        if (currentGameState != newState || isTutorialActive != (newState == GameState.TutorialDisplay && currentCustomerIndex == 0 && PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0) == 0)) // 튜토리얼 상태도 함께 고려
+        // Debug.Log($"CustomerOrderManager: SetGameState 시도. Current: {currentGameState}, New: {newState}, isTutorialActive: {isTutorialActive}");
+        // 튜토리얼 상태 결정 로직은 SetupInitialGameState에 집중되어 있으므로, 여기서는 GameState 변경만 처리
+        // bool tutorialFlagForEvent = isTutorialActive; // isTutorialActive는 SetupInitialGameState에서 이미 결정됨
+
+        // if (currentGameState != newState || isTutorialActive != tutorialFlagForEvent) // isTutorialActive 변경 여부도 조건에 포함했었으나, GameState 변경만으로도 이벤트 발생 가능
+        if (currentGameState != newState)
         {
             currentGameState = newState;
-            // isTutorialActive는 SetupInitialGameState에서 결정된 값을 따르도록 함
+            // isTutorialActive 값은 CustomerOrderManager의 현재 멤버 변수 값을 사용
             OnGameStateChanged?.Invoke(currentGameState, isTutorialActive);
-            Debug.Log($"CustomerOrderManager: GameState 변경됨 -> {currentGameState}, isTutorialActive -> {isTutorialActive}");
+            Debug.Log($"CustomerOrderManager: GameState 변경됨 -> {currentGameState}, isTutorialActive (전달값) -> {isTutorialActive}");
         }
     }
 
-    public void SetTutorialState(bool tutorialActiveState) // 함수 이름 변경 및 역할 명확화
+        // isTutorialActive 상태를 설정하고 이벤트를 발생시키는 함수
+    public void SetTutorialState(bool tutorialActiveState)
     {
         if (isTutorialActive != tutorialActiveState)
         {
             isTutorialActive = tutorialActiveState;
+            // isTutorialActive가 변경되면, 연관된 게임 상태도 변경될 수 있으므로 OnGameStateChanged 호출
             OnGameStateChanged?.Invoke(currentGameState, isTutorialActive);
-            Debug.Log($"CustomerOrderManager: TutorialActive 상태 명시적 변경됨 -> {isTutorialActive}");
+            Debug.Log($"CustomerOrderManager: isTutorialActive 상태가 명시적으로 변경됨 -> {isTutorialActive} (SetTutorialState 직접 호출)");
         }
     }
+
 
     public void ProceedToNextMiniGameStep()
     {
