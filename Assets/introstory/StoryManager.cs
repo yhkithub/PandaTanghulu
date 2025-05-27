@@ -29,6 +29,13 @@ public class StoryManager : MonoBehaviour
 
     void Start()
     {
+        if (AudioManager.Instance != null)
+        {
+            // 현재 재생 중인 BGM을 중지하려면
+            AudioManager.Instance.StopBackgroundMusic();
+            AudioManager.Instance.PlayBgm("MainGameBGM"); // "ShopBGM"으로 교체
+
+        }
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {

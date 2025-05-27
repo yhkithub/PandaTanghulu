@@ -154,7 +154,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -309, y: 284.65}
+  m_AnchoredPosition: {x: 0, y: 88}
   m_SizeDelta: {x: 374.11, y: 149.32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &44851948
@@ -954,7 +954,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 478.7, y: 358.3}
+  m_AnchoredPosition: {x: 236, y: 182}
   m_SizeDelta: {x: 121.91, y: 81.38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &303688156
@@ -1562,8 +1562,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.22998047, y: 0}
-  m_SizeDelta: {x: -195.01, y: -146.26}
+  m_AnchoredPosition: {x: 21, y: 18.733994}
+  m_SizeDelta: {x: -816.16, y: -612.12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &535568948
 PrefabInstance:
@@ -2001,8 +2001,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -0.0000029206, y: 0.0049942}
+  m_SizeDelta: {x: 136.73, y: 136.73}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &724736570
 MonoBehaviour:
@@ -3037,6 +3037,7 @@ MonoBehaviour:
   settingsPanel: {fileID: 524050280}
   logoImage: {fileID: 1299498586}
   logoFadeDuration: 1
+  buttonclickSoundName: button
   fruitPrefabsWithChanceForRoll:
   - prefab: {fileID: 3337232242521932015, guid: 4bfd8b69853c5c44287b051b72f87b31, type: 3}
     minCount: 2
@@ -3492,7 +3493,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -309, y: 119}
+  m_AnchoredPosition: {x: 0, y: -79.7}
   m_SizeDelta: {x: 374.11, y: 149.32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1445681688
@@ -4762,6 +4763,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5480856391866932247, guid: a998440f80ce85947b7262390b90483e, type: 3}
+      propertyPath: sounds.Array.data[5].isBgm
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5480856391866932247, guid: a998440f80ce85947b7262390b90483e, type: 3}
+      propertyPath: sounds.Array.data[6].isBgm
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8473739778097456524, guid: a998440f80ce85947b7262390b90483e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.43113

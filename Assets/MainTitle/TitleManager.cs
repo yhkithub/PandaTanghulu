@@ -17,6 +17,7 @@ public class TitleManager : MonoBehaviour
     public GameObject settingsPanel;
     public Image logoImage;
     public float logoFadeDuration = 1f;
+    public string buttonclickSoundName = "button";
 
     [Header("과일 롤 애니메이션 설정")]
     public List<FruitPrefabChanceForRoll> fruitPrefabsWithChanceForRoll;
@@ -69,7 +70,20 @@ public class TitleManager : MonoBehaviour
 
     void Start()
     {
+        void PlayClickSound()
+        {
+            if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
+            {
+                AudioManager.Instance.PlayOneShotSound(buttonclickSoundName);
+            }
+        }
+        
         Debug.Log($"TitleManager Start: TUTORIAL_COMPLETED_KEY = {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, 0)}");
+        if (AudioManager.Instance != null)
+        {
+            // AudioManager에 "MainTitleBGM"이라는 이름으로 등록된 사운드를 재생
+            AudioManager.Instance.PlayBgm("MainTitleBGM");
+        }
 
         if (logoImage != null)
         {
@@ -81,8 +95,32 @@ public class TitleManager : MonoBehaviour
 
         if (newGameButton != null) newGameButton.SetActive(true);
         // stageSelectButton과 animalBookButton은 튜토리얼 완료 여부에 따라 아래에서 설정
+        if (newGameButton != null)
+        {
+            Button newGameBtnComponent = newGameButton.GetComponent<Button>();
+            if (newGameBtnComponent != null)
+            {
+                newGameBtnComponent.onClick.AddListener(PlayClickSound);
+            }
+            else
+            {
+                Debug.LogWarning("settingsButton에 Button 컴포넌트가 없습니다.");
+            }
+        }
 
         if (settingsButton != null) settingsButton.SetActive(true);
+        if (settingsButton != null)
+        {
+            Button settingsBtnComponent = settingsButton.GetComponent<Button>();
+            if (settingsBtnComponent != null)
+            {
+                settingsBtnComponent.onClick.AddListener(PlayClickSound);
+            }
+            else
+            {
+                Debug.LogWarning("settingsButton에 Button 컴포넌트가 없습니다.");
+            }
+        }
         if (settingsPanel != null) settingsPanel.SetActive(false);
         if (stageSelectPanel_UI != null) stageSelectPanel_UI.SetActive(false);
 
@@ -110,6 +148,18 @@ public class TitleManager : MonoBehaviour
         if (shouldShowStageButtons)
         {
             if (stageSelectButton != null) stageSelectButton.SetActive(true);
+            if (stageSelectButton != null)
+            {
+                Button stageSelectBtnComponent = stageSelectButton.GetComponent<Button>();
+                if (stageSelectBtnComponent != null)
+                {
+                    stageSelectBtnComponent.onClick.AddListener(PlayClickSound);
+                }
+                else
+                {
+                    Debug.LogWarning("stageSelectButton Button 컴포넌트가 없습니다.");
+                }
+            }
             if (animalBookButton != null) animalBookButton.SetActive(true);
             Debug.Log("튜토리얼 완료 상태(또는 방금 완료됨)이므로 스테이지 선택 및 동물도감 버튼을 활성화합니다.");
         }
@@ -150,6 +200,10 @@ public class TitleManager : MonoBehaviour
 
     public void ConfirmNewGame_Yes()
     {
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
+        {
+            AudioManager.Instance.PlayOneShotSound(buttonclickSoundName);
+        }
         Debug.Log("새로하기 확인: 예");
         if (confirmNewGamePanel_UI != null) confirmNewGamePanel_UI.SetActive(false);
         ProceedWithNewGame();
@@ -157,6 +211,10 @@ public class TitleManager : MonoBehaviour
 
     public void ConfirmNewGame_No()
     {
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
+        {
+            AudioManager.Instance.PlayOneShotSound(buttonclickSoundName);
+        }
         Debug.Log("새로하기 확인: 아니오");
         if (confirmNewGamePanel_UI != null) confirmNewGamePanel_UI.SetActive(false);
     }
@@ -498,6 +556,10 @@ public class TitleManager : MonoBehaviour
 
     public void CloseStageSelectPanel()
     {
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
+        {
+            AudioManager.Instance.PlayOneShotSound(buttonclickSoundName);
+        }
         if (stageSelectPanel_UI != null)
         {
             stageSelectPanel_UI.SetActive(false);
@@ -507,10 +569,30 @@ public class TitleManager : MonoBehaviour
 
     void PopulateStageButtons()
     {
+        void PlayClickSound()
+        {
+            if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
+            {
+                AudioManager.Instance.PlayOneShotSound(buttonclickSoundName);
+            }
+        }
+
         if (stageButtonPrefab_UI == null || stageButtonContainer_UI == null || StageDataManager.Instance == null)
         {
             Debug.LogError("스테이지 버튼 생성에 필요한 요소가 설정되지 않았습니다.");
             return;
+        }
+        if (stageButtonPrefab_UI != null)
+        {
+            Button stageBtnComponent = stageButtonPrefab_UI.GetComponent<Button>();
+            if (stageBtnComponent != null)
+            {
+                stageBtnComponent.onClick.AddListener(PlayClickSound);
+            }
+            else
+            {
+                Debug.LogWarning("settingsButton에 Button 컴포넌트가 없습니다.");
+            }
         }
 
         foreach (Transform child in stageButtonContainer_UI)
@@ -619,6 +701,10 @@ public class TitleManager : MonoBehaviour
 
     public void ToggleSettingsPanel()
     {
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
+        {
+            AudioManager.Instance.PlayOneShotSound(buttonclickSoundName);
+        }
         if (settingsPanel != null)
         {
             bool isActive = !settingsPanel.activeSelf;

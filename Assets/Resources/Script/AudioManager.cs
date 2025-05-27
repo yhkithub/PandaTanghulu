@@ -10,6 +10,7 @@ public class Sound
     public float volume = 1f;
     public float pitch = 1f;
     public bool loop = false;
+    public bool isBgm = false; // BGM 여부를 나타내는 플래그 추가
 
     [HideInInspector] public AudioSource source;
 }
@@ -145,10 +146,10 @@ public class AudioManager : MonoBehaviour
     public void SetBgmEnabled(bool isEnabled)
     {
         IsBgmEnabled = isEnabled;
-        PlayerPrefs.SetInt(BGM_KEY, IsBgmEnabled ? 1 : 0); // 오타 수정: isEnabled -> IsBgmEnabled
+        PlayerPrefs.SetInt(BGM_KEY, IsBgmEnabled ? 1 : 0);
         PlayerPrefs.Save();
         Debug.Log($"AudioManager: BGM status set to {IsBgmEnabled}");
-        ApplyBgmSettings(); // 볼륨 및 재생 상태 모두 적용
+        ApplyBgmSettings();
     }
 
     // 새로운 마스터 BGM 볼륨 설정 메서드
@@ -172,39 +173,68 @@ public class AudioManager : MonoBehaviour
     }
 
     // BGM 재생 및 상태 전체 적용 (내부 헬퍼 함수)
-    void ApplyBgmSettings()
+    void ApplyBgmSettings() // BGM 재생 및 상태 전체 적용
     {
-        if (currentBgmSource != null)
+        if (currentBgmSource != null && currentBgmSoundObject != null)
         {
-            currentBgmSource.mute = !IsBgmEnabled; // 음소거는 IsBgmEnabled로 직접 제어
-            ApplyBgmVolume(); // 볼륨 적용
+            if (!currentBgmSoundObject.isBgm) // 재생하려는 사운드가 BGM으로 설정되어 있지 않으면 경고
+            {
+                Debug.LogWarning($"AudioManager: BGM으로 재생하려는 사운드 '{currentBgmSoundObject.name}'는 isBgm 플래그가 설정되지 않았습니다.");
+                // return; // 또는 재생을 막음
+            }
+
+            currentBgmSource.mute = !IsBgmEnabled;
+            currentBgmSource.volume = currentBgmSoundObject.volume * masterBgmVolume;
 
             if (IsBgmEnabled && !currentBgmSource.isPlaying && currentBgmSource.clip != null)
             {
                 currentBgmSource.Play();
+                Debug.Log($"AudioManager: BGM \"{currentBgmSoundObject.name}\" 재생 시작.");
             }
             else if (!IsBgmEnabled && currentBgmSource.isPlaying)
             {
                 currentBgmSource.Stop();
+                Debug.Log($"AudioManager: BGM \"{currentBgmSoundObject.name}\" 중지 (BGM 비활성화됨).");
             }
         }
     }
 
     public void PlayBgm(string nameOfBgmSound)
     {
-        // ... (기존 PlayBgm 코드) ...
-        // Sound 객체를 찾으면 currentBgmSoundObject = bgmToPlay; 추가
-        // currentBgmSource = bgmToPlay.source; 이후 ApplyBgmSettings(); 호출
         Sound bgmToPlay = sounds.Find(sound => sound.name == nameOfBgmSound);
-        if (bgmToPlay == null) { /* ... 오류 처리 ... */ return; }
+        if (bgmToPlay == null)
+        {
+            Debug.LogWarning("AudioManager: BGM 사운드 \"" + nameOfBgmSound + "\"을(를) 찾을 수 없습니다!");
+            return;
+        }
 
-        if (currentBgmSource != null && currentBgmSource.isPlaying && currentBgmSource != bgmToPlay.source)
+        // 현재 재생 중인 BGM과 요청된 BGM이 동일하고, 이미 재생 중이라면 아무것도 하지 않음
+        if (currentBgmSource != null && currentBgmSoundObject == bgmToPlay && currentBgmSource.isPlaying)
+        {
+            Debug.Log("AudioManager: 요청된 BGM \"" + nameOfBgmSound + "\"이(가) 이미 재생 중입니다.");
+            return; // 이미 재생 중이므로 변경 없음
+        }
+
+        // 기존에 다른 BGM이 재생 중이었다면 중지
+        if (currentBgmSource != null && currentBgmSource.isPlaying)
         {
             currentBgmSource.Stop();
         }
+
+        // 새로운 BGM 설정 및 재생
         currentBgmSoundObject = bgmToPlay;
         currentBgmSource = bgmToPlay.source;
-        ApplyBgmSettings(); // 모든 설정을 한 번에 적용
+
+        if (currentBgmSource != null)
+        {
+            currentBgmSource.clip = currentBgmSoundObject.clip; // 클립 재할당 (필수는 아닐 수 있으나 명확성을 위해)
+            currentBgmSource.loop = true; // 루프 보장
+            ApplyBgmSettings(); // 볼륨 적용 및 재생 (IsBgmEnabled 상태에 따라)
+        }
+        else
+        {
+            Debug.LogError("AudioManager: BGM 재생을 위한 AudioSource가 없습니다.");
+        }
     }
 
     public void SetSfxEnabled(bool isEnabled)
@@ -214,21 +244,19 @@ public class AudioManager : MonoBehaviour
         PlayerPrefs.Save();
         Debug.Log($"AudioManager: SFX status set to {IsSfxEnabled}");
 
-        // 모든 SFX AudioSource의 mute 상태 업데이트
         foreach (Sound s in sounds)
         {
-            // BGM으로 지정된 사운드는 SFX 설정의 영향을 받지 않도록 예외 처리 (선택적)
-            if (bgmSound != null && s.name == bgmSound.name)
+            if (s.isBgm) // isBgm 플래그가 true이면 BGM이므로 건너뛰기
             {
-                continue; // BGM 사운드면 건너뛰기
+                continue;
             }
 
             if (s.source != null)
             {
-                s.source.mute = !IsSfxEnabled;
-                if (!IsSfxEnabled && s.source.isPlaying && !s.loop) // SFX가 꺼졌고, 재생 중인 일회성 사운드면 중지
+                s.source.mute = !IsSfxEnabled; // SFX가 아니면 SFX 설정에 따라 음소거
+                if (!IsSfxEnabled && s.source.isPlaying && !s.loop)
                 {
-                    // s.source.Stop(); // 일회성 사운드 즉시 중지 (선택적)
+                    // s.source.Stop(); // 일회성 효과음 즉시 중지 (선택적)
                 }
             }
         }
@@ -305,6 +333,8 @@ public class AudioManager : MonoBehaviour
             textSource.Stop();
         }
     }
+
+    
     
     
 }

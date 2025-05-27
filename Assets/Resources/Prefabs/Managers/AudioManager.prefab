@@ -51,24 +51,70 @@ MonoBehaviour:
     volume: 1
     pitch: 1
     loop: 0
+    isBgm: 0
     source: {fileID: 0}
   - name: Text
     clip: {fileID: 8300000, guid: 6739daf52b0cf6d4eb3c8183b29009d2, type: 3}
     volume: 1
     pitch: 1
     loop: 0
+    isBgm: 0
     source: {fileID: 0}
   - name: BubbleOpen
     clip: {fileID: 8300000, guid: b1ad540bb1bb49a4490b2e24b9313f38, type: 3}
     volume: 1
     pitch: 1
     loop: 0
+    isBgm: 0
     source: {fileID: 0}
   - name: CustomerArrival
     clip: {fileID: 8300000, guid: 7c726b9b4c49b3e439ff5b1a198f7476, type: 3}
     volume: 1
     pitch: 1
     loop: 0
+    isBgm: 0
+    source: {fileID: 0}
+  - name: Boiling
+    clip: {fileID: 8300000, guid: 3e516e8d097be2e4992e4bd685d0412f, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    isBgm: 0
+    source: {fileID: 0}
+  - name: MainGameBGM
+    clip: {fileID: 8300000, guid: aa90cee3ede4dd04090d8d44ab4eaa62, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    isBgm: 1
+    source: {fileID: 0}
+  - name: MainTitleBGM
+    clip: {fileID: 8300000, guid: 477a23c5ee59f1c4180c2608904bc6bf, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    isBgm: 1
+    source: {fileID: 0}
+  - name: FruitCrack
+    clip: {fileID: 8300000, guid: dd4977fd40218134db2692497ace2a35, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    isBgm: 0
+    source: {fileID: 0}
+  - name: CameraClick
+    clip: {fileID: 8300000, guid: dcf4d15c2a8715740a52797c21439cc4, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    isBgm: 0
+    source: {fileID: 0}
+  - name: TanghuluSlide
+    clip: {fileID: 8300000, guid: 831acea4c65d0bc4887194c5c0426d79, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    isBgm: 0
     source: {fileID: 0}
   bgmAudioSource: {fileID: 0}
   bgmSoundName: 

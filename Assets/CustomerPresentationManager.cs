@@ -313,9 +313,9 @@ public class CustomerPresentationManager : MonoBehaviour
     {
         isTextTyping = true;
         textComponent.text = "";
-        // AudioSource textSfxSource = null; // 사운드 준비 안됨
-        // Sound s = AudioManager.Instance?.sounds.Find(sound => sound.name == dialogueTextSound);
-        // if (s?.source != null) { /* 사운드 재생 로직 */ }
+        AudioSource textSfxSource = null; // 사운드 준비 안됨
+        Sound s = AudioManager.Instance?.sounds.Find(sound => sound.name == dialogueTextSound);
+        if (s?.source != null)
 
         foreach (char c in message)
         {
@@ -323,7 +323,7 @@ public class CustomerPresentationManager : MonoBehaviour
             textComponent.text += c;
             yield return new WaitForSeconds(0.03f);
         }
-        // if (textSfxSource != null && textSfxSource.isPlaying) { /* 사운드 중지 로직 */ }
+        if (textSfxSource != null && textSfxSource.isPlaying) { /* 사운드 중지 로직 */ }
         isTextTyping = false;
     }
 
@@ -336,7 +336,7 @@ public class CustomerPresentationManager : MonoBehaviour
             {
                  currentSpeechText.text = activeDialogueSequence[currentDialogueIndex].line; 
             }
-            // AudioManager.Instance?.StopTextSound(); // 사운드 준비 안됨
+            AudioManager.Instance?.StopTextSound(); // 사운드 준비 안됨
         }
         else 
         {

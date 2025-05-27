@@ -64,6 +64,7 @@ public class SkewerManager : MonoBehaviour
             return;
         }
 
+
         // CustomerOrderManager나 현재 주문 데이터가 없으면 과일 처리하지 않음 (위의 게임 상태 체크로 대부분 커버될 수 있음)
         if (orderManager == null || orderManager.CurrentOrderData == null)
         {
@@ -96,6 +97,12 @@ public class SkewerManager : MonoBehaviour
 
         collectedFruitsOnSkewer.Add(fruitType);
         attachedFruitObjects.Add(fruitObject);
+
+        // 과일이 꽂힐 때 효과음 재생
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySound("FruitCrack"); // PlaySound로 변경 (AudioManager에 맞게 메서드명 수정)
+        }
 
         // 과일의 원래 월드 스케일 저장 (부모로 설정하기 전)
         Vector3 originalWorldScale = fruitObject.transform.lossyScale;

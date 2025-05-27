@@ -31,6 +31,10 @@ public class SugarCoatingManager : MonoBehaviour
     [Header("꼬치 시각적 설정")]
     public float targetVisualHeightInWorldUnits = 5.0f;
 
+    
+    [Header("Sounds - AudioManager에 등록된 이름")]
+    public string sugarcoating = "sugarcoating";      // 각 타이밍 성공 시
+
     private int currentRubs = 0;
     private bool isCoatingPhase = false;
     private bool coatingComplete = false;
