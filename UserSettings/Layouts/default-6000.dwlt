@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: 8
-    y: 51
+    x: -90
+    y: 335
     width: 1904
     height: 973
   m_ShowMode: 4
@@ -43,8 +43,8 @@ MonoBehaviour:
     y: 0
     width: 476
     height: 917
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 276, y: 76}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
@@ -74,7 +74,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 81
+  controlID: 42
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -338,8 +338,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Project\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 8
-    y: 714
+    x: 0
+    y: 651
     width: 1427
     height: 264
   m_SerializedDataModeController:
@@ -381,9 +381,9 @@ MonoBehaviour:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 94b70000
-    m_LastClickedID: 46996
-    m_ExpandedIDs: 0000000094b7000096b7000098b700009ab7000088ba000022bb000000ca9a3bffffff7f
+    m_SelectedIDs: aeb70000
+    m_LastClickedID: 47022
+    m_ExpandedIDs: 00000000aeb70000b0b70000b2b70000b4b70000b6b7000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -412,7 +412,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000094b7000096b7000098b700009ab70000
+    m_ExpandedIDs: 00000000aeb70000b0b70000b2b70000b4b70000b6b70000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -440,7 +440,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000b0b400008efb00001a14010000b0000014c100002cb2000088bd000026b3000036b40000aeb800006eb4000076b4000058b70000f2bc00004ab8000010b800006eb8000000b9000012b900000000000040b900004abe00004ebe000052b80000a8c500000ecf00001ab7000028e20000feb4000056b9000046ba00005ab900001ab500000eb500003c0d0100840d01008a0d0100f0270100ea27010094dc0000501601002cff000052d0000050d000008e6501003af8000034f8000040f80000deb900006eb60000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -491,8 +491,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1436
-    y: 87
+    x: 1429
+    y: 24
     width: 475
     height: 891
   m_SerializedDataModeController:
@@ -540,8 +540,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Hierarchy\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 8
-    y: 87
+    x: 0
+    y: 24
     width: 349
     height: 601
   m_SerializedDataModeController:
@@ -560,21 +560,21 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: f84dffff0a4effff0451ffff0a51ffff1651ffff2051ffff3251ffff4651ffff6a51ffffba51ffffb465ffffc665ffffc268ffffcc68ffffdc68ffffea68ffff0069ffff1869ffff3e69ffff8e69ffff3a81ffff0cf5ffff3af7ffff04fbfffff4ffffff22b9000038b9000054b900007cb9000098b90000beb90000e4b900000cba00003eba0000
+      m_ExpandedIDs: 04fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: StageDataManager
-        m_OriginalName: StageDataManager
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: -31250
+        m_UserData: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 4}
@@ -606,8 +606,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 358
-    y: 87
+    x: 351
+    y: 24
     width: 1076
     height: 601
   m_SerializedDataModeController:
@@ -1152,7 +1152,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: -0.06296763, y: 0.63552415, z: 30.073845}
     speed: 2
-    m_Value: {x: -0.28707266, y: 0.4412021, z: 35.604263}
+    m_Value: {x: -0.06296763, y: 0.63552415, z: 30.073845}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1204,7 +1204,7 @@ MonoBehaviour:
   m_Size:
     m_Target: 6.071939
     speed: 2
-    m_Value: 6.3580513
+    m_Value: 6.071939
   m_Ortho:
     m_Target: 1
     speed: 2
