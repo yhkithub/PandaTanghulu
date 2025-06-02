@@ -659,7 +659,7 @@ public class TitleManager : MonoBehaviour
                     if (stageSpecificData != null && stageSpecificData.customerSprite != null)
                     {
                         lockIconImage.sprite = stageSpecificData.customerSprite;
-                        lockIconImage.color = new Color(0, 0, 0, 1f); // 실루엣
+                        lockIconImage.color = new Color(0, 0, 0, 1); // 실루엣
                         lockIconImage.gameObject.SetActive(true);
                     }
                     else
@@ -668,7 +668,7 @@ public class TitleManager : MonoBehaviour
                     }
                 }
 
-                if (buttonBackgroundImage != null) buttonBackgroundImage.color = new Color(0.4f, 0.4f, 0.4f, 1f);
+                if (buttonBackgroundImage != null) buttonBackgroundImage.color = new Color(0.4f, 0.4f, 0.4f, 1);
                 stageButtonInstance.interactable = false;
             }
         }

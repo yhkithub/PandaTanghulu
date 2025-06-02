@@ -12,16 +12,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd6ecd571eea26c4cb4fbe964bebecad, type: 3}
   m_Name: 8GG_data 5
   m_EditorClassIdentifier: 
-  customerName: "\uBA54\uBA54"
+  customerName: "\uAFC0\uAFC0"
   customerSprite: {fileID: 21300000, guid: d70474c10fa465f4fba2d7e0fd026344, type: 3}
   smilingCustomerSprite: {fileID: 21300000, guid: a8992e8485c34d0488bf442bc9531960, type: 3}
-  skewerOrder: []
-  toppingItem: 11
+  skewerOrder:
+  - fruit: 1
+  - fruit: 3
+  - fruit: 4
+  - fruit: 5
+  - fruit: 7
+  - fruit: 6
+  - fruit: 8
+  - fruit: 9
+  toppingItem: 0
   toppingItemSpriteForHint: {fileID: 21300000, guid: 87147efa6ac70f2428b7224c423bf7b4, type: 3}
   completedSkewerSprite: {fileID: 21300000, guid: 19809cddc107d324381d6fa51868436a, type: 3}
   sugarCoatedSkewerSprite: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
   skewerWithToppingSprite: {fileID: 21300000, guid: eaa562561aa325847a8f358f0f935a4e, type: 3}
   dialogueSequence:
   - speaker: 0
-    line: 
-  presentationDialogueSequence: []
+    line: "\uD478\uD478, \uC548\uB155. \uC9C4\uC9DC \uC5F4\uC5C8\uB124. \uC18C\uBB38
+      \uB4E3\uACE0 \uC124\uB9C8 \uD588\uB294\uB370\u2026 \uC624\uB79C\uB9CC\uC774\uC9C0?
+      \uBB34\uC2A8 \uAC00\uAC8C\uC57C?"
+  - speaker: 1
+    line: "\uC5B4, \uC624\uB79C\uB9CC\u2026 (\uC598\uB294 \uC548 \uC62C \uC904 \uC54C\uC558\uB294\uB370.)
+      \uBCF4\uB2E4\uC2DC\uD53C \uADF8\uB0E5 \uD0D5\uD6C4\uB8E8 \uAC00\uAC8C\uC9C0."
+  - speaker: 0
+    line: "\uD765, \uADF8\uB798, \uADF8\uB0E5. \uADF8\uB54C\uB3C4 \uADF8\uB7AC\uC9C0,
+      \uC6B0\uB9AC\uB294 \uADF8\uB0E5 \uC0AC\uADC0\uB294 \uC0AC\uC774\uC600\uB2E4\uACE0.
+      \uC9C4\uC9DC \uBCC4\uB85C\uC600\uC5B4, \uADF8 \uB9D0. \uBB3C\uB860 \uC624\uB298
+      \uCC3E\uC544 \uC628 \uAC74 \uB124\uAC00 \uB9CC\uB4E0 \uD0D5\uD6C4\uB8E8 \uB9DB\uC774
+      \uAD81\uAE08\uD574\uC11C\uC600\uC9C0\uB9CC. \uBBF8\uB828\uC740 \uB0A8\uC544\uC788\uC9C0
+      \uC54A\uC73C\uB2C8\uAE4C!"
+  - speaker: 1
+    line: "\uC751, \uC8FC\uBB38\uD560\uB798?"
+  - speaker: 0
+    line: "\uD574\uC57C\uC9C0, \uADF8\uB7FC. \uB09C \uB9D0\uC774\uC9C0, \uC788\uB294
+      \uACFC\uC77C\uC744 \uC804\uBD80 \uAF42\uC544\uC11C \uB9CC\uB4E4\uC5B4\uC918.
+      \uADE4\uBD80\uD130 \uD0A4\uC704, \uD30C\uC778\uC560\uD50C, \uB538\uAE30, \uC0E4\uC778\uBA38\uC2A4\uCF13,
+      \uD1A0\uB9C8\uD1A0, \uCCB4\uB9AC, \uBE14\uB8E8\uBCA0\uB9AC\uAE4C\uC9C0! \uBE60\uC9D0\uC5C6\uC774
+      \uC804\uBD80. \uC65C\uB0D0\uD558\uBA74, \uC624\uB298 \uAE30\uBD84\uC774 \uBCF5\uC7A1\uD558\uAC70\uB4E0.
+      \uB9DB\uC788\uB294 \uAC78 \uB2E4 \uBA39\uC5B4\uC57C\uACA0\uC5B4."
+  - speaker: 1
+    line: "\u2026\u2026\uB9CE\uC774\uB3C4 \uC2DC\uD0A4\uB124. \uC774\uB7F0 \uC2A4\uD0C0\uC77C
+      \uC544\uB2C8\uC9C0 \uC54A\uC558\uC5B4?"
+  - speaker: 0
+    line: "\uADF8\uB798, \uB124\uAC00 \uC544\uB294 \uB0B4 \uC2A4\uD0C0\uC77C\uC740
+      \uB538\uAE30 \uD558\uB098\uB9CC \uBA39\uB294 \uBAA8\uC2B5\uC774\uACA0\uC9C0.
+      \uD558\uC9C0\uB9CC \uB108\uC640 \uD5E4\uC5B4\uC9C0\uACE0 \uB098\uC11C \uB098\uB3C4
+      \uB9CE\uC774 \uBCC0\uD588\uAC70\uB4E0. \uADF8 \uC0AC\uC774\uC5D0 \uB124\uAC00
+      \uC774\uB807\uAC8C \uAC00\uAC8C\uB97C \uC5F4\uACE0 \uADF8 \uD1A0\uD1A0\uAE4C\uC9C0
+      \uB2E4\uB140\uAC08\uB9CC\uD07C. \uC5B4\uCA0C\uB4E0, \uC8FC\uBB38\uC740 \uBC1B\uC558\uC9C0?
+      \uC5B4\uC11C \uB9CC\uB4E4\uC5B4\uC918. \uB098\uB3C4 \uBC14\uC05C \uBAB8\uC774\uAC70\uB4E0."
+  presentationDialogueSequence:
+  - speaker: 0
+    line: "\u2026. \uC0DD\uAC01\uBCF4\uB2E8 \uB9DB\uC788\uB124. \uC5EC\uB7EC \uACFC\uC77C\uC774
+      \uC2F8\uC6B0\uC9C0 \uC54A\uACE0 \uC11C\uB85C \uC870\uD654\uB86D\uAC8C\u2026
+      \uC5B4\uC6B8\uB9AC\uB294 \uB9DB\uC774\uC57C. \uB9DB\uC788\uB294 \uAC8C \uB354
+      \uC584\uBC09\uB124. \uB9DB\uC5C6\uC73C\uBA74 \uB098\uC05C \uB9D0\uC744 \uAC00\uB4DD
+      \uD574\uC8FC\uB824\uACE0 \uD588\uB294\uB370."
+  - speaker: 0
+    line: " \u2026 \u2026 \u2026."
+  - speaker: 0
+    line: "\uC6B0\uB9AC\uB3C4\u2026 \uC774\uB807\uAC8C \uC5B4\uC6B8\uB9B4 \uC218
+      \uC788\uC5C8\uC744\uAE4C?"
+  - speaker: 0
+    line: "\u2026 \u2026\uB18D\uB2F4\uC774\uC57C. \uC774\uC820 \uB2E4 \uB05D\uB0AC\uC73C\uB2C8\uAE4C.
+      \uB09C \uADF8\uB0E5, \uB124\uAC00 \uB9CC\uB4E0 \uD0D5\uD6C4\uB8E8 \uD558\uB098\uB85C
+      \uB0B4\uAC00 \uBB34\uC2A8 \uAE30\uBD84\uC744 \uB290\uAF08\uB294\uC9C0 \uC7A0\uAE50
+      \uC78A\uACE0 \uC2F6\uC5C8\uC744 \uBFD0\uC774\uB2C8\uAE4C!"
+  - speaker: 1
+    line: "\uC751, \uBBFF\uC744\uAC8C. \uC798 \uBA39\uC5C8\uC73C\uBA74 \uB410\uC5B4."
+  - speaker: 0
+    line: "\uADF8\uB798. \uADF8\uB7FC \uB09C \uAC08\uAC8C! \uB610 \uC624\uC9C4 \uC54A\uC744
+      \uAC70\uC57C."
+  - speaker: 0
+    line: "\u2026 \u2026."
+  - speaker: 0
+    line: "\u2026\uC544\uB9C8\uB3C4."

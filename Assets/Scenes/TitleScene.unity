@@ -2118,8 +2118,8 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 260, y: 320}
-  m_Spacing: {x: 35, y: 100}
-  m_Constraint: 1
+  m_Spacing: {x: 38, y: 40}
+  m_Constraint: 2
   m_ConstraintCount: 2
 --- !u!1 &753721832
 GameObject:
@@ -3098,6 +3098,12 @@ MonoBehaviour:
   customerOrderDataListForTitle:
   - {fileID: 11400000, guid: 51355b39dedd2f14f862940f6745987b, type: 2}
   - {fileID: 11400000, guid: d0b27841ecf79f24097e3487652b9c04, type: 2}
+  - {fileID: 11400000, guid: c16e55a1e6c1b7a458ff975880c4c013, type: 2}
+  - {fileID: 11400000, guid: 388f582f335d9974bb27e0bfc00a1fcb, type: 2}
+  - {fileID: 11400000, guid: c7c33e5b9f2d18f4a900d10512a7bde2, type: 2}
+  - {fileID: 11400000, guid: bb96010e5cc7d654a8d2d9ff1e745631, type: 2}
+  - {fileID: 11400000, guid: fc2188109aead52499e3c7538f18f897, type: 2}
+  - {fileID: 11400000, guid: 2219d9e00f89d314c8d6b5e506bd43b4, type: 2}
   confirmNewGamePanel_UI: {fileID: 1116195343}
 --- !u!1 &1228914018
 GameObject:

@@ -5,7 +5,6 @@ public enum FruitType
 {
     None,
     귤,
-    바나나,
     키위,
     파인애플,
     딸기,
@@ -13,6 +12,7 @@ public enum FruitType
     샤인머스켓,
     체리,
     블루베리,
+    바나나,
     뼈다귀쿠키,
     풀,
     당근,
