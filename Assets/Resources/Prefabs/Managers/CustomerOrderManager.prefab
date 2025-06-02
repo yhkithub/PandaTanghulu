@@ -55,12 +55,18 @@ MonoBehaviour:
   allCustomerOrders:
   - {fileID: 11400000, guid: 51355b39dedd2f14f862940f6745987b, type: 2}
   - {fileID: 11400000, guid: d0b27841ecf79f24097e3487652b9c04, type: 2}
+  - {fileID: 11400000, guid: c16e55a1e6c1b7a458ff975880c4c013, type: 2}
+  - {fileID: 11400000, guid: 388f582f335d9974bb27e0bfc00a1fcb, type: 2}
+  - {fileID: 11400000, guid: c7c33e5b9f2d18f4a900d10512a7bde2, type: 2}
+  - {fileID: 11400000, guid: bb96010e5cc7d654a8d2d9ff1e745631, type: 2}
+  - {fileID: 11400000, guid: fc2188109aead52499e3c7538f18f897, type: 2}
+  - {fileID: 11400000, guid: 2219d9e00f89d314c8d6b5e506bd43b4, type: 2}
   fruitSpritesForOrderUI:
   - fruitType: 1
-    sprite: {fileID: 1145269190016207877, guid: f66abd0e3c9e90847a798a2af4db4e32, type: 3}
+    sprite: {fileID: 21300000, guid: f66abd0e3c9e90847a798a2af4db4e32, type: 3}
   - fruitType: 9
     sprite: {fileID: 21300000, guid: 0456dd12df7a8374280d3034d9f29b69, type: 3}
   - fruitType: 5
     sprite: {fileID: 21300000, guid: 2c8c2b84c9b7c0e4ebffdce67988dafc, type: 3}
   - fruitType: 3
-    sprite: {fileID: -7897708528983486298, guid: 67864e0660da094419ba04bd3c040964, type: 3}
+    sprite: {fileID: 21300000, guid: 67864e0660da094419ba04bd3c040964, type: 3}
