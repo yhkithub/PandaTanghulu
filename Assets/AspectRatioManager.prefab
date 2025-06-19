@@ -55,7 +55,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6007149197954390064}
   - component: {fileID: 6725097811555080062}
-  - component: {fileID: 2877278242555801604}
   - component: {fileID: 5769920119265666588}
   m_Layer: 0
   m_Name: LetterboxCamera
@@ -130,14 +129,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &2877278242555801604
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5825591041678652267}
-  m_Enabled: 1
 --- !u!114 &5769920119265666588
 MonoBehaviour:
   m_ObjectHideFlags: 0

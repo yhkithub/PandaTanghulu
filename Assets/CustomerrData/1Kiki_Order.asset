@@ -19,8 +19,8 @@ MonoBehaviour:
   - fruit: 1
   - fruit: 1
   - fruit: 1
-  toppingItem: 2
-  toppingItemSpriteForHint: {fileID: 0}
+  toppingItem: 9
+  toppingItemSpriteForHint: {fileID: 21300000, guid: 87147efa6ac70f2428b7224c423bf7b4, type: 3}
   completedSkewerSprite: {fileID: 21300000, guid: 19809cddc107d324381d6fa51868436a, type: 3}
   sugarCoatedSkewerSprite: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
   skewerWithToppingSprite: {fileID: 21300000, guid: eaa562561aa325847a8f358f0f935a4e, type: 3}

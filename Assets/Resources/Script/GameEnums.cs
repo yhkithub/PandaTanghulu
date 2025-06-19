@@ -41,7 +41,11 @@ public enum MiniGameStep
 [System.Serializable]
 public class DialogueEntry
 {
-    public enum Speaker { Kiki, Pupu } // 필요에 따라 다른 화자 추가
+    public enum Speaker
+    {
+        customer, // 'Kiki'를 'Customer'로 변경
+        Pupu
+    }
     public Speaker speaker;
     [TextArea(3, 10)] public string line;
 }

@@ -206,7 +206,6 @@ public class CustomerPresentationManager : MonoBehaviour
         }
 
         currentDialogueIndex = 0;
-        isDialoguePlaying = true;
         if (playDialogueCoroutine != null) StopCoroutine(playDialogueCoroutine);
         playDialogueCoroutine = StartCoroutine(PlayDialogueInternal());
     }
@@ -215,15 +214,13 @@ public class CustomerPresentationManager : MonoBehaviour
     {
         List<DialogueEntry> defaultDialogues = new List<DialogueEntry>();
         string customerName = currentOrder?.customerName ?? "손님";
-        DialogueEntry.Speaker speaker = (customerName == "끼끼" || customerName == "키키") ? DialogueEntry.Speaker.Kiki : DialogueEntry.Speaker.Pupu;
-        defaultDialogues.Add(new DialogueEntry { speaker = speaker, line = "정말 맛있어 보여! 고마워!" });
+        defaultDialogues.Add(new DialogueEntry { speaker = DialogueEntry.Speaker.customer, line = "정말 맛있어 보여! 고마워!" });
         return defaultDialogues;
     }
 
     IEnumerator PlayDialogueInternal()
     {
         HideAllDialogueBubbles();
-        isDialoguePlaying = true;
 
         while (currentDialogueIndex < activeDialogueSequence.Count)
         {
@@ -234,12 +231,12 @@ public class CustomerPresentationManager : MonoBehaviour
 
             if (currentBubbleGroup != null && currentBubbleGroup.gameObject.activeSelf)
             {
-                bool shouldHideOldBubble = (entry.speaker == DialogueEntry.Speaker.Kiki && currentBubbleGroup == pupuSpeechBubbleGroup) ||
-                                           (entry.speaker == DialogueEntry.Speaker.Pupu && currentBubbleGroup == kikiSpeechBubbleGroup);
+                bool shouldHideOldBubble = (entry.speaker == DialogueEntry.Speaker.customer && currentBubbleGroup == pupuSpeechBubbleGroup) ||
+                           (entry.speaker == DialogueEntry.Speaker.Pupu && currentBubbleGroup == kikiSpeechBubbleGroup);
                 if (shouldHideOldBubble) yield return StartCoroutine(FadeOutBubble(currentBubbleGroup));
             }
 
-            if (entry.speaker == DialogueEntry.Speaker.Kiki)
+            if (entry.speaker == DialogueEntry.Speaker.customer)
             {
                 targetBubbleGroup = kikiSpeechBubbleGroup; targetTextComponent = kikiSpeechText; targetNextButton = kikiNextButton;
             }
@@ -266,10 +263,6 @@ public class CustomerPresentationManager : MonoBehaviour
                 else if (currentNextButton != null && currentNextButton.gameObject.activeSelf) 
                 {
                     yield return null;
-                }
-                else 
-                {
-                    waitingForUserInteraction = false;
                 }
             }
         }
