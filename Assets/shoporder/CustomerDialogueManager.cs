@@ -5,13 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 
+
 public class CustomerDialogueManager : MonoBehaviour
 {
     public static CustomerDialogueManager Instance { get; private set; }
 
     [Header("씬 전환 설정")]
     public string fruitCatchingSceneName = "FruitCatchingGameScene";
-    
+
     [Header("손님 이미지 UI")]
     public Image customerImage;
 
@@ -44,7 +45,7 @@ public class CustomerDialogueManager : MonoBehaviour
     void Start()
     {
         InitializeButtonsAndBubbles();
-        
+
         currentCustomerData = CustomerOrderManager.Instance.CurrentOrderData;
 
         if (currentCustomerData != null)
@@ -92,7 +93,7 @@ public class CustomerDialogueManager : MonoBehaviour
         HideAllBubblesAndButtons();
 
         DialogueEntry entry = activeDialogueSequence[currentDialogueIndex];
-        
+
         if (entry.speaker == DialogueEntry.Speaker.customer)
         {
             yield return ShowSpeechBubbleAndText(kikiSpeechBubbleGroup, kikiSpeechText, entry.line, kikiNextButton);
@@ -102,7 +103,7 @@ public class CustomerDialogueManager : MonoBehaviour
             yield return ShowSpeechBubbleAndText(pupuSpeechBubbleGroup, pupuDialogueText, entry.line, pupuNextButton);
         }
     }
-    
+
     IEnumerator ShowSpeechBubbleAndText(CanvasGroup bubbleGroup, TextMeshProUGUI textComponent, string message, Button nextBtn)
     {
         if (bubbleGroup == null || textComponent == null) yield break;
@@ -122,7 +123,7 @@ public class CustomerDialogueManager : MonoBehaviour
     {
         isTextTyping = true;
         textComponent.text = "";
-        
+
         Sound s = AudioManager.Instance?.sounds.Find(sound => sound.name == textSoundName);
         if (s?.source != null) s.source.Play();
 
@@ -131,9 +132,9 @@ public class CustomerDialogueManager : MonoBehaviour
             textComponent.text += message[textComponent.text.Length];
             yield return new WaitForSeconds(0.02f);
         }
-        
+
         if (s?.source != null && s.source.isPlaying) s.source.Stop();
-        
+
         textComponent.text = message;
         isTextTyping = false;
     }
@@ -147,7 +148,7 @@ public class CustomerDialogueManager : MonoBehaviour
             isTextTyping = false;
             return;
         }
-        
+
         currentDialogueIndex++;
         if (currentDialogueIndex < activeDialogueSequence.Count)
         {
@@ -185,5 +186,12 @@ public class CustomerDialogueManager : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = 1f;
+    }
+
+    public void OnSkipButtonClicked()
+    {
+        // 이미 구현된 "다음 씬으로 넘어가기" 함수를 바로 호출합니다.
+        Debug.Log("대화를 스킵하고 게임 씬으로 바로 이동합니다.");
+        ProceedToGame();
     }
 }

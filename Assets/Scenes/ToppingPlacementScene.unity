@@ -672,8 +672,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC2DC\uC791\n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f8661c6f93ddff64fb3a2985c20bfa38, type: 2}
-  m_sharedMaterial: {fileID: 5579108726872724804, guid: f8661c6f93ddff64fb3a2985c20bfa38, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2c4b14c21f2ba7e4984aeaaa76232647, type: 2}
+  m_sharedMaterial: {fileID: -1490565178851746168, guid: 2c4b14c21f2ba7e4984aeaaa76232647, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -980,11 +980,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc7eb9844ab77d748800053b503451ee, type: 3}
---- !u!20 &870619984 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 6725097811555080062, guid: dc7eb9844ab77d748800053b503451ee, type: 3}
-  m_PrefabInstance: {fileID: 870619983}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &938767820
 GameObject:
   m_ObjectHideFlags: 0
@@ -1424,8 +1419,8 @@ MonoBehaviour:
   m_text: "\uC190\uB2D8\uC774 \uC88B\uC544\uD560 \uC544\uC774\uD15C\uC744 \uAF42\uC544\uC11C
     \uC644\uC131\uC2DC\uCF1C\uBCF4\uC138\uC694!"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f8661c6f93ddff64fb3a2985c20bfa38, type: 2}
-  m_sharedMaterial: {fileID: 5579108726872724804, guid: f8661c6f93ddff64fb3a2985c20bfa38, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2c4b14c21f2ba7e4984aeaaa76232647, type: 2}
+  m_sharedMaterial: {fileID: -1490565178851746168, guid: 2c4b14c21f2ba7e4984aeaaa76232647, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1789,8 +1784,7 @@ MonoBehaviour:
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
-  m_Cameras:
-  - {fileID: 870619984}
+  m_Cameras: []
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
@@ -2061,7 +2055,7 @@ MonoBehaviour:
   toppingItemPrefab: {fileID: 6859095463996844769, guid: 6c353ffa8ae9adc43804a76c1deca7c8, type: 3}
   skewerDropZoneTransform: {fileID: 1148622909}
   allAvailableToppings:
-  - toppingType: 2
+  - toppingType: 9
     toppingSprite: {fileID: 21300000, guid: 87147efa6ac70f2428b7224c423bf7b4, type: 3}
   - toppingType: 10
     toppingSprite: {fileID: 21300000, guid: 98f5a83c8af318a489812bc22fbb000d, type: 3}

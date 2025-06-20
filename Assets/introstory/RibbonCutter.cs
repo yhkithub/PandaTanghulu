@@ -1,55 +1,73 @@
-// RibbonCutter.cs
+// 🟩 수정 후 코드
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-[RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))]
+[RequireComponent(typeof(SpriteRenderer), typeof(Collider2D), typeof(AudioSource))]
 public class RibbonCutter : MonoBehaviour
 {
     public Sprite cutSprite;
     public float fadeDuration = 0.25f;
     public float delayAfterCut = 0.25f;
-    public AudioClip ribbonCutSound; // 리본 자르는 사운드 AudioClip 직접 참조
+    public AudioClip ribbonCutSound;
 
     private SpriteRenderer sr;
-    private bool isCut = false;
-    private Camera mainCamera;
     private Collider2D ribbonCollider;
-    private AudioSource audioSource; // RibbonCutter 자체의 AudioSource
+    private AudioSource audioSource;
+
+    private bool isCut = false;
+    private bool isDraggingRibbon = false; // 리본을 드래그 중인지 확인하는 플래그
+    private Vector2 dragStartPosition; // 드래그 시작 마우스 위치
+    private const float MIN_DRAG_DISTANCE_Y = 50f; // 리본을 자르기 위해 필요한 최소 Y축 이동 거리
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         ribbonCollider = GetComponent<Collider2D>();
-        mainCamera = Camera.main;
         audioSource = GetComponent<AudioSource>();
-
-        if (audioSource == null)
-        {
-            Debug.LogError("RibbonCutter Error: AudioSource 컴포넌트가 없습니다!", this.gameObject);
-            enabled = false; // AudioSource 없으면 스크립트 비활성화
-            return;
-        }
-
-        if (sr == null) { Debug.LogError("RibbonCutter Error: SpriteRenderer 없음!"); enabled = false; }
-        if (ribbonCollider == null) { Debug.LogError("RibbonCutter Error: Collider2D 없음!"); enabled = false; }
-        if (mainCamera == null) { Debug.LogError("RibbonCutter Error: MainCamera 없음!"); enabled = false; }
-        isCut = false;
+        // Camera.main은 성능상 Awake/Start에서 캐싱하는 것이 좋습니다.
     }
 
     void Update()
     {
-        if (isCut || mainCamera == null || !Input.GetMouseButton(0))
+        if (isCut) return;
+
+        // 1. 마우스 버튼을 처음 눌렀을 때
+        if (Input.GetMouseButtonDown(0))
         {
-            return;
+            // 마우스 위치에 있는 콜라이더 확인
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (hit.collider != null && hit.collider == ribbonCollider)
+            {
+                // 리본 위에서 클릭했으므로 드래그 시작
+                isDraggingRibbon = true;
+                dragStartPosition = Input.mousePosition;
+                Debug.Log("리본 드래그 시작");
+            }
         }
 
-        Vector2 mousePosWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.Raycast(mousePosWorld, Vector2.zero);
-
-        if (hit.collider != null && hit.collider == ribbonCollider)
+        // 2. 마우스 버튼을 누르고 있는 동안 (드래그 중)
+        if (isDraggingRibbon && Input.GetMouseButton(0))
         {
-            StartCuttingSequence();
+            float dragDistanceY = dragStartPosition.y - Input.mousePosition.y;
+
+            // 현재 마우스 위치가 시작 위치보다 일정 거리 이상 아래에 있다면
+            if (dragDistanceY > MIN_DRAG_DISTANCE_Y)
+            {
+                Debug.Log("리본 자르기 성공!");
+                StartCuttingSequence();
+                isDraggingRibbon = false; // 한 번만 실행되도록 플래그 초기화
+            }
+        }
+
+        // 3. 마우스 버튼에서 손을 떼면 드래그 상태 초기화
+        if (Input.GetMouseButtonUp(0))
+        {
+            if(isDraggingRibbon)
+            {
+                Debug.Log("리본 드래그 취소");
+                isDraggingRibbon = false;
+            }
         }
     }
 
@@ -57,12 +75,13 @@ public class RibbonCutter : MonoBehaviour
     {
         if (isCut) return;
         isCut = true;
-        Debug.Log("RibbonCutter (Raycast): 리본 자르기 시퀀스 시작.");
         StartCoroutine(CutRibbonSequence());
     }
 
     IEnumerator CutRibbonSequence()
     {
+        // (기존의 CutRibbonSequence 코드는 그대로 유지)
+        // ... 페이드 아웃, 사운드 재생, 스프라이트 교체, 씬 전환 로직 ...
         float timer = 0f;
         Color originalColor = sr.color;
 
@@ -74,50 +93,16 @@ public class RibbonCutter : MonoBehaviour
             yield return null;
         }
         sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-        Debug.Log("RibbonCutter: 페이드 아웃 완료.");
 
-        // ★★★ 리본 자르는 사운드 재생 로직 수정 ★★★
-        if (ribbonCutSound != null) // AudioClip이 할당되어 있는지 먼저 확인
+        if (ribbonCutSound != null && AudioManager.Instance != null && AudioManager.Instance.IsSfxEnabled)
         {
-            // AudioManager가 있고, SFX가 활성화되어 있을 때만 재생
-            if (AudioManager.Instance != null && AudioManager.Instance.IsSfxEnabled)
-            {
-                if (audioSource != null) // RibbonCutter의 AudioSource가 있는지 확인
-                {
-                    audioSource.PlayOneShot(ribbonCutSound);
-                    Debug.Log("RibbonCutter: 리본 자르는 사운드 재생 (SFX 활성화됨).");
-                }
-                else
-                {
-                    Debug.LogWarning("RibbonCutter Warning: 리본 사운드를 재생할 AudioSource가 없습니다 (RibbonCutter에).");
-                }
-            }
-            else if (AudioManager.Instance != null && !AudioManager.Instance.IsSfxEnabled)
-            {
-                Debug.Log("RibbonCutter: 리본 자르는 사운드 재생 안 함 (SFX 비활성화됨).");
-            }
-            else if (AudioManager.Instance == null)
-            {
-                Debug.LogWarning("RibbonCutter Warning: AudioManager 인스턴스를 찾을 수 없어 리본 사운드 설정을 확인할 수 없습니다.");
-                // AudioManager가 없는 경우, 그냥 재생하거나 재생하지 않는 정책을 정할 수 있습니다.
-                // if (audioSource != null) audioSource.PlayOneShot(ribbonCutSound); // 예: AudioManager 없으면 그냥 재생
-            }
-        }
-        else
-        {
-            Debug.LogWarning("RibbonCutter Warning: ribbonCutSound가 할당되지 않았습니다.");
+            audioSource.PlayOneShot(ribbonCutSound);
         }
 
         if (cutSprite != null)
         {
             sr.sprite = cutSprite;
-            Debug.Log("RibbonCutter: 스프라이트를 'cutSprite'으로 교체.");
-            sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f); // 알파값 원복
-            Debug.Log("RibbonCutter: 잘린 리본 즉시 표시.");
-        }
-        else
-        {
-            Debug.LogWarning("RibbonCutter Warning: 'cutSprite'가 할당되지 않음.", this.gameObject);
+            sr.color = new Color(originalColor.r, originalColor.g, originalColor.b, 1f);
         }
 
         if (delayAfterCut > 0)
@@ -130,7 +115,6 @@ public class RibbonCutter : MonoBehaviour
 
     void LoadShopScene()
     {
-        Debug.Log("RibbonCutter: 'ShopScene' 로드를 시도합니다.");
         SceneManager.LoadScene("ShopScene");
     }
 }
