@@ -65,7 +65,7 @@ public class SugarBoilingManager : MonoBehaviour
         {
             // 현재 재생 중인 BGM을 중지하려면
             // AudioManager.Instance.StopBackgroundMusic();
-            AudioManager.Instance.PlayBgm("MainGameBGM"); // "ShopBGM"으로 교체
+            // AudioManager.Instance.PlayBgm("MainGameBGM"); // "ShopBGM"으로 교체
         }
 
         if (clickButton != null)

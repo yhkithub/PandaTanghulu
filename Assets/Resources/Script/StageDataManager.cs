@@ -77,4 +77,18 @@ public class StageDataManager : MonoBehaviour
         // 남은 하트 수도 초기화 (HeartManager에서 처리하거나 여기서 PlayerPrefs로 직접)
         // PlayerPrefs.DeleteKey("CurrentHearts"); // 예시
     }
+
+    public bool IsGameFullyCleared()
+    {
+        for (int i = 0; i < totalStages; i++)
+        {
+            if (!IsStageCleared(i))
+            {
+                // 하나라도 클리어하지 않은 스테이지가 있다면 false 반환
+                return false;
+            }
+        }
+        // 모든 스테이지를 클리어했다면 true 반환
+        return true;
+    }
 }

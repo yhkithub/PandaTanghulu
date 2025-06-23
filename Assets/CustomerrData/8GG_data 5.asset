@@ -26,9 +26,9 @@ MonoBehaviour:
   - fruit: 9
   toppingItem: 0
   toppingItemSpriteForHint: {fileID: 21300000, guid: 87147efa6ac70f2428b7224c423bf7b4, type: 3}
-  completedSkewerSprite: {fileID: 21300000, guid: 19809cddc107d324381d6fa51868436a, type: 3}
-  sugarCoatedSkewerSprite: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
-  skewerWithToppingSprite: {fileID: 21300000, guid: eaa562561aa325847a8f358f0f935a4e, type: 3}
+  completedSkewerSprite: {fileID: 21300000, guid: c0caafa061e17a24a90e152af7de0f40, type: 3}
+  sugarCoatedSkewerSprite: {fileID: 21300000, guid: a25101671c9606c4f8f25a07c6129419, type: 3}
+  skewerWithToppingSprite: {fileID: 21300000, guid: a25101671c9606c4f8f25a07c6129419, type: 3}
   dialogueSequence:
   - speaker: 0
     line: "\uD478\uD478, \uC548\uB155. \uC9C4\uC9DC \uC5F4\uC5C8\uB124. \uC18C\uBB38

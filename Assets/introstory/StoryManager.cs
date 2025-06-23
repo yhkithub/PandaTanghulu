@@ -61,9 +61,12 @@ public class StoryManager : MonoBehaviour
         currentStep = 0;
         ShowStep(currentStep);
 
-        if (nextButton != null && storySteps.Length > 1) {
+        if (nextButton != null && storySteps.Length > 1)
+        {
             nextButton.SetActive(true);
-        } else if (nextButton != null) {
+        }
+        else if (nextButton != null)
+        {
             nextButton.SetActive(false);
         }
     }
@@ -118,13 +121,16 @@ public class StoryManager : MonoBehaviour
         StoryStep step = storySteps[index];
 
         if (storyText != null) { storyText.text = step.text; }
-        if (backgroundRenderer != null) {
-            if (step.backgroundImage != null) {
+        if (backgroundRenderer != null)
+        {
+            if (step.backgroundImage != null)
+            {
                 backgroundRenderer.sprite = step.backgroundImage;
                 Debug.Log($"StoryManager: 배경 이미지를 '{step.backgroundImage.name}'으로 변경.");
                 if (backgroundScaler != null) { backgroundScaler.ScaleBackground(); }
                 else { Debug.LogWarning("StoryManager Warning: BackgroundScaler 참조가 없어 스케일 재조정을 호출할 수 없습니다.", this.gameObject); }
-            } else { Debug.LogWarning($"StoryManager Warning: 스텝 {index}의 배경 이미지가 null입니다."); }
+            }
+            else { Debug.LogWarning($"StoryManager Warning: 스텝 {index}의 배경 이미지가 null입니다."); }
         }
 
         // ★★★ 장면 사운드(step.soundEffect) 재생 로직 수정 ★★★
@@ -140,7 +146,7 @@ public class StoryManager : MonoBehaviour
                 }
                 else
                 {
-                     Debug.LogWarning($"StoryManager Warning: 스텝 {index} 사운드를 재생할 AudioSource가 없습니다 (StoryManager에).");
+                    Debug.LogWarning($"StoryManager Warning: 스텝 {index} 사운드를 재생할 AudioSource가 없습니다 (StoryManager에).");
                 }
             }
             else if (AudioManager.Instance != null && !AudioManager.Instance.IsSfxEnabled)
@@ -149,13 +155,13 @@ public class StoryManager : MonoBehaviour
             }
             else if (AudioManager.Instance == null)
             {
-                 Debug.LogWarning($"StoryManager Warning: AudioManager 인스턴스를 찾을 수 없어 스텝 {index} 사운드 설정을 확인할 수 없습니다.");
+                Debug.LogWarning($"StoryManager Warning: AudioManager 인스턴스를 찾을 수 없어 스텝 {index} 사운드 설정을 확인할 수 없습니다.");
                 // if (audioSource != null) audioSource.PlayOneShot(step.soundEffect); // 예: AudioManager 없으면 그냥 재생
             }
         }
 
 
-        // ★★★ 마지막 스텝인지 확인하고 리본/트레일 활성화 (이전과 동일) ★★★
+        // 마지막 스텝인지 확인하고 리본/트레일 활성화
         if (index == storySteps.Length - 1)
         {
             Debug.Log("StoryManager: 마지막 스텝 표시 완료. 리본 커팅 단계 진입.");
@@ -178,10 +184,16 @@ public class StoryManager : MonoBehaviour
         }
         else
         {
-             if (nextButton != null && !nextButton.activeSelf)
-             {
-                  nextButton.SetActive(true);
-             }
+            if (nextButton != null && !nextButton.activeSelf)
+            {
+                nextButton.SetActive(true);
+            }
         }
+    }
+    public void OnSkipButtonClicked()
+    {
+        Debug.Log("스토리 씬 스킵! 상점 씬으로 이동합니다.");
+        // 상점 씬으로 즉시 이동
+        SceneManager.LoadScene("ShopScene");
     }
 }

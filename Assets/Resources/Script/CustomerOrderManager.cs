@@ -23,6 +23,11 @@ public class CustomerOrderManager : MonoBehaviour
     public string customerPresentationSceneName = "CustomerPresentationScene";
     public string fruitCatchingSceneName = "FruitCatchingGameScene"; // FruitCatchingGameScene 이름 명시
 
+    [Header("배경음악 이름 (AudioManager 등록)")]
+    public string normalStageBgmName = "MainGame"; // 일반 스테이지 BGM 이름
+    public string finalStageBgmName = "FinalStage"; // 마지막 스테이지 BGM 이름
+
+
     [Header("데이터 에셋")]
     public List<CustomerOrderData> allCustomerOrders;
     public List<FruitSpriteMapping> fruitSpritesForOrderUI;
@@ -168,9 +173,12 @@ public class CustomerOrderManager : MonoBehaviour
         {
             isTutorialActive = false; // 첫 번째 손님이 아니거나, 영구적으로 튜토리얼 완료됨
             SetGameState(GameState.Playing);
-            if (currentCustomerIndex == 0 && isTutorialPermanentlyCompleted) {
+            if (currentCustomerIndex == 0 && isTutorialPermanentlyCompleted)
+            {
                 Debug.Log("SetupInitialGameState: Tutorial previously completed for customer 0. Starting normal play.");
-            } else if (currentCustomerIndex != 0) {
+            }
+            else if (currentCustomerIndex != 0)
+            {
                 Debug.Log("SetupInitialGameState: Not customer 0, starting normal play.");
             }
         }
@@ -186,9 +194,9 @@ public class CustomerOrderManager : MonoBehaviour
             Debug.Log("튜토리얼 UI의 시작 버튼 클릭됨. GameState를 Playing으로 변경합니다. isTutorialActive는 계속 true 입니다.");
             SetGameState(GameState.Playing);
             // LoadOrderForCurrentCustomer(); // 필요시 여기서 주문 재로드 또는 스포너 시작 등을 명시적 호출 가능
-                                        // 현재는 SetGameState 후 LoadOrderForCurrentCustomer가 이미 SetupInitialGameState의 일부로 호출됨.
-                                        // 만약 FruitSpawner 로직이 GameState.Playing 상태에만 반응한다면, 여기서 추가 호출이 필요 없을 수 있음.
-                                        // 명확성을 위해 FruitSpawner 시작을 여기서 직접 제어할 수도 있음.
+            // 현재는 SetGameState 후 LoadOrderForCurrentCustomer가 이미 SetupInitialGameState의 일부로 호출됨.
+            // 만약 FruitSpawner 로직이 GameState.Playing 상태에만 반응한다면, 여기서 추가 호출이 필요 없을 수 있음.
+            // 명확성을 위해 FruitSpawner 시작을 여기서 직접 제어할 수도 있음.
             if (SceneManager.GetActiveScene().name == fruitCatchingSceneName && FruitSpawner2D.Instance != null)
             {
                 FruitSpawner2D.Instance.StartSpawning(); // 튜토리얼 게임 플레이 시작 시 스포너 가동
@@ -242,7 +250,8 @@ public class CustomerOrderManager : MonoBehaviour
 
         // FruitCatchingGameScene이고, 튜토리얼이 아니거나, 튜토리얼이 끝나고 게임 플레이 상태일 때 스포너 시작
         string currentSceneName = SceneManager.GetActiveScene().name;
-        if (currentSceneName == fruitCatchingSceneName) { // FruitCatchingGameScene의 원래 파일 이름을 사용
+        if (currentSceneName == fruitCatchingSceneName)
+        { // FruitCatchingGameScene의 원래 파일 이름을 사용
             if (!isTutorialActive && currentGameState == GameState.Playing && FruitSpawner2D.Instance != null)
             {
                 FruitSpawner2D.Instance.StartSpawning();
@@ -308,7 +317,7 @@ public class CustomerOrderManager : MonoBehaviour
             // ▼▼▼ 로그 추가 ▼▼▼
             Debug.Log($"과일 꽂기 실패! ({CurrentOrderData.customerName}). 현재 isTutorialActive 상태: {isTutorialActive} / currentGameState: {currentGameState}");
             // ▲▲▲ 로그 추가 ▲▲▲
-            if (!isTutorialActive) 
+            if (!isTutorialActive)
             {
                 if (HeartManager.Instance != null) HeartManager.Instance.LoseHeart();
             }
@@ -347,7 +356,8 @@ public class CustomerOrderManager : MonoBehaviour
 
             GameInfoHolder.TutorialWasJustCompleted = true; // 정적 플래그 설정
 
-            if (확인용값 != 1) {
+            if (확인용값 != 1)
+            {
                 Debug.LogError("CRITICAL PREFS ERROR: TUTORIAL_COMPLETED_KEY가 1로 저장되지 않았습니다! GameInfoHolder.TutorialWasJustCompleted 플래그에 의존합니다.");
             }
         }
@@ -399,7 +409,7 @@ public class CustomerOrderManager : MonoBehaviour
         }
     }
 
-        // isTutorialActive 상태를 설정하고 이벤트를 발생시키는 함수
+    // isTutorialActive 상태를 설정하고 이벤트를 발생시키는 함수
     public void SetTutorialState(bool tutorialActiveState)
     {
         if (isTutorialActive != tutorialActiveState)
@@ -426,7 +436,7 @@ public class CustomerOrderManager : MonoBehaviour
 
         if (currentScene == fruitCatchingSceneName) // 과일 잡기 완료 후
         {
-             nextSceneToLoad = sugarBoilingSceneName;
+            nextSceneToLoad = sugarBoilingSceneName;
         }
         else if (currentScene == sugarBoilingSceneName)
         {
@@ -470,5 +480,51 @@ public class CustomerOrderManager : MonoBehaviour
         GameInfoHolder.OpenStageSelectPanelOnLoad = true;
         if (SceneSwitcher.Instance != null) SceneSwitcher.Instance.LoadScene(stageSelectSceneName);
         else SceneManager.LoadScene(stageSelectSceneName);
+    }
+    // 외부에서 현재 주문을 설정하는 필수 함수
+    public void SetCurrentOrder(int customerIndex)
+    {
+        if (customerIndex < 0 || customerIndex >= allCustomerOrders.Count)
+        {
+            Debug.LogError($"SetCurrentOrder: 잘못된 인덱스({customerIndex})입니다.");
+            return;
+        }
+
+        currentCustomerIndex = customerIndex;
+        CurrentOrderData = allCustomerOrders[customerIndex];
+
+        // 주문에 필요한 과일 목록 초기화 및 설정
+        CurrentRequiredSkewerFruits.Clear();
+        if (CurrentOrderData != null)
+        {
+            // [기존 오류 코드]
+            // CurrentRequiredSkewerFruits.AddRange(CurrentOrderData.fruitsInOrder);
+
+            // [최종 수정 코드]
+            // skewerOrder 리스트에 있는 각 OrderItem에서 fruit 정보만 추출하여 추가합니다.
+            foreach (OrderItem item in CurrentOrderData.skewerOrder)
+            {
+                CurrentRequiredSkewerFruits.Add(item.fruit);
+            }
+        }
+        
+        // BGM 재생 로직 (이 부분은 그대로 유지)
+        if (AudioManager.Instance != null)
+        {
+            if (customerIndex >= allCustomerOrders.Count - 1)
+            {
+                AudioManager.Instance.Play(finalStageBgmName);
+            }
+            else
+            {
+                AudioManager.Instance.Play(normalStageBgmName);
+            }
+        }
+    }
+
+    // 현재 스테이지 인덱스를 외부에서 알 수 있게 하는 함수
+    public int GetCurrentCustomerIndex()
+    {
+        return currentCustomerIndex;
     }
 }

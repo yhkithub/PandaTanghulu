@@ -21,10 +21,10 @@ MonoBehaviour:
   - fruit: 4
   - fruit: 5
   toppingItem: 11
-  toppingItemSpriteForHint: {fileID: 21300000, guid: 87147efa6ac70f2428b7224c423bf7b4, type: 3}
-  completedSkewerSprite: {fileID: 21300000, guid: 19809cddc107d324381d6fa51868436a, type: 3}
-  sugarCoatedSkewerSprite: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
-  skewerWithToppingSprite: {fileID: 21300000, guid: eaa562561aa325847a8f358f0f935a4e, type: 3}
+  toppingItemSpriteForHint: {fileID: 21300000, guid: 610cddb75913135438670e111db1fd9d, type: 3}
+  completedSkewerSprite: {fileID: 21300000, guid: 267adf008b77fa64582617e103d163bc, type: 3}
+  sugarCoatedSkewerSprite: {fileID: 21300000, guid: eff586e1c2d48d94fa79b9310883566e, type: 3}
+  skewerWithToppingSprite: {fileID: 21300000, guid: 18c098428ca87fa449fa9534627a627b, type: 3}
   dialogueSequence:
   - speaker: 0
     line: "\uD478\uD478~ \uAC00\uAC8C \uC624\uD508 \uCD95\uD558\uD574. \uC544\uCE68\uBD80\uD130

@@ -23,7 +23,7 @@ MonoBehaviour:
   toppingItem: 10
   toppingItemSpriteForHint: {fileID: 21300000, guid: 98f5a83c8af318a489812bc22fbb000d, type: 3}
   completedSkewerSprite: {fileID: 21300000, guid: 7a8e9d557139d02489e055388676f785, type: 3}
-  sugarCoatedSkewerSprite: {fileID: 21300000, guid: 8531a45a1696e634181908fd66b45e49, type: 3}
+  sugarCoatedSkewerSprite: {fileID: 1288084061216479992, guid: 8531a45a1696e634181908fd66b45e49, type: 3}
   skewerWithToppingSprite: {fileID: -4585161123306608184, guid: 6c58ea8935f1a2b459aa63e1530838ea, type: 3}
   dialogueSequence:
   - speaker: 0

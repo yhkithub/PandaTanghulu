@@ -320,8 +320,9 @@ public class CustomerPresentationManager : MonoBehaviour
 
     IEnumerator CaptureMoment()
     {
+        // --- 기존 연출 코드 (여기서부터는 그대로 유지) ---
         Debug.Log("CaptureMoment 코루틴 시작");
-        // 사진 촬영 시에는 일반 손님 이미지는 비활성화하고, 웃는 손님 이미지와 손에 든 탕후루를 활성화합니다.
+        
         if (customerImage != null)
         {
             customerImage.gameObject.SetActive(false);
@@ -329,24 +330,21 @@ public class CustomerPresentationManager : MonoBehaviour
 
         if (smilingCustomerImage != null && currentOrder != null)
         {
-            // CustomerOrderData에 smilingCustomerSprite 필드가 정의되어 있다고 가정합니다.
-            // 없다면 customerSprite를 사용합니다.
             smilingCustomerImage.sprite = currentOrder.smilingCustomerSprite ?? currentOrder.customerSprite;
             smilingCustomerImage.gameObject.SetActive(smilingCustomerImage.sprite != null);
         }
-        else if (customerImage != null) // 웃는 이미지가 없다면 기본 손님 이미지를 그대로 사용 (이미 활성화 되어있을 수 있음)
+        else if (customerImage != null)
         {
             customerImage.gameObject.SetActive(true);
         }
 
-
+        // 폴라로이드 안의 탕후루 이미지 설정
         if (tanghuluInCustomerHandImage != null && currentOrder?.skewerWithToppingSprite != null)
         {
             tanghuluInCustomerHandImage.sprite = currentOrder.skewerWithToppingSprite;
             tanghuluInCustomerHandImage.gameObject.SetActive(true);
         }
 
-        // 플래시 효과
         if (flashImage != null)
         {
             flashImage.gameObject.SetActive(true); flashImage.color = Color.white;
@@ -364,9 +362,9 @@ public class CustomerPresentationManager : MonoBehaviour
             // 폴라로이드 안의 손님 이미지 설정
             if (smilingCustomerImage != null && smilingCustomerImage.sprite != null && smilingCustomerImage.gameObject.activeSelf)
                 smilingCustomerInPolaroidImage.sprite = smilingCustomerImage.sprite;
-            else if (customerImage != null && customerImage.sprite != null && customerImage.gameObject.activeSelf) // 웃는 이미지가 없으면 기본 손님 이미지
+            else if (customerImage != null && customerImage.sprite != null && customerImage.gameObject.activeSelf)
                 smilingCustomerInPolaroidImage.sprite = customerImage.sprite;
-            else if (currentOrder?.customerSprite != null) // 최후의 보루
+            else if (currentOrder?.customerSprite != null)
                 smilingCustomerInPolaroidImage.sprite = currentOrder.customerSprite;
 
 
@@ -376,7 +374,7 @@ public class CustomerPresentationManager : MonoBehaviour
                 tanghuluInPolaroidImage.sprite = tanghuluInCustomerHandImage.sprite;
                 tanghuluInPolaroidImage.gameObject.SetActive(true);
             }
-
+            
             polaroidFrameImage.gameObject.SetActive(true);
             if (smilingCustomerInPolaroidImage.sprite != null) smilingCustomerInPolaroidImage.gameObject.SetActive(true);
             AudioManager.Instance?.PlayOneShotSound(polaroidAppearSound);
@@ -393,12 +391,49 @@ public class CustomerPresentationManager : MonoBehaviour
         }
         else { yield return new WaitForSeconds(1.0f); }
 
-        // 다음 씬으로 넘어가기 전에 현재 씬의 손님 관련 이미지들을 최종적으로 정리합니다.
         if (customerImage != null) customerImage.gameObject.SetActive(false);
         if (smilingCustomerImage != null) smilingCustomerImage.gameObject.SetActive(false);
         if (tanghuluInCustomerHandImage != null) tanghuluInCustomerHandImage.gameObject.SetActive(false);
+        // --- 여기까지 기존 연출 코드 ---
 
-        ProceedToTitleScene();
+
+        // [수정된 게임 클리어 판정 로직]
+        // 1. 현재 주문(currentOrder)이 전체 주문 리스트에서 몇 번째인지 직접 찾아서 인덱스를 얻습니다.
+        int currentStageIndex = -1;
+        if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.allCustomerOrders != null)
+        {
+            currentStageIndex = CustomerOrderManager.Instance.allCustomerOrders.IndexOf(currentOrder);
+        }
+
+        // 2. 현재 스테이지를 클리어했다고 StageDataManager에 저장합니다.
+        if (currentStageIndex != -1) // 인덱스를 성공적으로 찾았을 때만 저장
+        {
+            StageDataManager.Instance.SetStageCleared(currentStageIndex);
+        }
+
+        // 3. 모든 스테이지가 클리어되었는지 확인합니다.
+        bool allStagesCleared = true;
+        int totalStages = CustomerOrderManager.Instance.allCustomerOrders.Count;
+        for (int i = 0; i < totalStages; i++)
+        {
+            if (!StageDataManager.Instance.IsStageCleared(i))
+            {
+                allStagesCleared = false;
+                break; // 하나라도 클리어하지 않은 스테이지가 있으면 루프 중단
+            }
+        }
+        
+        if (allStagesCleared)
+        {
+            // 모든 스테이지를 클리어했다면 게임 클리어 씬으로 이동
+            Debug.Log("모든 스테이지 클리어! 게임 클리어 씬으로 이동합니다.");
+            SceneSwitcher.Instance.LoadScene("GameClearScene");
+        }
+        else
+        {
+            // 아직 클리어하지 않은 스테이지가 있다면 기존처럼 스테이지 선택 화면으로 이동
+            ProceedToTitleScene();
+        }
     }
 
     void ProceedToTitleScene()

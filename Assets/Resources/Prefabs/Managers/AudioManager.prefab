@@ -115,5 +115,26 @@ MonoBehaviour:
     loop: 0
     isBgm: 0
     source: {fileID: 0}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: 2707bcb3b2db70e4bbe6fe2cd842b00e, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    isBgm: 1
+    source: {fileID: 0}
+  - name: GameClear
+    clip: {fileID: 8300000, guid: 82629afc8d826454c8ba524b1fa64da9, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    isBgm: 1
+    source: {fileID: 0}
+  - name: FinalStage
+    clip: {fileID: 8300000, guid: e9ef359041c833c469872ea808c61a9a, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 1
+    isBgm: 1
+    source: {fileID: 0}
   bgmAudioSource: {fileID: 0}
   bgmSoundName: 

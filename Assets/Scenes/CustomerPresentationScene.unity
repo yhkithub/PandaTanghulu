@@ -619,13 +619,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
-  m_fontSizeBase: 40
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1126,7 +1126,7 @@ MonoBehaviour:
   pupuNextButton: {fileID: 1647050043}
   slideInDuration: 1
   tanghuluBoardHiddenPos: {x: 0, y: -1000}
-  tanghuluBoardTargetPos: {x: 0, y: -400}
+  tanghuluBoardTargetPos: {x: 0, y: -600}
   flashImage: {fileID: 573929653}
   polaroidFrameImage: {fileID: 372139871}
   smilingCustomerInPolaroidImage: {fileID: 465891397}
@@ -2717,7 +2717,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: c652d2192b5a2934cab2c479b50cbf17, type: 3}
+  m_Sprite: {fileID: -5158809637958285579, guid: 83cd060b1265e534bb49b5be2f5776ed, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2834,8 +2834,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000022888, y: 0}
-  m_SizeDelta: {x: 710.193, y: 401.776}
+  m_AnchoredPosition: {x: -16.898, y: -35}
+  m_SizeDelta: {x: 533.796, y: 301.983}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1947010907
 MonoBehaviour:
@@ -2857,7 +2857,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2765d3cc2a7a67d44b12cf6285946d6e, type: 3}
+  m_Sprite: {fileID: -9022745774391733452, guid: f8937a152cc27e04eb0b0a9094681d56, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

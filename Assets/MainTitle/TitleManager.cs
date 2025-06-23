@@ -59,6 +59,14 @@ public class TitleManager : MonoBehaviour
     [Header("새로하기 확인 UI")]
     public GameObject confirmNewGamePanel_UI;
 
+    [Header("배경 애니메이션 관련 변수")]
+    public SpriteRenderer background; // 배경 이미지를 표시할 SpriteRenderer 컴포넌트
+    public Sprite[] beforeClearSprites; // 클리어 전 배경 이미지 배열
+    public Sprite[] afterClearSprites; // 클리어 후 배경 이미지 배열
+    public float frameRate = 0.2f; // 이미지 전환 속도
+
+    private KeyCode[] secretCode = { KeyCode.Return, KeyCode.V, KeyCode.K, KeyCode.T, KeyCode.M, KeyCode.X, KeyCode.P, KeyCode.F }; // 비밀번호: VKTMXPF
+    private int secretCodeIndex = 0;
 
     [System.Serializable]
     public struct FruitPrefabChanceForRoll
@@ -70,6 +78,11 @@ public class TitleManager : MonoBehaviour
 
     void Start()
     {
+        // 비밀 키 인덱스 초기화
+        secretCodeIndex = 0;
+        // 타이틀 매니저 시작 시 배경 애니메이션 코루틴 시작
+        StartCoroutine(AnimateBackground());
+
         void PlayClickSound()
         {
             if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
@@ -82,6 +95,7 @@ public class TitleManager : MonoBehaviour
         if (AudioManager.Instance != null)
         {
             // AudioManager에 "MainTitleBGM"이라는 이름으로 등록된 사운드를 재생
+            AudioManager.Instance.StopBackgroundMusic();
             AudioManager.Instance.PlayBgm("MainTitleBGM");
         }
 
@@ -172,6 +186,70 @@ public class TitleManager : MonoBehaviour
         
         LoadAudioSettings();
     }
+    void Update()
+    {
+        // 비밀 키 입력 감지
+        if (Input.anyKeyDown)
+        {
+            if (Input.GetKeyDown(secretCode[secretCodeIndex]))
+            {
+                secretCodeIndex++;
+                if (secretCodeIndex >= secretCode.Length)
+                {
+                    UnlockEverything();
+                    secretCodeIndex = 0; // 초기화
+                }
+            }
+            else
+            {
+                secretCodeIndex = 0; // 순서가 틀리면 초기화
+            }
+        }
+    }
+    
+    // 모든 것을 클리어 상태로 만드는 함수
+    private void UnlockEverything()
+    {
+        if (StageDataManager.Instance != null)
+        {
+            Debug.Log("비밀 명령어 발동! 모든 스테이지를 클리어합니다.");
+
+            // [수정] isGameCleared 변수에 직접 값을 할당하는 대신, 모든 스테이지를 클리어 처리
+            for (int i = 0; i < StageDataManager.Instance.totalStages; i++)
+            {
+                StageDataManager.Instance.SetStageCleared(i);
+            }
+
+            StopAllCoroutines();
+            StartCoroutine(AnimateBackground());
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayOneShotSound("Success"); 
+            }
+        }
+    }
+
+    // 배경 애니메이션을 위한 코루틴
+    IEnumerator AnimateBackground()
+    {
+        // StageDataManager 인스턴스가 로드될 때까지 잠시 대기
+        yield return new WaitUntil(() => StageDataManager.Instance != null);
+
+        Sprite[] selectedSprites = StageDataManager.Instance.IsGameFullyCleared() ? afterClearSprites : beforeClearSprites;
+        int currentIndex = 0;
+
+        while (true)
+        {
+            if (selectedSprites.Length > 0)
+            {
+                background.sprite = selectedSprites[currentIndex];
+                currentIndex = (currentIndex + 1) % selectedSprites.Length;
+            }
+            yield return new WaitForSeconds(frameRate);
+        }
+    }
+
 
     public void StartNewGame()
     {
@@ -380,7 +458,7 @@ public class TitleManager : MonoBehaviour
 
         float screenWorldWidth = Camera.main.aspect * Camera.main.orthographicSize * 2;
         float longestRollTime = (screenWorldWidth / fruitRollSpeed) + 2f;
-        if (fruitRollSpeed <= 0) longestRollTime = 5f;
+        if (fruitRollSpeed <= 0) longestRollTime = 4f;
 
         yield return new WaitForSeconds(longestRollTime);
 
