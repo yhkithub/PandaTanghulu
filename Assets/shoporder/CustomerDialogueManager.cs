@@ -102,6 +102,18 @@ public class CustomerDialogueManager : MonoBehaviour
 
         if (entry.speaker == DialogueEntry.Speaker.customer)
         {
+            if (entry.spriteState == CustomerSpriteState.Smiling)
+            {
+                customerImage.sprite = currentCustomerData.smilingCustomerSprite;
+            }
+            else // Default 상태일 때
+            {
+                customerImage.sprite = currentCustomerData.customerSprite;
+            }
+        }
+
+        if (entry.speaker == DialogueEntry.Speaker.customer)
+        {
             yield return ShowSpeechBubbleAndText(kikiSpeechBubbleGroup, kikiSpeechText, entry.line, kikiNextButton);
         }
         else
@@ -171,6 +183,10 @@ public class CustomerDialogueManager : MonoBehaviour
         isDialoguePlaying = false;
         HideAllBubblesAndButtons();
         SceneManager.LoadScene(fruitCatchingSceneName);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopSound("Text");
+        }
     }
 
     void HideAllBubblesAndButtons()

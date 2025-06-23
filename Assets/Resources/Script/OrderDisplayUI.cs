@@ -81,10 +81,14 @@ public class OrderDisplayUI : MonoBehaviour
         // 현재 주문의 과일들 표시 (CurrentRequiredSkewerFruits 또는 CurrentOrderData.skewerOrder 사용)
         List<FruitType> fruitsToDisplay = CustomerOrderManager.Instance.CurrentRequiredSkewerFruits;
         // 만약 CurrentRequiredSkewerFruits가 비어있다면, CurrentOrderData.skewerOrder를 직접 참조할 수도 있습니다.
-        if (fruitsToDisplay == null || fruitsToDisplay.Count == 0) {
-            if (CustomerOrderManager.Instance.CurrentOrderData != null && CustomerOrderManager.Instance.CurrentOrderData.skewerOrder != null) {
+        if (fruitsToDisplay == null || fruitsToDisplay.Count == 0)
+        {
+            if (CustomerOrderManager.Instance.CurrentOrderData != null && CustomerOrderManager.Instance.CurrentOrderData.skewerOrder != null)
+            {
                 fruitsToDisplay = CustomerOrderManager.Instance.CurrentOrderData.skewerOrder.Select(item => item.fruit).ToList();
-            } else {
+            }
+            else
+            {
                 Debug.LogWarning("OrderDisplayUI: 표시할 과일 데이터가 없습니다.");
                 return; // 과일 데이터 없으면 더 이상 진행 안 함
             }
@@ -92,21 +96,32 @@ public class OrderDisplayUI : MonoBehaviour
 
         Debug.Log($"OrderDisplayUI: 표시할 과일 개수: {fruitsToDisplay.Count}"); // 실제 개수 로깅
 
-        foreach (FruitType fruit in fruitsToDisplay)
+        for (int i = 0; i < fruitsToDisplay.Count; i++)
         {
+            FruitType fruit = fruitsToDisplay[i];
             Sprite fruitSprite = CustomerOrderManager.Instance.GetSpriteForFruitUI(fruit);
+
             if (fruitSprite != null)
             {
                 Image fruitIconInstance = Instantiate(fruitImagePrefab_SceneUI, fruitsContainerForOrderUI_Scene);
-                fruitIconInstance.sprite = fruitSprite; // ★★★ 여기서 실제 과일 스프라이트 할당 ★★★
+                fruitIconInstance.sprite = fruitSprite;
                 fruitIconInstance.name = fruit.ToString() + "_OrderIcon_InScene";
-                fruitIconInstance.color = Color.white; // 흰색으로 설정하여 스프라이트 원본 색상 유지 (필요시 알파 조절)
+                fruitIconInstance.color = Color.white;
+
+                // RectTransform을 가져와서 위치를 직접 설정합니다.
+                RectTransform iconRect = fruitIconInstance.GetComponent<RectTransform>();
+
+                // 아이콘의 Y 위치를 계산합니다. (i가 증가할수록 위로 쌓입니다)
+                // 50f는 아이콘 하나의 높이 + 간격입니다. 원하시는 값으로 조절하세요.
+                float yPos = i * 70f; 
+
+                // 위치 설정 (x는 0으로 중앙, y는 계산된 값)
+                iconRect.anchoredPosition = new Vector2(0, yPos);
             }
             else
             {
                 Debug.LogWarning($"OrderDisplayUI: {fruit}에 대한 스프라이트를 CustomerOrderManager에서 가져올 수 없습니다.");
             }
         }
-        Debug.Log($"OrderDisplayUI: {currentOrder.customerName} 손님의 주문을 현재 씬의 UI에 표시했습니다.");
     }
 }

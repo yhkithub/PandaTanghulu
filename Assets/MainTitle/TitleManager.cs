@@ -12,7 +12,6 @@ public class TitleManager : MonoBehaviour
     [Header("기본 UI 요소")]
     public GameObject newGameButton;
     public GameObject stageSelectButton;
-    public GameObject animalBookButton;
     public GameObject settingsButton;
     public GameObject settingsPanel;
     public Image logoImage;
@@ -108,7 +107,6 @@ public class TitleManager : MonoBehaviour
         else { Debug.LogError("TitleManager: 로고 이미지가 할당되지 않았습니다!"); }
 
         if (newGameButton != null) newGameButton.SetActive(true);
-        // stageSelectButton과 animalBookButton은 튜토리얼 완료 여부에 따라 아래에서 설정
         if (newGameButton != null)
         {
             Button newGameBtnComponent = newGameButton.GetComponent<Button>();
@@ -174,18 +172,17 @@ public class TitleManager : MonoBehaviour
                     Debug.LogWarning("stageSelectButton Button 컴포넌트가 없습니다.");
                 }
             }
-            if (animalBookButton != null) animalBookButton.SetActive(true);
             Debug.Log("튜토리얼 완료 상태(또는 방금 완료됨)이므로 스테이지 선택 및 동물도감 버튼을 활성화합니다.");
         }
         else
         {
             if (stageSelectButton != null) stageSelectButton.SetActive(false);
-            if (animalBookButton != null) animalBookButton.SetActive(false);
             Debug.Log("튜토리얼 미완료 상태이므로 스테이지 선택 및 동물도감 버튼을 비활성화합니다.");
         }
         
         LoadAudioSettings();
     }
+
     void Update()
     {
         // 비밀 키 입력 감지
@@ -214,11 +211,20 @@ public class TitleManager : MonoBehaviour
         {
             Debug.Log("비밀 명령어 발동! 모든 스테이지를 클리어합니다.");
 
-            // [수정] isGameCleared 변수에 직접 값을 할당하는 대신, 모든 스테이지를 클리어 처리
+            // 튜토리얼 클리어 상태를 영구 저장
+            PlayerPrefs.SetInt(TUTORIAL_COMPLETED_KEY, 1);
+            PlayerPrefs.Save(); // 변경사항을 기기에 즉시 저장
+            Debug.Log($"TUTORIAL_COMPLETED_KEY를 1로 설정하고 저장했습니다. 현재 값: {PlayerPrefs.GetInt(TUTORIAL_COMPLETED_KEY, -1)}");
+
+            // 모든 스테이지를 클리어 처리
             for (int i = 0; i < StageDataManager.Instance.totalStages; i++)
             {
                 StageDataManager.Instance.SetStageCleared(i);
             }
+            
+            // 스테이지 선택 버튼 활성화
+            if (stageSelectButton != null) stageSelectButton.SetActive(true);
+
 
             StopAllCoroutines();
             StartCoroutine(AnimateBackground());
@@ -330,7 +336,6 @@ public class TitleManager : MonoBehaviour
 
         if (newGameButton != null) newGameButton.SetActive(false);
         if (stageSelectButton != null) stageSelectButton.SetActive(false);
-        if (animalBookButton != null) animalBookButton.SetActive(false);
         if (settingsButton != null) settingsButton.SetActive(false);
         Debug.Log("타이틀 버튼 비활성화됨 (새로하기 진행 중).");
 
@@ -624,6 +629,10 @@ public class TitleManager : MonoBehaviour
 
     public void OpenStageSelectPanel()
     {
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(buttonclickSoundName))
+        {
+            AudioManager.Instance.PlayOneShotSound(buttonclickSoundName);
+        }
         if (stageSelectPanel_UI != null)
         {
             stageSelectPanel_UI.SetActive(true);
@@ -774,8 +783,6 @@ public class TitleManager : MonoBehaviour
             SceneManager.LoadScene(dialogueSceneName);
         }
     }
-
-    public void OpenAnimalBook() { /* SceneManager.LoadScene("AnimalBookScene"); */ Debug.Log("동물도감 열기 시도 (미구현)"); }
 
     public void ToggleSettingsPanel()
     {

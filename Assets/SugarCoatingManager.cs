@@ -31,15 +31,13 @@ public class SugarCoatingManager : MonoBehaviour
     [Header("꼬치 시각적 설정")]
     public float targetVisualHeightInWorldUnits = 5.0f;
 
-    
-    [Header("Sounds - AudioManager에 등록된 이름")]
-    public string sugarcoating = "sugarcoating";      // 각 타이밍 성공 시
 
     private int currentRubs = 0;
     private bool isCoatingPhase = false;
     private bool coatingComplete = false;
     private Vector3 lastDipperPosition;
     private bool firstSparkleShown = false;
+    private bool isDipperTouchingSkewer = false;
 
     void Awake()
     {
@@ -120,12 +118,12 @@ public class SugarCoatingManager : MonoBehaviour
     {
         if (isCoatingPhase && !coatingComplete && honeyDipper.HasSugar())
         {
-            if (Vector3.Distance(currentDipperPos, lastDipperPosition) > rubbingDistanceThreshold)
+            float distance = Vector3.Distance(currentDipperPos, lastDipperPosition);
+            if (distance < 0.01f) return; // 너무 작은 이동은 무시
+            if (distance > rubbingDistanceThreshold)
             {
                 currentRubs++;
-                UpdateRubCountText(); // 문지를 때마다 횟수 UI 업데이트
-
-                // 코팅 진행도에 따라 알파값 조절
+                UpdateRubCountText();
                 UpdateCoatingVisuals();
 
                 if (!firstSparkleShown && currentRubs >= rubsForFirstSparkle)
@@ -133,9 +131,6 @@ public class SugarCoatingManager : MonoBehaviour
                     if (sparkleEffectObject1 != null)
                     {
                         sparkleEffectObject1.SetActive(true);
-                        Debug.Log("첫 번째 반짝이는 효과 표시.");
-                        // 필요하면 잠시 후 사라지게 하는 코루틴 호출
-                        // StartCoroutine(HideSparkleAfterDelay(sparkleEffectObject1, 0.5f));
                     }
                     firstSparkleShown = true;
                 }
@@ -147,6 +142,19 @@ public class SugarCoatingManager : MonoBehaviour
             }
             lastDipperPosition = currentDipperPos;
         }
+    }
+    
+    public void OnDipperTouchSkewer(bool isTouching)
+    {
+        if (isTouching && !isDipperTouchingSkewer)
+        {
+            AudioManager.Instance?.PlayLoopSound("Coating");
+        }
+        else if (!isTouching && isDipperTouchingSkewer)
+        {
+            AudioManager.Instance?.StopLoopSound("Coating");
+        }
+        isDipperTouchingSkewer = isTouching;
     }
 
     void UpdateRubCountText()
@@ -195,7 +203,7 @@ public class SugarCoatingManager : MonoBehaviour
             Debug.Log("두 번째 (최종) 반짝이는 효과 표시.");
         }
 
-        AudioManager.Instance?.PlayOneShotSound("CoatingSuccessSound"); // 실제 사운드 이름으로 변경 필요
+        AudioManager.Instance?.PlayOneShotSound("Success"); // 실제 사운드 이름으로 변경 필요
 
         StartCoroutine(ProceedToNextStageAfterDelay(coatingDuration));
     }

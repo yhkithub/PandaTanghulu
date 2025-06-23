@@ -82,14 +82,14 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: MainGameBGM
     clip: {fileID: 8300000, guid: aa90cee3ede4dd04090d8d44ab4eaa62, type: 3}
-    volume: 1
+    volume: 0.7
     pitch: 1
     loop: 1
     isBgm: 1
     source: {fileID: 0}
   - name: MainTitleBGM
     clip: {fileID: 8300000, guid: 477a23c5ee59f1c4180c2608904bc6bf, type: 3}
-    volume: 1
+    volume: 0.7
     pitch: 1
     loop: 1
     isBgm: 1
@@ -135,6 +135,27 @@ MonoBehaviour:
     pitch: 1
     loop: 1
     isBgm: 1
+    source: {fileID: 0}
+  - name: Success
+    clip: {fileID: 8300000, guid: 155fd5f8e8c94314890af64e9885c477, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    isBgm: 0
+    source: {fileID: 0}
+  - name: Coating
+    clip: {fileID: 8300000, guid: 8753bd050fcc29b499ad32eb4509ad4a, type: 3}
+    volume: 10
+    pitch: 1
+    loop: 1
+    isBgm: 0
+    source: {fileID: 0}
+  - name: Fail
+    clip: {fileID: 8300000, guid: f5cd73eb2a9d46942918d66697534336, type: 3}
+    volume: 10
+    pitch: 1
+    loop: 0
+    isBgm: 0
     source: {fileID: 0}
   bgmAudioSource: {fileID: 0}
   bgmSoundName: 

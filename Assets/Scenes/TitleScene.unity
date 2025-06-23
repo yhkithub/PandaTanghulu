@@ -2031,7 +2031,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 260, y: 320}
-  m_Spacing: {x: 38, y: 40}
+  m_Spacing: {x: 38, y: 35}
   m_Constraint: 2
   m_ConstraintCount: 2
 --- !u!1 &753721832
@@ -2170,6 +2170,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 753721832}
   m_CullTransparentMesh: 1
+--- !u!1 &854968476
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 854968478}
+  - component: {fileID: 854968477}
+  m_Layer: 0
+  m_Name: UIPopupManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &854968477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854968476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6152a1540cd484f4f8e016949e471428, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exitConfirmationPrefab: {fileID: 1827700870424272786, guid: 7ca0b3b120624e5419609674ee66633f, type: 3}
+--- !u!4 &854968478
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854968476}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.06517, y: 1.01042, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &899125616
 GameObject:
   m_ObjectHideFlags: 0
@@ -2964,7 +3009,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   newGameButton: {fileID: 2043316492}
   stageSelectButton: {fileID: 566476965}
-  animalBookButton: {fileID: 0}
   settingsButton: {fileID: 267870733}
   settingsPanel: {fileID: 524050280}
   logoImage: {fileID: 1299498586}
@@ -4971,3 +5015,4 @@ SceneRoots:
   - {fileID: 1522086822}
   - {fileID: 535568948}
   - {fileID: 6546663897403533872}
+  - {fileID: 854968478}

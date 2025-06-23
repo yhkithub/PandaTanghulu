@@ -38,6 +38,12 @@ public enum MiniGameStep
     ToppingPlacement
 }
 
+public enum CustomerSpriteState
+{
+    Default,
+    Smiling
+}
+
 [System.Serializable]
 public class DialogueEntry
 {
@@ -48,6 +54,9 @@ public class DialogueEntry
     }
     public Speaker speaker;
     [TextArea(3, 10)] public string line;
+
+    public CustomerSpriteState spriteState = CustomerSpriteState.Default;
+
 }
 
 public static class GameInfoHolder

@@ -1118,6 +1118,8 @@ MonoBehaviour:
   draggableTanghuluImage: {fileID: 2009025288}
   tanghuluInCustomerHandImage: {fileID: 1533742354}
   customerDropZoneRect: {fileID: 1755700439}
+  pupuBackSprite: {fileID: 21300000, guid: 4b34a9203a6ffa44c89664a5a3eaebe0, type: 3}
+  pupuObject: {fileID: 1292654857}
   kikiSpeechBubbleGroup: {fileID: 43630217}
   kikiSpeechText: {fileID: 921483234}
   kikiNextButton: {fileID: 1522130826}

@@ -29,6 +29,7 @@ public class SugarBoilingManager : MonoBehaviour
     [Header("게임 설정 값")]
     public int totalChallengeCount = 3;
     public float resultDisplayDuration = 1.0f;
+
     [Tooltip("1단계, 2단계, 3단계의 인디케이터 속도")]
     public float[] speedPerStep = new float[3] { 2.0f, 3.0f, 4.0f };
 
@@ -46,7 +47,9 @@ public class SugarBoilingManager : MonoBehaviour
     private bool isIndicatorMoving = false;
     private bool moveRight = true;
     private float minX, maxX;
-    private float halfIndicatorWidth; 
+    private float halfIndicatorWidth;
+    private float stageSpeedMultiplier = 1.0f;
+    private float stageSuccessZoneWidth = 150f;
 
     void Awake()
     {
@@ -93,6 +96,18 @@ public class SugarBoilingManager : MonoBehaviour
         
         currentChallengeStep = 1;
         currentSuccessCount = 0;
+
+        if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.CurrentOrderData != null)
+        {
+            stageSpeedMultiplier = CustomerOrderManager.Instance.CurrentOrderData.sugarBoilingSpeed;
+            stageSuccessZoneWidth = CustomerOrderManager.Instance.CurrentOrderData.sugarBoilingSuccessZoneWidth;
+        }
+        else
+        {
+            stageSpeedMultiplier = 1.0f;
+            stageSuccessZoneWidth = 150f; 
+        }
+
         
         StartCoroutine(ShowStageTitleAndStartFirstChallenge());
     }
@@ -137,17 +152,27 @@ public class SugarBoilingManager : MonoBehaviour
 
     public void StartTimingGame()
     {
-        if (speedPerStep.Length >= currentChallengeStep)
+        float baseSpeedForStep = 0f;
+        if (speedPerStep != null && speedPerStep.Length > 0)
         {
-            currentIndicatorSpeed = speedPerStep[currentChallengeStep - 1];
+            if (speedPerStep.Length >= currentChallengeStep)
+            {
+                baseSpeedForStep = speedPerStep[currentChallengeStep - 1];
+            }
+            else
+            {
+                baseSpeedForStep = speedPerStep[speedPerStep.Length - 1];
+            }
         }
-        else
-        {
-            currentIndicatorSpeed = speedPerStep[speedPerStep.Length - 1];
-        }
+        
+        // 최종 속도 = (스텝별 기본 속도) * (스테이지별 속도 배율)
+        currentIndicatorSpeed = baseSpeedForStep * stageSpeedMultiplier;
 
         if (successZone != null)
         {
+            // 성공 영역의 크기를 설정
+            successZone.sizeDelta = new Vector2(stageSuccessZoneWidth, successZone.sizeDelta.y);
+            // 성공 영역의 위치를 랜덤하게 설정
             float successZoneWidth = successZone.rect.width;
             float randomRangeMin = minX + (successZoneWidth / 2) - halfIndicatorWidth;
             float randomRangeMax = maxX - (successZoneWidth / 2) + halfIndicatorWidth;
@@ -198,7 +223,7 @@ public class SugarBoilingManager : MonoBehaviour
         StartCoroutine(ShowResultAndProceed(isSuccess));
     }
 
-    // [핵심 수정] 성공/실패 시 로직을 분리하여 인덕션 깜빡임 문제를 해결합니다.
+    // 결과 이미지와 사운드를 표시하고 다음 단계로 진행
     IEnumerator ShowResultAndProceed(bool isSuccess)
     {
         // 결과 이미지와 사운드는 공통으로 처리
@@ -225,7 +250,7 @@ public class SugarBoilingManager : MonoBehaviour
 
         if (isSuccess)
         {
-            // [수정] 성공 시에는 인덕션을 끄지 않고 바로 다음 단계로 넘어갑니다.
+            // 성공 시에는 인덕션을 끄지 않고 바로 다음 단계로 넘어갑니다.
             currentChallengeStep++;
             if (currentChallengeStep > totalChallengeCount)
             {
@@ -239,7 +264,7 @@ public class SugarBoilingManager : MonoBehaviour
         }
         else
         {
-            // [수정] 실패 시에만 모든 시각/사운드 효과를 확실히 끕니다.
+            // 실패 시에만 모든 시각/사운드 효과를 확실히 끕니다.
             StopVisualAndSoundEffects();
             HandleFailure();
         }

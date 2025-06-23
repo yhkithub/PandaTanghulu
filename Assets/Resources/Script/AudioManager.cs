@@ -286,7 +286,7 @@ public class AudioManager : MonoBehaviour
         s.source.Play();
     }
 
-    // BGM 재생/중지 메서드 (예시)
+    // BGM 재생/중지 메서드
     public void PlayBackgroundMusic(string name)
     {
         if (bgmSound != null && bgmSound.name == name) // 기존 bgmSound 객체를 사용
@@ -334,7 +334,41 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    public void StopSound(string name)
+    {
+        Sound s = sounds.Find(sound => sound.name == name);
+        if (s != null && s.source.isPlaying)
+        {
+            s.source.Stop();
+        }
+    }
     
+    public void PlayLoopSound(string name)
+    {
+        if (!IsSfxEnabled) { Debug.Log("SFX 비활성화 상태"); return; }
+        Sound s = sounds.Find(sound => sound.name == name);
+        if (s == null) { Debug.Log($"{name} 사운드 없음"); return; }
+        if (s.source == null) { Debug.Log($"{name} AudioSource 없음"); return; }
+        if (!s.source.isPlaying)
+        {
+            Debug.Log($"{name} 사운드 루프 재생 시작");
+            s.source.loop = true;
+            s.source.volume = s.volume * masterSfxVolume;
+            s.source.Play();
+        }
+    }
+
+    public void StopLoopSound(string name)
+    {
+        Sound s = sounds.Find(sound => sound.name == name);
+        if (s == null) return;
+        if (s.source.isPlaying)
+        {
+            s.source.Stop();
+            s.source.loop = false;
+            Debug.Log($"{name} 사운드 루프 재생 중지");
+        }
+    }
     
     
 }

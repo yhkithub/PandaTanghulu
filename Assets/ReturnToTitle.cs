@@ -37,6 +37,11 @@ public class ReturnToTitle : MonoBehaviour
 
         if (SceneSwitcher.Instance != null)
         {
+            if (HeartManager.Instance != null)
+            {
+                HeartManager.Instance.InitializeHearts();
+            }
+            
             SceneSwitcher.Instance.LoadScene("TitleScene");
         }
     }

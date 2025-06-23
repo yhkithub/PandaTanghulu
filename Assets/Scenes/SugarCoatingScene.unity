@@ -767,12 +767,11 @@ MonoBehaviour:
   rubCountText: {fileID: 0}
   skewerBeforeCoatingSprite: {fileID: 0}
   skewerAfterCoatingSprite: {fileID: 0}
-  rubsNeededForCoating: 10
-  coatingDuration: 2
+  rubsNeededForCoating: 20
+  coatingDuration: 4
   rubbingDistanceThreshold: 0.1
-  rubsForFirstSparkle: 5
+  rubsForFirstSparkle: 10
   targetVisualHeightInWorldUnits: 5
-  sugarcoating: sugarcoating
 --- !u!4 &552741446
 Transform:
   m_ObjectHideFlags: 0

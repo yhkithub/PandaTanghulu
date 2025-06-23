@@ -18,6 +18,9 @@ public class CustomerPresentationManager : MonoBehaviour
     public Image draggableTanghuluImage;
     public Image tanghuluInCustomerHandImage; // 손님이 탕후루를 들고 있는 모습
     public RectTransform customerDropZoneRect;
+    public Sprite pupuBackSprite; // Inspector에서 뒷모습 스프라이트 할당
+    public GameObject pupuObject; // Hierarchy에 있는 푸푸 오브젝트를 Drag&Drop
+
 
     [Header("Dialogue UI")]
     public CanvasGroup kikiSpeechBubbleGroup;
@@ -183,6 +186,17 @@ public class CustomerPresentationManager : MonoBehaviour
                 tanghuluInCustomerHandImage.sprite = currentOrder.skewerWithToppingSprite;
                 tanghuluInCustomerHandImage.gameObject.SetActive(true);
             }
+
+            // 푸푸 오브젝트의 SpriteRenderer를 뒷모습으로 변경
+            if (pupuObject != null && pupuBackSprite != null)
+            {
+                var sr = pupuObject.GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    sr.sprite = pupuBackSprite;
+                }
+            }
+
             AudioManager.Instance?.PlayOneShotSound(tanghuluDeliveredSound);
             StartCustomerDialogue();
         }

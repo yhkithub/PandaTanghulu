@@ -24,7 +24,7 @@ public class CustomerOrderManager : MonoBehaviour
     public string fruitCatchingSceneName = "FruitCatchingGameScene"; // FruitCatchingGameScene 이름 명시
 
     [Header("배경음악 이름 (AudioManager 등록)")]
-    public string normalStageBgmName = "MainGame"; // 일반 스테이지 BGM 이름
+    public string normalStageBgmName = "MainGameBGM"; // 일반 스테이지 BGM 이름
     public string finalStageBgmName = "FinalStage"; // 마지막 스테이지 BGM 이름
 
 
@@ -513,11 +513,11 @@ public class CustomerOrderManager : MonoBehaviour
         {
             if (customerIndex >= allCustomerOrders.Count - 1)
             {
-                AudioManager.Instance.Play(finalStageBgmName);
+                AudioManager.Instance.PlayBgm(finalStageBgmName);
             }
             else
             {
-                AudioManager.Instance.Play(normalStageBgmName);
+                AudioManager.Instance.PlayBgm(normalStageBgmName);
             }
         }
     }

@@ -312,6 +312,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 185359713}
   m_CullTransparentMesh: 1
+--- !u!1 &201080132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 201080133}
+  - component: {fileID: 201080134}
+  - component: {fileID: 201080135}
+  m_Layer: 5
+  m_Name: SceneSpecificImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &201080133
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201080132}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 523313707}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.82001, y: -81}
+  m_SizeDelta: {x: 947.49, y: 881.34}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &201080134
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201080132}
+  m_CullTransparentMesh: 1
+--- !u!114 &201080135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201080132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &321646238
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,6 +689,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 201080133}
   - {fileID: 349697512}
   - {fileID: 1956048136}
   - {fileID: 1700300390}
@@ -687,12 +763,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -785131654404453707, guid: 75a60ba3ddd1795448c38517ef9c20c0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 434b5999482d189498ff4b05bdfaef72, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 6.12, y: 6.12}
+  m_Size: {x: 12.8, y: 9.6}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -707,8 +783,8 @@ Transform:
   m_GameObject: {fileID: 876221001}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0082, y: -0.0194, z: 0}
-  m_LocalScale: {x: 2.8976681, y: 1.6320695, z: 1}
+  m_LocalPosition: {x: 0.1011, y: -0.5083, z: 0}
+  m_LocalScale: {x: 1.17834, y: 1.17834, z: 1.17834}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -720,7 +796,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 876221001}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98327b9cba5b87b41997f4d5e24bc214, type: 3}
   m_Name: 
@@ -894,55 +970,54 @@ MonoBehaviour:
   storySteps:
   - text: "\uBC29\uACFC \uD6C4 \uB300\uB098\uBB34\uC232 \uC18D\uC744 \uD55C\uAC00\uB85C\uC774
       \uAC70\uB2D0\uB358 \uD310\uB2E4 \uD478\uD478."
-    backgroundImage: {fileID: 21300000, guid: 66ca04d9370feac44918589f173c5ee9, type: 3}
+    sceneImage: {fileID: 21300000, guid: d70474c10fa465f4fba2d7e0fd026344, type: 3}
     soundEffect: {fileID: 0}
   - text: "\u201C\uC624\uB298 \uAC04\uC2DD\uC740 \uBB50 \uBA39\uC9C0?\u201D \uD558\uBA70
       \uACE0\uBBFC\uD558\uB358 \uCC30\uB098, \uC5B4\uB514\uC120\uAC00 \uB2EC\uCF64\uD55C
       \uD5A5\uAE30\uAC00 \uC194\uC194 \uD48D\uACA8\uC628\uB2E4."
-    backgroundImage: {fileID: 9141755401725020031, guid: f477cbbcd6e944141804529a4a82453c, type: 3}
+    sceneImage: {fileID: 21300000, guid: d70474c10fa465f4fba2d7e0fd026344, type: 3}
     soundEffect: {fileID: 0}
   - text: "\uADF8 \uD5A5\uAE30\uB97C \uB530\uB77C\uAC00\uBCF4\uB2C8, \uBC18\uC9DD\uBC18\uC9DD
       \uBE5B\uB098\uB294 \uD0D5\uD6C4\uB8E8 \uAC00\uAC8C \uC55E\uC5D0 \uAE34 \uC904\uC774
       \uB298\uC5B4\uC11C \uC788\uB2E4!"
-    backgroundImage: {fileID: 9141755401725020031, guid: f477cbbcd6e944141804529a4a82453c, type: 3}
+    sceneImage: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
     soundEffect: {fileID: 0}
   - text: "\uD638\uAE30\uC2EC \uAC00\uB4DD\uD55C \uB208\uC73C\uB85C \uC904 \uB05D\uC5D0
       \uC120 \uD478\uD478\uB294, \uB9C8\uCE68\uB0B4 \uC724\uAE30\uB098\uB294 \uD1B5\uADE4\uD0D5\uD6C4\uB8E8
       \uD558\uB098\uB97C \uC190\uC5D0 \uB123\uB294\uB2E4."
-    backgroundImage: {fileID: 21300000, guid: 162d556ec7ca1a946a45fb0392f88fd8, type: 3}
+    sceneImage: {fileID: 21300000, guid: d70474c10fa465f4fba2d7e0fd026344, type: 3}
     soundEffect: {fileID: 0}
   - text: "\u201C\uD55C \uC785\uB9CC...!\u201D"
-    backgroundImage: {fileID: 21300000, guid: 162d556ec7ca1a946a45fb0392f88fd8, type: 3}
+    sceneImage: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
     soundEffect: {fileID: 0}
   - text: "\uBC14\uC0AD!"
-    backgroundImage: {fileID: 21300000, guid: 9aaa9e6d434011345a20b804957fbdb4, type: 3}
+    sceneImage: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
     soundEffect: {fileID: 8300000, guid: 4a25b43369c26f544b9adc382a39b7f5, type: 3}
   - text: "\uB2EC\uCF64\uD55C \uC2DC\uB7FD\uC774 \uD1A1, \uC0C1\uD07C\uD55C \uACFC\uC999\uC774
       \uD321!"
-    backgroundImage: {fileID: 21300000, guid: 9aaa9e6d434011345a20b804957fbdb4, type: 3}
+    sceneImage: {fileID: 21300000, guid: 1008105f3adfc12419dbeea182f2db0f, type: 3}
     soundEffect: {fileID: 0}
   - text: "\u201C\uC73C\uC545... \uC774\uAC74... \uC138\uC0C1\uC5D0\uC11C \uC81C\uC77C
       \uB9DB\uC788\uC5B4!!\u201D"
-    backgroundImage: {fileID: 21300000, guid: 9aaa9e6d434011345a20b804957fbdb4, type: 3}
+    sceneImage: {fileID: 21300000, guid: a8992e8485c34d0488bf442bc9531960, type: 3}
     soundEffect: {fileID: 0}
   - text: "\uD0D5\uD6C4\uB8E8\uC758 \uB9C8\uC131\uC5D0 \uBE60\uC838\uBC84\uB9B0 \uD478\uD478\uB294
       \uACB0\uC2EC\uD55C\uB2E4."
-    backgroundImage: {fileID: 21300000, guid: 3e9dbffe6ba0aa7439b08aba9132f5dc, type: 3}
+    sceneImage: {fileID: 21300000, guid: a8992e8485c34d0488bf442bc9531960, type: 3}
     soundEffect: {fileID: 0}
   - text: "\u201C\uADF8\uB798! \uB098\uB3C4 \uC774\uB7F0 \uD0D5\uD6C4\uB8E8\uB97C
       \uB9CC\uB4E4 \uAC70\uC57C! \uBAA8\uB450\uC5D0\uAC8C \uC774 \uD589\uBCF5\uD55C
       \uB9DB\uC744 \uC804\uD574\uC904\uB798!\u201D"
-    backgroundImage: {fileID: 21300000, guid: 3e9dbffe6ba0aa7439b08aba9132f5dc, type: 3}
+    sceneImage: {fileID: 21300000, guid: d70474c10fa465f4fba2d7e0fd026344, type: 3}
     soundEffect: {fileID: 0}
   - text: "\uADF8\uB807\uAC8C, \uD478\uD478\uC758 \uB2EC\uCF64\uD558\uACE0 \uBC14\uC05C
       \uD558\uB8E8\uAC00 \uC2DC\uC791\uB41C\uB2E4."
-    backgroundImage: {fileID: -5448576196392795416, guid: a0aae151e7ab227498bcf05c36bdf27f, type: 3}
+    sceneImage: {fileID: 21300000, guid: 086321cef9d9b794da66c7bc712c35ba, type: 3}
     soundEffect: {fileID: 0}
   - text: "\uB9AC\uBCF8\uC744 \uC798\uB77C \uC8FC\uC138\uC694"
-    backgroundImage: {fileID: -5448576196392795416, guid: a0aae151e7ab227498bcf05c36bdf27f, type: 3}
+    sceneImage: {fileID: 21300000, guid: 086321cef9d9b794da66c7bc712c35ba, type: 3}
     soundEffect: {fileID: 0}
-  backgroundRenderer: {fileID: 876221002}
-  backgroundScaler: {fileID: 876221005}
+  sceneSpecificRenderer: {fileID: 201080135}
   storyText: {fileID: 1956048137}
   nextButton: {fileID: 1700300389}
   ribbonObj: {fileID: 1565801924}

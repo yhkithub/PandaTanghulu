@@ -191,8 +191,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 833, y: 605}
-  m_SizeDelta: {x: 258.06, y: 258.09}
+  m_AnchoredPosition: {x: 901.25, y: 649.68}
+  m_SizeDelta: {x: 168.72, y: 168.73}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &121717747
 GameObject:
@@ -1318,8 +1318,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 574.41, y: 604.48004}
-  m_SizeDelta: {x: 259.12, y: 259.13}
+  m_AnchoredPosition: {x: 732.19, y: 649.34}
+  m_SizeDelta: {x: 169.4, y: 169.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1356937852
 CanvasRenderer:
@@ -1972,8 +1972,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 315.47992, y: 604.68}
-  m_SizeDelta: {x: 258.75, y: 258.75}
+  m_AnchoredPosition: {x: 562.90015, y: 649.47046}
+  m_SizeDelta: {x: 169.17, y: 169.17}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1984313451
 CanvasRenderer:
@@ -2060,11 +2060,15 @@ MonoBehaviour:
   - toppingType: 10
     toppingSprite: {fileID: 21300000, guid: 98f5a83c8af318a489812bc22fbb000d, type: 3}
   - toppingType: 13
-    toppingSprite: {fileID: 21300000, guid: 0456dd12df7a8374280d3034d9f29b69, type: 3}
+    toppingSprite: {fileID: 21300000, guid: 3243199b3fe2fc947843bb89719b745e, type: 3}
   - toppingType: 15
-    toppingSprite: {fileID: 21300000, guid: 7a0de223bf9fe814eb03694365f502eb, type: 3}
+    toppingSprite: {fileID: 21300000, guid: 7c0a1c2e032976847a34a8f785d32291, type: 3}
   - toppingType: 14
-    toppingSprite: {fileID: 21300000, guid: 2c8c2b84c9b7c0e4ebffdce67988dafc, type: 3}
+    toppingSprite: {fileID: 21300000, guid: 6654442cccd5a6e4ea8dc5f38f632e89, type: 3}
+  - toppingType: 11
+    toppingSprite: {fileID: 21300000, guid: 610cddb75913135438670e111db1fd9d, type: 3}
+  - toppingType: 12
+    toppingSprite: {fileID: 21300000, guid: 3bcade197be3eb84fba31bcfb2d5c424, type: 3}
 --- !u!4 &2045080285
 Transform:
   m_ObjectHideFlags: 0
