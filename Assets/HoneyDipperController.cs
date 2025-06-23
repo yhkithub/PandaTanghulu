@@ -38,6 +38,10 @@ public class HoneyDipperController : MonoBehaviour
 
     void Update()
     {
+        if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.IsGamePaused)
+        {
+            return; // 여기서 함수를 종료하여 아래의 이동 코드가 실행되지 않도록 함
+        }
         // 마우스를 따라 허니디퍼 이동
         Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         transform.position = new Vector3(mousePos.x, mousePos.y, 0); // Z는 0으로 고정 (2D)

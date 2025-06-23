@@ -44,6 +44,15 @@ public class CustomerOrderManager : MonoBehaviour
         public Sprite sprite;
     }
 
+    public bool IsGamePaused
+    {
+        get
+        {
+            // 튜토리얼이 활성화 상태이고, 현재 게임 상태가 '튜토리얼 표시' 상태일 때 true를 반환합니다.
+            return isTutorialActive && currentGameState == GameState.TutorialDisplay;
+        }
+    }
+
     void Awake()
     {
         Debug.Log("CustomerOrderManager Awake() 호출됨");

@@ -55,9 +55,10 @@ public class CustomerPresentationManager : MonoBehaviour
     private Button currentNextButton;
     private TextMeshProUGUI currentSpeechText;
     private Coroutine typeTextCoroutine;
-    private Coroutine playDialogueCoroutine;
 
     private Canvas m_Canvas;
+
+    private bool isSkipped = false; // 스킵 버튼이 눌렸는지 여부
 
     void Awake()
     {
@@ -196,18 +197,12 @@ public class CustomerPresentationManager : MonoBehaviour
         if (currentOrder == null) { ProceedToTitleScene(); return; }
 
         activeDialogueSequence = (currentOrder.presentationDialogueSequence != null && currentOrder.presentationDialogueSequence.Count > 0)
-                               ? currentOrder.presentationDialogueSequence
-                               : GetDefaultThanksDialogues();
-
-        if (activeDialogueSequence == null || activeDialogueSequence.Count == 0)
-        {
-            StartCoroutine(CaptureMoment());
-            return;
-        }
-
+                                ? currentOrder.presentationDialogueSequence
+                                : GetDefaultThanksDialogues();
+        
         currentDialogueIndex = 0;
-        if (playDialogueCoroutine != null) StopCoroutine(playDialogueCoroutine);
-        playDialogueCoroutine = StartCoroutine(PlayDialogueInternal());
+        
+        StartCoroutine(ShowCurrentDialogue());
     }
 
     List<DialogueEntry> GetDefaultThanksDialogues()
@@ -218,62 +213,42 @@ public class CustomerPresentationManager : MonoBehaviour
         return defaultDialogues;
     }
 
-    IEnumerator PlayDialogueInternal()
+    IEnumerator ShowCurrentDialogue()
     {
         HideAllDialogueBubbles();
 
-        while (currentDialogueIndex < activeDialogueSequence.Count)
+        if (currentDialogueIndex >= activeDialogueSequence.Count)
         {
-            DialogueEntry entry = activeDialogueSequence[currentDialogueIndex];
-            CanvasGroup targetBubbleGroup = null;
-            TextMeshProUGUI targetTextComponent = null;
-            Button targetNextButton = null;
-
-            if (currentBubbleGroup != null && currentBubbleGroup.gameObject.activeSelf)
-            {
-                bool shouldHideOldBubble = (entry.speaker == DialogueEntry.Speaker.customer && currentBubbleGroup == pupuSpeechBubbleGroup) ||
-                           (entry.speaker == DialogueEntry.Speaker.Pupu && currentBubbleGroup == kikiSpeechBubbleGroup);
-                if (shouldHideOldBubble) yield return StartCoroutine(FadeOutBubble(currentBubbleGroup));
-            }
-
-            if (entry.speaker == DialogueEntry.Speaker.customer)
-            {
-                targetBubbleGroup = kikiSpeechBubbleGroup; targetTextComponent = kikiSpeechText; targetNextButton = kikiNextButton;
-            }
-            else
-            {
-                targetBubbleGroup = pupuSpeechBubbleGroup; targetTextComponent = pupuSpeechText; targetNextButton = pupuNextButton;
-            }
-            currentSpeechText = targetTextComponent;
-            currentBubbleGroup = targetBubbleGroup;
-            currentNextButton = targetNextButton;
-
-            if (targetBubbleGroup != null && targetTextComponent != null)
-            {
-                yield return ShowSingleDialogueBubble(targetBubbleGroup, targetTextComponent, entry.line, targetNextButton);
-            }
-            
-            bool waitingForUserInteraction = true;
-            while(waitingForUserInteraction)
-            {
-                if (isTextTyping) 
-                {
-                    yield return null;
-                }
-                else if (currentNextButton != null && currentNextButton.gameObject.activeSelf) 
-                {
-                    yield return null;
-                }
-            }
+            // 대화가 끝났을 때의 처리
+            StartCoroutine(CaptureMoment());
+            yield break;
         }
 
-        isDialoguePlaying = false;
-        if (currentBubbleGroup != null && currentBubbleGroup.gameObject.activeSelf)
+        DialogueEntry entry = activeDialogueSequence[currentDialogueIndex];
+        CanvasGroup targetBubbleGroup = null;
+        TextMeshProUGUI targetTextComponent = null;
+        Button targetNextButton = null;
+
+        if (entry.speaker == DialogueEntry.Speaker.customer)
         {
-            yield return StartCoroutine(FadeOutBubble(currentBubbleGroup));
+            targetBubbleGroup = kikiSpeechBubbleGroup;
+            targetTextComponent = kikiSpeechText;
+            targetNextButton = kikiNextButton;
         }
-        Debug.Log("손님 감사 대화 종료. 사진 촬영 시작.");
-        StartCoroutine(CaptureMoment());
+        else
+        {
+            targetBubbleGroup = pupuSpeechBubbleGroup;
+            targetTextComponent = pupuSpeechText;
+            targetNextButton = pupuNextButton;
+        }
+        currentSpeechText = targetTextComponent;
+        currentBubbleGroup = targetBubbleGroup;
+        currentNextButton = targetNextButton;
+
+        if (targetBubbleGroup != null && targetTextComponent != null)
+        {
+            yield return ShowSingleDialogueBubble(targetBubbleGroup, targetTextComponent, entry.line, targetNextButton);
+        }
     }
 
     void HideAllDialogueBubbles()
@@ -310,34 +285,33 @@ public class CustomerPresentationManager : MonoBehaviour
         Sound s = AudioManager.Instance?.sounds.Find(sound => sound.name == dialogueTextSound);
         if (s?.source != null)
 
-        foreach (char c in message)
-        {
-            if (!isTextTyping) { textComponent.text = message; break; }
-            textComponent.text += c;
-            yield return new WaitForSeconds(0.03f);
-        }
+            foreach (char c in message)
+            {
+                if (!isTextTyping) { textComponent.text = message; break; }
+                textComponent.text += c;
+                yield return new WaitForSeconds(0.03f);
+            }
         if (textSfxSource != null && textSfxSource.isPlaying) { /* 사운드 중지 로직 */ }
         isTextTyping = false;
     }
 
     public void OnDialogueNextButtonClicked()
     {
+        // 텍스트 타이핑 중이면 즉시 완료
         if (isTextTyping)
         {
-            isTextTyping = false; 
+            isTextTyping = false;
             if (currentSpeechText != null && activeDialogueSequence != null && currentDialogueIndex < activeDialogueSequence.Count)
             {
-                 currentSpeechText.text = activeDialogueSequence[currentDialogueIndex].line; 
+                currentSpeechText.text = activeDialogueSequence[currentDialogueIndex].line;
             }
-            AudioManager.Instance?.StopTextSound(); // 사운드 준비 안됨
+            AudioManager.Instance?.StopTextSound();
         }
-        else 
+        else // 타이핑이 끝났으면 다음 대사로 진행
         {
-            currentDialogueIndex++; 
-            if (currentNextButton != null)
-            {
-                currentNextButton.gameObject.SetActive(false); 
-            }
+            currentDialogueIndex++;
+            // 🟩 수정: 다음 대사를 보여주는 함수를 직접 호출
+            StartCoroutine(ShowCurrentDialogue());
         }
     }
 
@@ -393,7 +367,7 @@ public class CustomerPresentationManager : MonoBehaviour
             else if (customerImage != null && customerImage.sprite != null && customerImage.gameObject.activeSelf) // 웃는 이미지가 없으면 기본 손님 이미지
                 smilingCustomerInPolaroidImage.sprite = customerImage.sprite;
             else if (currentOrder?.customerSprite != null) // 최후의 보루
-                 smilingCustomerInPolaroidImage.sprite = currentOrder.customerSprite;
+                smilingCustomerInPolaroidImage.sprite = currentOrder.customerSprite;
 
 
             // 폴라로이드 안의 탕후루 이미지 설정
@@ -434,4 +408,19 @@ public class CustomerPresentationManager : MonoBehaviour
         Debug.Log(titleSceneName + " (스테이지 선택 화면)으로 돌아갑니다. StageSelectPanel 열기 요청됨.");
         SceneSwitcher.Instance?.LoadScene(titleSceneName);
     }
+    
+    public void OnSkipButtonClicked()
+    {
+        // 스킵 버튼이 여러 번 눌리는 것을 방지
+        if (isSkipped) return;
+        isSkipped = true;
+
+        Debug.Log("Presentation 씬의 모든 연출을 스킵합니다!");
+
+        // 이 스크립트에서 실행 중인 모든 코루틴(애니메이션, 대화 등)을 중단합니다.
+        StopAllCoroutines();
+
+        // 최종적으로 다음 씬으로 넘어가는 함수를 즉시 호출합니다.
+        ProceedToTitleScene();
+    }
 }

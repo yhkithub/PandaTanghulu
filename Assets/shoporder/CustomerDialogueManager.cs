@@ -47,6 +47,12 @@ public class CustomerDialogueManager : MonoBehaviour
         InitializeButtonsAndBubbles();
 
         currentCustomerData = CustomerOrderManager.Instance.CurrentOrderData;
+        if (AudioManager.Instance != null)
+        {
+            // 현재 재생 중인 BGM을 중지하려면
+            AudioManager.Instance.PlayBgm("MainGameBGM"); // "ShopBGM"으로 교체
+
+        }
 
         if (currentCustomerData != null)
         {

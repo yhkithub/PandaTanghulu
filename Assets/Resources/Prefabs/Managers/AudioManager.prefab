@@ -75,7 +75,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: Boiling
     clip: {fileID: 8300000, guid: 3e516e8d097be2e4992e4bd685d0412f, type: 3}
-    volume: 1
+    volume: 3
     pitch: 1
     loop: 1
     isBgm: 0

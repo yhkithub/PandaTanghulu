@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 3MeMe_data
   m_EditorClassIdentifier: 
   customerName: "\uBA54\uBA54"
-  customerSprite: {fileID: 21300000, guid: d70474c10fa465f4fba2d7e0fd026344, type: 3}
-  smilingCustomerSprite: {fileID: 21300000, guid: a8992e8485c34d0488bf442bc9531960, type: 3}
+  customerSprite: {fileID: 21300000, guid: 5a7bc282da0975748bedeeb3a332a4f8, type: 3}
+  smilingCustomerSprite: {fileID: 21300000, guid: 41fae343eeb5d254d923c2c81901564c, type: 3}
   skewerOrder:
   - fruit: 1
   - fruit: 3

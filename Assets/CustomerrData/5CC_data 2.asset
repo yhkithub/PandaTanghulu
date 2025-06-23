@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: 5CC_data 2
   m_EditorClassIdentifier: 
   customerName: "\uD06C\uD06C"
-  customerSprite: {fileID: 21300000, guid: d70474c10fa465f4fba2d7e0fd026344, type: 3}
-  smilingCustomerSprite: {fileID: 21300000, guid: a8992e8485c34d0488bf442bc9531960, type: 3}
+  customerSprite: {fileID: 21300000, guid: db0692b713dfad04eb26d6b219045c51, type: 3}
+  smilingCustomerSprite: {fileID: 21300000, guid: 8b42f443c12ac7549ba4a78011bb22cb, type: 3}
   skewerOrder:
   - fruit: 3
   - fruit: 5

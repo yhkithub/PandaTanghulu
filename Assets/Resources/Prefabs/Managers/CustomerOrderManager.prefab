@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f0693b2cce75645a96aa600767ec56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentGameState: 0
+  currentGameState: 1
   isTutorialActive: 1
   sugarBoilingSceneName: SugarBoilingScene
   sugarCoatingSceneName: SugarCoatingScene

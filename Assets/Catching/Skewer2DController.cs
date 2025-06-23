@@ -22,6 +22,11 @@ public class Skewer2DController : MonoBehaviour
 
     void Update()
     {
+        if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.IsGamePaused)
+        {
+            return; // 여기서 함수를 종료하여 아래의 이동 코드가 실행되지 않도록 함
+        }        
+        
         // 1. 마우스 위치로 꼬치 이동 (X축만)
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         float targetX = Mathf.Clamp(mousePosition.x, minXClamp, maxXClamp);
