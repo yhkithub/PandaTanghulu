@@ -468,10 +468,10 @@ public class TitleManager : MonoBehaviour
         yield return new WaitForSeconds(longestRollTime);
 
         // 과일 롤 애니메이션 후 생성된 과일들 제거 (선택적)
-        foreach (GameObject fruit in generatedRolledFruits)
-        {
-            if (fruit != null) Destroy(fruit);
-        }
+        // foreach (GameObject fruit in generatedRolledFruits)
+        // {
+        //     if (fruit != null) Destroy(fruit);
+        // }
         Debug.Log("과일 롤 애니메이션 종료 및 생성된 과일 제거 완료.");
     }
 

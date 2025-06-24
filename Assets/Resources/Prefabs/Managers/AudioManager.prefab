@@ -53,10 +53,10 @@ MonoBehaviour:
     isBgm: 0
     source: {fileID: 0}
   - name: Text
-    clip: {fileID: 8300000, guid: 6739daf52b0cf6d4eb3c8183b29009d2, type: 3}
+    clip: {fileID: 8300000, guid: 4d7395c370d1f5f4f848b55a8559ba93, type: 3}
     volume: 1
     pitch: 1
-    loop: 0
+    loop: 1
     isBgm: 0
     source: {fileID: 0}
   - name: BubbleOpen

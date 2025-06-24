@@ -343,18 +343,28 @@ public class AudioManager : MonoBehaviour
         }
     }
     
-    public void PlayLoopSound(string name)
+        public void PlayLoopSound(string name)
     {
         if (!IsSfxEnabled) { Debug.Log("SFX 비활성화 상태"); return; }
         Sound s = sounds.Find(sound => sound.name == name);
         if (s == null) { Debug.Log($"{name} 사운드 없음"); return; }
         if (s.source == null) { Debug.Log($"{name} AudioSource 없음"); return; }
+        
+        s.source.loop = true; // 루프는 항상 켜두도록 보장
+        
+        // ★★★ 수정된 로직 ★★★
+        // 소리가 재생 중이지 않을 때만 처음부터 Play
         if (!s.source.isPlaying)
         {
             Debug.Log($"{name} 사운드 루프 재생 시작");
-            s.source.loop = true;
             s.source.volume = s.volume * masterSfxVolume;
             s.source.Play();
+        }
+        // 이미 재생중이었다면 (일시정지 상태였다면) 이어서 재생
+        else
+        {
+            Debug.Log($"{name} 사운드 루프 이어서 재생");
+            s.source.UnPause();
         }
     }
 
@@ -362,13 +372,13 @@ public class AudioManager : MonoBehaviour
     {
         Sound s = sounds.Find(sound => sound.name == name);
         if (s == null) return;
+
+        // ★★★ 수정된 로직 ★★★
+        // Stop() 대신 Pause()를 사용하여 일시 정지
         if (s.source.isPlaying)
         {
-            s.source.Stop();
-            s.source.loop = false;
-            Debug.Log($"{name} 사운드 루프 재생 중지");
+            s.source.Pause();
+            Debug.Log($"{name} 사운드 루프 일시정지");
         }
     }
-    
-    
 }

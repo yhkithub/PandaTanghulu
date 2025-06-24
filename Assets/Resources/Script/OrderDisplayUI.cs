@@ -108,6 +108,9 @@ public class OrderDisplayUI : MonoBehaviour
                 fruitIconInstance.name = fruit.ToString() + "_OrderIcon_InScene";
                 fruitIconInstance.color = Color.white;
 
+                // 새로 생성된 과일 아이콘을 부모(Container)의 첫 번째 자식으로 만들어 맨 뒤에 그리도록 설정
+                fruitIconInstance.transform.SetAsFirstSibling();
+
                 // RectTransform을 가져와서 위치를 직접 설정합니다.
                 RectTransform iconRect = fruitIconInstance.GetComponent<RectTransform>();
 

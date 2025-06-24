@@ -301,6 +301,7 @@ public class ToppingPlacementManager : MonoBehaviour
         {
             resultImageDisplay.sprite = clearSprite;
             resultImageDisplay.gameObject.SetActive(true);
+            AudioManager.Instance?.PlayOneShotSound("Success");
         }
         if (sparkleEffect != null)
         {
@@ -340,6 +341,7 @@ public class ToppingPlacementManager : MonoBehaviour
         {
             resultImageDisplay.sprite = failSprite;
             resultImageDisplay.gameObject.SetActive(true);
+            AudioManager.Instance?.PlayOneShotSound("Fail");
         }
 
         AudioManager.Instance?.PlayOneShotSound("ToppingFailureSound");

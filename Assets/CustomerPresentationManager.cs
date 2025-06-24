@@ -295,20 +295,45 @@ public class CustomerPresentationManager : MonoBehaviour
     {
         isTextTyping = true;
         textComponent.text = "";
-        AudioSource textSfxSource = null; // 사운드 준비 안됨
-        Sound s = AudioManager.Instance?.sounds.Find(sound => sound.name == dialogueTextSound);
-        if (s?.source != null)
 
+        // AudioManager가 존재하는지, dialogueTextSound 변수에 효과음 이름이 제대로 설정되었는지 확인합니다.
+        // dialogueTextSound 변수에는 "Text" 라는 문자열이 할당되어 있어야 합니다.
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(dialogueTextSound))
+        {
+            // 사운드가 실제로 AudioManager에 등록되어 있는지 한번 더 확인
+            Sound s = AudioManager.Instance.sounds.Find(sound => sound.name == dialogueTextSound);
+            if (s?.source != null) s.source.Play();
+
+            foreach (char c in message)
+            {
+                if (!isTextTyping)
+                {
+                    textComponent.text = message;
+                    break;
+                }
+                textComponent.text += c;
+
+
+                yield return new WaitForSeconds(0.03f);
+            }
+            if (s?.source != null && s.source.isPlaying) s.source.Stop();
+
+        }
+        else
+        {
+            // AudioManager가 없거나 dialogueTextSound가 비어있는 경우, 소리 없이 텍스트만 표시
+            Debug.LogWarning("AudioManager를 찾을 수 없거나, 재생할 효과음 이름이 지정되지 않았습니다.");
             foreach (char c in message)
             {
                 if (!isTextTyping) { textComponent.text = message; break; }
                 textComponent.text += c;
                 yield return new WaitForSeconds(0.03f);
             }
-        if (textSfxSource != null && textSfxSource.isPlaying) { /* 사운드 중지 로직 */ }
+        }
+
+        // isTextTyping 플래그는 항상 코루틴 마지막에 false로 설정
         isTextTyping = false;
     }
-
     public void OnDialogueNextButtonClicked()
     {
         // 텍스트 타이핑 중이면 즉시 완료
@@ -468,6 +493,7 @@ public class CustomerPresentationManager : MonoBehaviour
 
         // 이 스크립트에서 실행 중인 모든 코루틴(애니메이션, 대화 등)을 중단합니다.
         StopAllCoroutines();
+        AudioManager.Instance?.StopSound("Text");
 
         // 최종적으로 다음 씬으로 넘어가는 함수를 즉시 호출합니다.
         ProceedToTitleScene();

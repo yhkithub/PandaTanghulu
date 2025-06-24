@@ -767,10 +767,10 @@ MonoBehaviour:
   rubCountText: {fileID: 0}
   skewerBeforeCoatingSprite: {fileID: 0}
   skewerAfterCoatingSprite: {fileID: 0}
-  rubsNeededForCoating: 20
-  coatingDuration: 4
-  rubbingDistanceThreshold: 0.1
-  rubsForFirstSparkle: 10
+  rubsNeededForCoating: 50
+  coatingDuration: 1
+  rubbingDistanceThreshold: 0.2
+  rubsForFirstSparkle: 25
   targetVisualHeightInWorldUnits: 5
 --- !u!4 &552741446
 Transform:
@@ -1266,8 +1266,8 @@ Transform:
   m_GameObject: {fileID: 891222874}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.81, y: 0.24, z: 0}
-  m_LocalScale: {x: 1.5134882, y: 1.1354, z: 0.11846059}
+  m_LocalPosition: {x: -1.93, y: 0.38, z: 0}
+  m_LocalScale: {x: 1.4386882, y: 1.4386882, z: 0.17042783}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

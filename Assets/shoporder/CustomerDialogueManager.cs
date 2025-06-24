@@ -183,10 +183,7 @@ public class CustomerDialogueManager : MonoBehaviour
         isDialoguePlaying = false;
         HideAllBubblesAndButtons();
         SceneManager.LoadScene(fruitCatchingSceneName);
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.StopSound("Text");
-        }
+        AudioManager.Instance?.StopSound("Text");
     }
 
     void HideAllBubblesAndButtons()
