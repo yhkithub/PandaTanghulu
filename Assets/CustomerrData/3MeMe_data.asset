@@ -23,7 +23,7 @@ MonoBehaviour:
   toppingItem: 11
   toppingItemSpriteForHint: {fileID: 21300000, guid: 610cddb75913135438670e111db1fd9d, type: 3}
   completedSkewerSprite: {fileID: 21300000, guid: 267adf008b77fa64582617e103d163bc, type: 3}
-  sugarCoatedSkewerSprite: {fileID: 21300000, guid: eff586e1c2d48d94fa79b9310883566e, type: 3}
+  sugarCoatedSkewerSprite: {fileID: 21300000, guid: cba4c04ed10859c47a3c4468fb59087f, type: 3}
   skewerWithToppingSprite: {fileID: 21300000, guid: 18c098428ca87fa449fa9534627a627b, type: 3}
   sugarBoilingSpeed: 3
   sugarBoilingSuccessZoneWidth: 280
