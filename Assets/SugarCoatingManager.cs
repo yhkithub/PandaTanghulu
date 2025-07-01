@@ -1,9 +1,9 @@
-// SugarCoatingManager.cs
+// 파일: SugarCoatingManager.cs (수정 완료)
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using TMPro; // TextMeshProUGUI 사용
+using TMPro;
 
 public class SugarCoatingManager : MonoBehaviour
 {
@@ -11,20 +11,21 @@ public class SugarCoatingManager : MonoBehaviour
 
     [Header("게임 오브젝트 연결")]
     public GameObject fryingPanObject;
-    public SpriteRenderer skewerRenderer; // 설탕 코팅 전 이미지 표시용 (알파값 조절 대상)
-    public SpriteRenderer skewerCoatedRenderer; // 설탕 코팅 후 이미지 표시용 (알파값 조절 대상)
+    public Transform skewerParent;
+    public SpriteRenderer skewerRenderer;
+    public SpriteRenderer skewerCoatedRenderer;
     public HoneyDipperController honeyDipper;
     public GameObject sparkleEffectObject1;
     public GameObject sparkleEffectObject2;
-    public TextMeshProUGUI rubCountText; // 문지른 횟수 표시용 Text
+    public TextMeshProUGUI rubCountText;
 
     [Header("스프라이트 에셋")]
-    public Sprite skewerBeforeCoatingSprite; // CustomerOrderManager에서 로드됨
-    public Sprite skewerAfterCoatingSprite;  // CustomerOrderManager에서 로드됨
+    public Sprite skewerBeforeCoatingSprite;
+    public Sprite skewerAfterCoatingSprite;
 
     [Header("게임 설정")]
     public int rubsNeededForCoating = 10;
-    public float coatingDuration = 2.0f; // 코팅 완료까지 걸리는 시간
+    public float coatingDuration = 2.0f;
     public float rubbingDistanceThreshold = 0.1f;
     public int rubsForFirstSparkle = 3;
 
@@ -38,6 +39,7 @@ public class SugarCoatingManager : MonoBehaviour
     private Vector3 lastDipperPosition;
     private bool firstSparkleShown = false;
     private bool isDipperTouchingSkewer = false;
+    private bool isEndlessModeActive = false;
 
     void Awake()
     {
@@ -47,20 +49,32 @@ public class SugarCoatingManager : MonoBehaviour
 
     void Start()
     {
-        if (CustomerOrderManager.Instance == null || CustomerOrderManager.Instance.CurrentOrderData == null)
+        isEndlessModeActive = GameModeManager.IsEndlessMode;
+
+        if (isEndlessModeActive)
         {
-            Debug.LogError("SugarCoatingManager Error: CustomerOrderManager 또는 CurrentOrderData가 null입니다! TitleScene으로 이동합니다.");
-            // SceneSwitcher.Instance?.LoadScene("TitleScene");
-            return;
+            if (skewerRenderer != null) skewerRenderer.gameObject.SetActive(false);
+            if (skewerCoatedRenderer != null) skewerCoatedRenderer.gameObject.SetActive(false);
+            
+            // --- 꼬치 위치 문제 해결 ---
+            // skewerParent와 skewerRenderer가 모두 할당되어 있을 때,
+            // skewerParent의 위치를 skewerRenderer의 위치와 동일하게 맞춰줍니다.
+            if (skewerParent != null && skewerRenderer != null)
+            {
+                skewerParent.position = skewerRenderer.transform.position;
+            }
+            
+            Debug.Log("[SugarCoatingManager] 무한 모드로 설정되었습니다.");
+        }
+        else
+        {
+            if (CustomerOrderManager.Instance?.CurrentOrderData == null) return;
+            skewerBeforeCoatingSprite = CustomerOrderManager.Instance.CurrentOrderData.completedSkewerSprite;
+            skewerAfterCoatingSprite = CustomerOrderManager.Instance.CurrentOrderData.sugarCoatedSkewerSprite;
+            if (skewerBeforeCoatingSprite == null) Debug.LogError("skewerBeforeCoatingSprite가 할당되지 않았습니다!");
         }
 
-        skewerBeforeCoatingSprite = CustomerOrderManager.Instance.CurrentOrderData.completedSkewerSprite;
-        skewerAfterCoatingSprite = CustomerOrderManager.Instance.CurrentOrderData.sugarCoatedSkewerSprite;
-
-        if (skewerBeforeCoatingSprite == null) Debug.LogError("skewerBeforeCoatingSprite가 할당되지 않았습니다!");
-        if (skewerAfterCoatingSprite == null) Debug.LogWarning($"CustomerOrderData ({CustomerOrderManager.Instance.CurrentOrderData.name})에 sugarCoatedSkewerSprite가 할당되지 않았습니다!");
-        if (skewerCoatedRenderer == null) Debug.LogError("skewerCoatedRenderer가 Inspector에 연결되지 않았습니다! 점진적 코팅 효과를 사용할 수 없습니다.");
-        if (rubCountText == null) Debug.LogWarning("rubCountText가 Inspector에 연결되지 않았습니다! 문지른 횟수를 표시할 수 없습니다.");
+        if (rubCountText == null) Debug.LogWarning("rubCountText가 Inspector에 연결되지 않았습니다!");
 
         InitializeCoating();
     }
@@ -72,27 +86,52 @@ public class SugarCoatingManager : MonoBehaviour
         coatingComplete = false;
         firstSparkleShown = false;
 
-        if (skewerRenderer != null && skewerBeforeCoatingSprite != null)
+        if (!isEndlessModeActive)
         {
-            skewerRenderer.sprite = skewerBeforeCoatingSprite;
-            skewerRenderer.color = Color.white; // 완전 불투명
-            AdjustSkewerSpriteSize(skewerRenderer, skewerBeforeCoatingSprite);
-            skewerRenderer.gameObject.SetActive(true);
-        }
-        else Debug.LogError("주 꼬치 렌더러 또는 설탕 코팅 전 스프라이트가 없습니다.");
+            if (skewerRenderer != null)
+            {
+                if (skewerBeforeCoatingSprite != null)
+                {
+                    skewerRenderer.sprite = skewerBeforeCoatingSprite;
+                    AdjustSkewerSpriteSize(skewerRenderer, skewerBeforeCoatingSprite);
+                }
+                skewerRenderer.color = Color.white;
+                skewerRenderer.gameObject.SetActive(true);
+            }
+            else Debug.LogError("주 꼬치 렌더러가 없습니다.");
 
-        if (skewerCoatedRenderer != null && skewerAfterCoatingSprite != null)
-        {
-            skewerCoatedRenderer.sprite = skewerAfterCoatingSprite;
-            skewerCoatedRenderer.color = new Color(1, 1, 1, 0); // 시작 시 완전히 투명
-            AdjustSkewerSpriteSize(skewerCoatedRenderer, skewerAfterCoatingSprite);
-            skewerCoatedRenderer.gameObject.SetActive(true); // 항상 활성화 상태로 두고 알파로 제어
-        }
-        else if (skewerCoatedRenderer != null) // 스프라이트만 없는 경우
-        {
-             skewerCoatedRenderer.gameObject.SetActive(false); // 비활성화
-        }
+            if (skewerCoatedRenderer != null)
+            {
+                if (skewerAfterCoatingSprite != null)
+                {
+                    skewerCoatedRenderer.sprite = skewerAfterCoatingSprite;
+                    AdjustSkewerSpriteSize(skewerCoatedRenderer, skewerAfterCoatingSprite);
+                }
+                skewerCoatedRenderer.color = new Color(1, 1, 1, 0);
+                skewerCoatedRenderer.gameObject.SetActive(true);
+            }
 
+            if (skewerRenderer != null && skewerBeforeCoatingSprite != null)
+            {
+                skewerRenderer.sprite = skewerBeforeCoatingSprite;
+                skewerRenderer.color = Color.white;
+                AdjustSkewerSpriteSize(skewerRenderer, skewerBeforeCoatingSprite);
+                skewerRenderer.gameObject.SetActive(true);
+            }
+            else Debug.LogError("주 꼬치 렌더러 또는 설탕 코팅 전 스프라이트가 없습니다.");
+
+            if (skewerCoatedRenderer != null && skewerAfterCoatingSprite != null)
+            {
+                skewerCoatedRenderer.sprite = skewerAfterCoatingSprite;
+                skewerCoatedRenderer.color = new Color(1, 1, 1, 0);
+                AdjustSkewerSpriteSize(skewerCoatedRenderer, skewerAfterCoatingSprite);
+                skewerCoatedRenderer.gameObject.SetActive(true);
+            }
+            else if (skewerCoatedRenderer != null)
+            {
+                skewerCoatedRenderer.gameObject.SetActive(false);
+            }
+        }
 
         if (honeyDipper != null) honeyDipper.ResetDipper();
         else Debug.LogError("허니디퍼 컨트롤러가 연결되지 않았습니다!");
@@ -100,7 +139,7 @@ public class SugarCoatingManager : MonoBehaviour
         if (sparkleEffectObject1 != null) sparkleEffectObject1.SetActive(false);
         if (sparkleEffectObject2 != null) sparkleEffectObject2.SetActive(false);
 
-        UpdateRubCountText(); // 문지른 횟수 초기화 및 UI 업데이트
+        UpdateRubCountText();
         Debug.Log("설탕 코팅 단계 시작!");
     }
 
@@ -110,16 +149,16 @@ public class SugarCoatingManager : MonoBehaviour
         {
             isCoatingPhase = true;
             Debug.Log("허니디퍼에 설탕물 묻힘!");
-            // 허니디퍼 스프라이트 변경은 HoneyDipperController에서 처리
         }
     }
 
     public void RubSkewer(Vector3 currentDipperPos)
     {
+        Debug.Log($"RubSkewer 호출! 현재 문지른 횟수: {currentRubs}");
         if (isCoatingPhase && !coatingComplete && honeyDipper.HasSugar())
         {
             float distance = Vector3.Distance(currentDipperPos, lastDipperPosition);
-            if (distance < 0.01f) return; // 너무 작은 이동은 무시
+            if (distance < 0.01f) return;
             if (distance > rubbingDistanceThreshold)
             {
                 currentRubs++;
@@ -167,29 +206,43 @@ public class SugarCoatingManager : MonoBehaviour
 
     void UpdateCoatingVisuals()
     {
-        if (skewerRenderer == null || skewerCoatedRenderer == null || rubsNeededForCoating == 0) return;
-
         float coatingProgress = Mathf.Clamp01((float)currentRubs / rubsNeededForCoating);
 
-        // skewerRenderer (코팅 전 이미지)는 점점 투명하게
-        skewerRenderer.color = new Color(1, 1, 1, 1 - coatingProgress);
-
-        // skewerCoatedRenderer (코팅 후 이미지)는 점점 불투명하게
-        if (skewerCoatedRenderer.sprite != null) // 코팅 후 스프라이트가 할당되었을 때만
+        if (isEndlessModeActive)
         {
-             skewerCoatedRenderer.color = new Color(1, 1, 1, coatingProgress);
+            // ✅ [수정] SkewerVisualizer의 새 함수를 호출하여 코팅 효과를 적용합니다.
+            if (SkewerVisualizer.Instance != null)
+            {
+                SkewerVisualizer.Instance.ApplyMaskedSugarCoating(skewerParent, coatingProgress);
+            }
+        }
+        else
+        {
+            // --- 스테이지 모드 로직 (기존과 동일) ---
+            if (skewerRenderer == null || skewerCoatedRenderer == null) return;
+            
+            // 원본 꼬치는 점점 투명해지고,
+            skewerRenderer.color = new Color(1, 1, 1, 1 - coatingProgress);
+            
+            // 코팅된 꼬치가 점점 나타납니다.
+            if (skewerCoatedRenderer.sprite != null)
+            {
+                skewerCoatedRenderer.color = new Color(1, 1, 1, coatingProgress);
+            }
         }
     }
 
+    
     void CompleteCoating()
     {
         if (coatingComplete) return;
 
         coatingComplete = true;
-        isCoatingPhase = false; // 코팅 완료
-        currentRubs = rubsNeededForCoating; // 확실하게 최대치로
-        UpdateRubCountText();
-        UpdateCoatingVisuals(); // 최종 알파값 적용 (코팅 전 이미지 완전 투명, 코팅 후 이미지 완전 불투명)
+        isCoatingPhase = false;
+        currentRubs = rubsNeededForCoating;
+
+        UpdateCoatingVisuals();
+        
         Debug.Log("설탕 코팅 최종 완료!");
 
 
@@ -203,11 +256,13 @@ public class SugarCoatingManager : MonoBehaviour
             Debug.Log("두 번째 (최종) 반짝이는 효과 표시.");
         }
 
-        AudioManager.Instance?.PlayOneShotSound("Success"); // 실제 사운드 이름으로 변경 필요
+        AudioManager.Instance?.PlayOneShotSound("Success");
 
         StartCoroutine(ProceedToNextStageAfterDelay(coatingDuration));
     }
-
+    
+    // AdjustSkewerSpriteSize, ProceedToNextStageAfterDelay, ResetCoatingGame 메서드는 기존과 동일
+    
     void AdjustSkewerSpriteSize(SpriteRenderer renderer, Sprite spriteToScale)
     {
         if (renderer == null || spriteToScale == null)
@@ -218,8 +273,6 @@ public class SugarCoatingManager : MonoBehaviour
 
         Transform objectTransform = renderer.transform;
 
-        // 스프라이트의 원본 픽셀 크기 (PPU가 적용되지 않은 순수 픽셀)
-        // textureRect 대신 texture의 width/height 사용
         float spritePixelWidth = spriteToScale.texture.width;
         float spritePixelHeight = spriteToScale.texture.height;
 
@@ -228,28 +281,22 @@ public class SugarCoatingManager : MonoBehaviour
             return;
         }
 
-        // 스프라이트의 PPU (Pixels Per Unit)
         float ppu = spriteToScale.pixelsPerUnit;
-
-        // PPU를 고려한 스프라이트의 원본 월드 유닛 크기
-        float spriteOriginalWorldWidth = spritePixelWidth / ppu;
         float spriteOriginalWorldHeight = spritePixelHeight / ppu;
 
-        if (spriteOriginalWorldHeight == 0) { // 0으로 나누기 방지
+        if (spriteOriginalWorldHeight == 0) {
                 Debug.LogWarning($"Sprite '{spriteToScale.name}'의 PPU ({ppu}) 또는 픽셀 높이 ({spritePixelHeight})가 0이거나 유효하지 않아 월드 높이를 계산할 수 없습니다.");
                 return;
         }
 
-        // 목표 시각적 높이(targetVisualHeightInWorldUnits)를 기준으로 스케일 계산
         float scaleMultiplier = targetVisualHeightInWorldUnits / spriteOriginalWorldHeight;
 
         Vector3 newLocalScale = new Vector3(
-            scaleMultiplier * (spriteOriginalWorldWidth / spriteOriginalWorldHeight), // 원본 비율 유지하며 너비 계산
-            scaleMultiplier, // 높이를 targetVisualHeightInWorldUnits에 맞춤
-            1f // Z 스케일은 2D이므로 일반적으로 1
+            scaleMultiplier * (spritePixelWidth / spriteOriginalWorldHeight),
+            scaleMultiplier,
+            1f
         );
         
-        // 부모 스케일을 고려하여 최종 로컬 스케일 계산
         Vector3 parentWorldScale = Vector3.one;
         if (objectTransform.parent != null)
         {
@@ -264,7 +311,6 @@ public class SugarCoatingManager : MonoBehaviour
         }
 
         objectTransform.localScale = newLocalScale;
-        // Debug.Log($"{renderer.gameObject.name} ({spriteToScale.name}) 로컬 스케일: {newLocalScale}, 부모 스케일: {parentWorldScale}, 목표 월드 높이: {targetVisualHeightInWorldUnits}");
     }
 
 

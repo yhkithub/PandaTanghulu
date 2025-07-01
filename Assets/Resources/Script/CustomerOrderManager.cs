@@ -32,7 +32,9 @@ public class CustomerOrderManager : MonoBehaviour
     public List<CustomerOrderData> allCustomerOrders;
     public List<FruitSpriteMapping> fruitSpritesForOrderUI;
 
+    // { get; private set; } -> 외부에서는 읽기만 가능하고, 이 클래스 내부에서만 값을 바꿀 수 있습니다.
     public CustomerOrderData CurrentOrderData { get; private set; }
+
     public List<FruitType> CurrentRequiredSkewerFruits { get; private set; } = new List<FruitType>();
     public int currentCustomerIndex { get; private set; } = 0;
 
@@ -76,20 +78,7 @@ public class CustomerOrderManager : MonoBehaviour
             return;
         }
     }
-
-    // Start 대신 OnEnable/OnDisable에서 씬 로드 이벤트 구독/해제
-    // void OnEnable()
-    // {
-    //     SceneManager.sceneLoaded += OnSceneLoaded;
-    //     // 게임 시작 시 한 번만 초기화 (혹은 첫 씬에서만)
-    //     if (SceneManager.GetActiveScene().name == "TitleScene") // 예시: TitleScene에서 처음 시작될 때만 초기화
-    //     {
-    //          currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
-    //          Debug.Log($"CustomerOrderManager: 활성화 시 GameInfoHolder로부터 로드할 손님 인덱스: {currentCustomerIndex}");
-    //          SetupInitialGameState();
-    //     }
-    // }
-
+    
     void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
@@ -108,16 +97,28 @@ public class CustomerOrderManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"CustomerOrderManager: Scene '{scene.name}' loaded. GameInfoHolder.CustomerIndexToLoad: {GameInfoHolder.CustomerIndexToLoad}");
-        currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad; // 항상 GameInfoHolder 값으로 동기화
-
-        // TitleScene으로 돌아왔을 때, 그리고 "새로하기" 직후가 아닐 때 OpenStageSelectPanelOnLoad 플래그 처리
-        if (scene.name == stageSelectSceneName && GameInfoHolder.OpenStageSelectPanelOnLoad)
+        // ★★★ [핵심 수정] 무한 모드일 때는 씬 로드 시 스테이지 데이터를 불러오지 않도록 막습니다.
+        if (GameModeManager.IsEndlessMode)
         {
-            // 이 플래그는 TitleManager에서 처리하므로 여기서는 CustomerOrderManager 상태 설정에 집중
+            Debug.Log("무한 모드이므로, OnSceneLoaded에서 스테이지 데이터 로딩을 건너뜁니다.");
+            return;
         }
 
-        SetupInitialGameState(); // 씬 로드 시에만 초기 게임 상태 설정
+        // 스테이지 모드일 때만 이 로직을 실행합니다.
+        currentCustomerIndex = GameInfoHolder.CustomerIndexToLoad;
+        SetupInitialGameState();
+    }
+
+    public void SetEndlessModeOrder(CustomerOrderData order)
+    {
+        CurrentOrderData = order;
+        CurrentRequiredSkewerFruits.Clear();
+        if (CurrentOrderData != null && CurrentOrderData.skewerOrder != null)
+        {
+            CurrentRequiredSkewerFruits.AddRange(order.skewerOrder.Select(item => item.fruit));
+        }
+        OnOrderLoaded?.Invoke();
+        Debug.Log("무한 모드용 랜덤 주문 설정 완료: " + order.customerName);
     }
 
 
@@ -340,6 +341,17 @@ public class CustomerOrderManager : MonoBehaviour
 
         Debug.Log($"{CurrentOrderData.customerName} 손님의 모든 탕후루 제작 단계 완료!");
 
+        // ★★★ 무한 모드에서는 이 로직을 실행하지 않음 ★★★
+        if (GameModeManager.IsEndlessMode)
+        {
+            if (EndlessModeController.Instance != null)
+            {
+                // CustomerPresentationScene으로 이동하는 대신, EndlessModeController에게 클리어 신호를 보냄
+                EndlessModeController.Instance.CustomerCleared();
+            }
+            return; 
+        }
+
         if (StageDataManager.Instance != null)
         {
             StageDataManager.Instance.SetStageCleared(currentCustomerIndex);
@@ -461,9 +473,17 @@ public class CustomerOrderManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError($"ProceedToNextMiniGameStep: 현재 씬({currentScene})에서 다음 단계를 결정할 수 없습니다.");
-            LoadTitleScene();
-            return;
+             // ★★★ [수정] 무한 모드에서 ShopScene -> FruitCatchingGameScene 이동 처리 ★★★
+            if (GameModeManager.IsEndlessMode && currentScene == "ShopScene")
+            {
+                nextSceneToLoad = fruitCatchingSceneName;
+            }
+            else
+            {
+                Debug.LogError($"ProceedToNextMiniGameStep: 현재 씬({currentScene})에서 다음 단계를 결정할 수 없습니다.");
+                LoadTitleScene();
+                return;
+            }
         }
 
         if (!string.IsNullOrEmpty(nextSceneToLoad))

@@ -52,7 +52,7 @@ public class CustomerPresentationManager : MonoBehaviour
     private bool tanghuluDelivered = false;
     private List<DialogueEntry> activeDialogueSequence;
     private int currentDialogueIndex = 0;
-    private bool isDialoguePlaying = false;
+    // private bool isDialoguePlaying = false;
     private bool isTextTyping = false;
     private CanvasGroup currentBubbleGroup;
     private Button currentNextButton;

@@ -35,6 +35,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameClearScene.unity
     guid: 415ddba8f31490b4a9e8569be601f26e
+  - enabled: 1
+    path: Assets/Scenes/EndlessGameOverScene.unity
+    guid: 6a871175730a1084189e3b1b0152d535
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

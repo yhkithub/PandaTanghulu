@@ -10,6 +10,7 @@ TagManager:
   - SugarPot
   - TanghuluSkewer
   - TanghuluDropZone
+  - DynamicSkewerPart
   layers:
   - Default
   - TransparentFX

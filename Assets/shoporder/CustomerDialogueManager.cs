@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 
-
 public class CustomerDialogueManager : MonoBehaviour
 {
     public static CustomerDialogueManager Instance { get; private set; }
@@ -44,22 +43,31 @@ public class CustomerDialogueManager : MonoBehaviour
 
     void Start()
     {
-        InitializeButtonsAndBubbles();
+        // ★★★ [핵심 수정] 씬 시작 시 모드를 직접 확인하여 분기 처리 ★★★
+        if (GameModeManager.IsEndlessMode)
+        {
+            StartCoroutine(StartEndlessDialogueFlow());
+        }
+        else
+        {
+            StartStageDialogue();
+        }
+    }
 
+    void StartStageDialogue()
+    {
+        InitializeButtonsAndBubbles();
         currentCustomerData = CustomerOrderManager.Instance.CurrentOrderData;
         if (AudioManager.Instance != null)
         {
-            // 현재 재생 중인 BGM을 중지하려면
-            AudioManager.Instance.PlayBgm("MainGameBGM"); // "ShopBGM"으로 교체
-
+            AudioManager.Instance.PlayBgm("MainGameBGM");
         }
-
         if (currentCustomerData != null)
         {
             if (customerImage != null && currentCustomerData.customerSprite != null)
             {
                 customerImage.sprite = currentCustomerData.customerSprite;
-                customerImage.gameObject.SetActive(true); // 애니메이션 시작점
+                customerImage.gameObject.SetActive(true);
             }
             activeDialogueSequence = currentCustomerData.dialogueSequence;
         }
@@ -68,6 +76,38 @@ public class CustomerDialogueManager : MonoBehaviour
             Debug.LogError("CustomerDialogueManager: CustomerOrderManager로부터 현재 손님 데이터를 가져올 수 없습니다!");
             ProceedToGame();
         }
+    }
+
+    IEnumerator StartEndlessDialogueFlow()
+    {
+        InitializeButtonsAndBubbles();
+        currentCustomerData = CustomerOrderManager.Instance.CurrentOrderData;
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBgm("MainGameBGM");
+        }
+
+        if (currentCustomerData == null)
+        {
+            yield return new WaitForSeconds(1.5f);
+            ProceedToGame();
+            yield break;
+        }
+
+        // 손님 등장 효과음 재생 및 이미지 표시
+        AudioManager.Instance?.PlayOneShotSound("CustomerArrival");
+        if (customerImage != null && currentCustomerData.customerSprite != null)
+        {
+            customerImage.sprite = currentCustomerData.customerSprite;
+            customerImage.gameObject.SetActive(true);
+        }
+
+        // 짧은 대사 한 줄 표시
+        activeDialogueSequence = currentCustomerData.dialogueSequence;
+        isDialoguePlaying = true;
+        currentDialogueIndex = 0;
+        yield return StartCoroutine(ProceedDialogueInternal());
     }
 
     void InitializeButtonsAndBubbles()
@@ -82,13 +122,11 @@ public class CustomerDialogueManager : MonoBehaviour
     public void StartDialogue()
     {
         if (isDialoguePlaying) return;
-
         if (activeDialogueSequence == null || activeDialogueSequence.Count == 0)
         {
             ProceedToGame();
             return;
         }
-
         isDialoguePlaying = true;
         currentDialogueIndex = 0;
         StartCoroutine(ProceedDialogueInternal());
@@ -97,43 +135,31 @@ public class CustomerDialogueManager : MonoBehaviour
     IEnumerator ProceedDialogueInternal()
     {
         HideAllBubblesAndButtons();
-
         DialogueEntry entry = activeDialogueSequence[currentDialogueIndex];
 
         if (entry.speaker == DialogueEntry.Speaker.customer)
         {
             if (entry.spriteState == CustomerSpriteState.Smiling)
-            {
                 customerImage.sprite = currentCustomerData.smilingCustomerSprite;
-            }
-            else // Default 상태일 때
-            {
+            else
                 customerImage.sprite = currentCustomerData.customerSprite;
-            }
         }
 
         if (entry.speaker == DialogueEntry.Speaker.customer)
-        {
             yield return ShowSpeechBubbleAndText(kikiSpeechBubbleGroup, kikiSpeechText, entry.line, kikiNextButton);
-        }
         else
-        {
             yield return ShowSpeechBubbleAndText(pupuSpeechBubbleGroup, pupuDialogueText, entry.line, pupuNextButton);
-        }
     }
 
     IEnumerator ShowSpeechBubbleAndText(CanvasGroup bubbleGroup, TextMeshProUGUI textComponent, string message, Button nextBtn)
     {
         if (bubbleGroup == null || textComponent == null) yield break;
-
         bubbleGroup.gameObject.SetActive(true);
         AudioManager.Instance?.PlaySound(bubbleOpenSoundName);
         yield return StartCoroutine(FadeIn(bubbleGroup));
-
         textComponent.text = "";
         nextBtn.gameObject.SetActive(false);
         yield return StartCoroutine(TypeText(textComponent, message));
-
         nextBtn.gameObject.SetActive(true);
     }
 
@@ -141,18 +167,14 @@ public class CustomerDialogueManager : MonoBehaviour
     {
         isTextTyping = true;
         textComponent.text = "";
-
         Sound s = AudioManager.Instance?.sounds.Find(sound => sound.name == textSoundName);
         if (s?.source != null) s.source.Play();
-
         while (isTextTyping && textComponent.text.Length < message.Length)
         {
             textComponent.text += message[textComponent.text.Length];
             yield return new WaitForSeconds(0.02f);
         }
-
         if (s?.source != null && s.source.isPlaying) s.source.Stop();
-
         textComponent.text = message;
         isTextTyping = false;
     }
@@ -169,16 +191,12 @@ public class CustomerDialogueManager : MonoBehaviour
 
         currentDialogueIndex++;
         if (currentDialogueIndex < activeDialogueSequence.Count)
-        {
             StartCoroutine(ProceedDialogueInternal());
-        }
         else
-        {
             ProceedToGame();
-        }
     }
 
-    void ProceedToGame()
+    public void ProceedToGame()
     {
         isDialoguePlaying = false;
         HideAllBubblesAndButtons();
@@ -209,8 +227,16 @@ public class CustomerDialogueManager : MonoBehaviour
 
     public void OnSkipButtonClicked()
     {
-        // 이미 구현된 "다음 씬으로 넘어가기" 함수를 바로 호출합니다.
         Debug.Log("대화를 스킵하고 게임 씬으로 바로 이동합니다.");
+        ProceedToGame();
+    }
+
+    // 무한 모드에서 대화를 건너뛰기 위한 함수
+    public IEnumerator EndlessModeSkipDialogue()
+    {
+        Debug.Log("무한 모드: 짧은 대기 후 게임 씬으로 이동합니다.");
+        HideAllBubblesAndButtons();
+        yield return new WaitForSeconds(1.5f);
         ProceedToGame();
     }
 }

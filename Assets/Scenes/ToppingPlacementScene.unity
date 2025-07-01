@@ -2045,6 +2045,7 @@ MonoBehaviour:
   targetVisualHeightInWorldUnits: 5
   targetColliderWorldSize: {x: 1, y: 4}
   targetColliderWorldOffset: {x: 0.1, y: 0}
+  skewerParent: {fileID: 520801926}
   sugarCoatedSkewerRenderer: {fileID: 126976774}
   finalSkewerRenderer: {fileID: 750245334}
   toppingSelectionArea: {fileID: 2085641030}

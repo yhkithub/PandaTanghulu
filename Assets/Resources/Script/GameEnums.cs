@@ -20,6 +20,17 @@ public enum FruitType
     생선장식,
     치즈
 }
+public enum ToppingType
+{
+    None,
+    바나나,
+    뼈다귀쿠키,
+    풀,
+    당근,
+    나비장식,
+    생선장식,
+    치즈
+}
 
 public enum GameState
 {

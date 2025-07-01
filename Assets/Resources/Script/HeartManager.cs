@@ -62,18 +62,33 @@ public class HeartManager : MonoBehaviour
             Debug.Log("하트 감소. 현재 하트: " + currentHearts);
         }
 
-
         if (currentHearts <= 0)
         {
-            Debug.Log("게임 오버!");
-            // SceneSwitcher 사용 권장
-            if (SceneSwitcher.Instance != null)
+            if (GameModeManager.IsEndlessMode)
             {
-                SceneSwitcher.Instance.LoadScene(gameOverSceneName);
+                // 무한 모드 컨트롤러의 게임오버 함수를 직접 호출
+                if (EndlessModeController.Instance != null)
+                {
+                    Debug.Log("무한 모드에서 하트 모두 소진! EndlessModeController.GameOver()를 호출합니다.");
+                    EndlessModeController.Instance.GameOver();
+                }
+                else
+                {
+                    Debug.LogError("EndlessModeController 인스턴스를 찾을 수 없어 무한 모드 게임오버를 처리할 수 없습니다.");
+                }
             }
             else
             {
-                SceneManager.LoadScene(gameOverSceneName);
+                // 기존 스테이지 모드의 게임오버 처리
+                Debug.Log("게임 오버!");
+                if (SceneSwitcher.Instance != null)
+                {
+                    SceneSwitcher.Instance.LoadScene(gameOverSceneName);
+                }
+                else
+                {
+                    SceneManager.LoadScene(gameOverSceneName);
+                }
             }
         }
     }

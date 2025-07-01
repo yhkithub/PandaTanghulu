@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4448059892340116371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2554636842976867919}
+  - component: {fileID: 6593902774923404272}
+  - component: {fileID: -2808607638822579480}
+  m_Layer: 0
+  m_Name: EndlessModeController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2554636842976867919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4448059892340116371}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.13579, y: -3.50791, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6593902774923404272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4448059892340116371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5600581e5e2aa743ba67779206bff1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skewerStickPrefab: {fileID: 4328689023622266480, guid: 48653d9c60d18cc41b72b55eb94f9dfa, type: 3}
+  sugarCoatingSprite: {fileID: 185078027555129239, guid: fdd629ea347a31a4aaa8fbbc998dead8, type: 3}
+  fruitTypes: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000
+  fruitPrefabs:
+  - {fileID: 6572275477713619998, guid: 50c84b8307852c54f8ac5e1a41b9677e, type: 3}
+  - {fileID: 6572275477713619998, guid: 64fe1b4d5ce40ca4e89b0b7f18f87105, type: 3}
+  - {fileID: 6572275477713619998, guid: 90bd92e7f2ef94249af0d82281452ffc, type: 3}
+  - {fileID: 6572275477713619998, guid: 10e7ae6b17b6b964bb99f5d0f82740d2, type: 3}
+  - {fileID: 6572275477713619998, guid: 8ee9408377a60a24081d46086eb44cce, type: 3}
+  - {fileID: 6572275477713619998, guid: cbcb88dfec0e4e341a333b2050b2c1ac, type: 3}
+  - {fileID: 6572275477713619998, guid: dd8396ae76f7df2499e88558aa7e6979, type: 3}
+  - {fileID: 6572275477713619998, guid: 232d9b7a7199b364c805465b80fecf24, type: 3}
+  - {fileID: 6572275477713619998, guid: 83c74dd1aa05aac4a975ac349e7171b4, type: 3}
+  - {fileID: 6572275477713619998, guid: 5e8b31a59664fc84f896b1fb5fd04ec0, type: 3}
+  - {fileID: 6572275477713619998, guid: b108533f4afd88a49aa782a8c302347b, type: 3}
+  - {fileID: 6572275477713619998, guid: 721481f29f9630d44b1456702c2040bb, type: 3}
+  - {fileID: 6572275477713619998, guid: e1fe6f55c7366bd459a1b1d0c8b113b7, type: 3}
+  - {fileID: 6572275477713619998, guid: 9812fb0716343204a8ab4dfe3a70b820, type: 3}
+  - {fileID: 6572275477713619998, guid: bb8b75fb73c166c4b9ce1226e14c9244, type: 3}
+  stickTargetHeight: 1
+  topMarginForTopping: 0.8
+  fruitScaleMultiplier: 0.125
+  toppingScaleMultiplier: 1.2
+  fruitSpacing: -0.3
+  debugTargetParent: {fileID: 0}
+  testSkewerOrder: 
+  toppingYOffset: 0
+--- !u!114 &-2808607638822579480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4448059892340116371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 907a55c9e7fe9a740891278803871f30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  endlessUIPrefab: {fileID: 4337363457746109842, guid: 332b5ce61743e4145b6ed6c1e132bade, type: 3}
+  initialTimePerCustomer: 45
+  endlessGameOverSceneName: EndlessGameOverScene

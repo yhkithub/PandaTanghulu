@@ -18,6 +18,9 @@ public class TitleManager : MonoBehaviour
     public float logoFadeDuration = 1f;
     public string buttonclickSoundName = "button";
 
+    [Header("무한 모드")]
+    public GameObject endlessModeTrigger;
+
     [Header("과일 롤 애니메이션 설정")]
     public List<FruitPrefabChanceForRoll> fruitPrefabsWithChanceForRoll;
     public Transform fruitRollStartPositionLeft;
@@ -48,7 +51,6 @@ public class TitleManager : MonoBehaviour
     [Header("스테이지 정보 (CustomerOrderData 에셋들)")]
     public List<CustomerOrderData> customerOrderDataListForTitle;
 
-
     private const string GAME_STARTED_KEY = "GameStarted";
     private const string TUTORIAL_COMPLETED_KEY = "TutorialCompleted"; // CustomerOrderManager와 동일하게
     private const string BGM_KEY = "BGM";
@@ -77,6 +79,7 @@ public class TitleManager : MonoBehaviour
 
     void Start()
     {
+        GameModeManager.ResetMode(); // 무한 모드 상태를 초기화합니다.
         // 비밀 키 인덱스 초기화
         secretCodeIndex = 0;
         // 타이틀 매니저 시작 시 배경 애니메이션 코루틴 시작
@@ -179,6 +182,8 @@ public class TitleManager : MonoBehaviour
             if (stageSelectButton != null) stageSelectButton.SetActive(false);
             Debug.Log("튜토리얼 미완료 상태이므로 스테이지 선택 및 동물도감 버튼을 비활성화합니다.");
         }
+
+        UpdateEndlessModeTriggerVisibility();
         
         LoadAudioSettings();
     }
@@ -221,7 +226,7 @@ public class TitleManager : MonoBehaviour
             {
                 StageDataManager.Instance.SetStageCleared(i);
             }
-            
+
             // 스테이지 선택 버튼 활성화
             if (stageSelectButton != null) stageSelectButton.SetActive(true);
 
@@ -231,8 +236,20 @@ public class TitleManager : MonoBehaviour
 
             if (AudioManager.Instance != null)
             {
-                AudioManager.Instance.PlayOneShotSound("Success"); 
+                AudioManager.Instance.PlayOneShotSound("Success");
             }
+            
+            UpdateEndlessModeTriggerVisibility(); 
+        }
+    }
+
+    private void UpdateEndlessModeTriggerVisibility()
+    {
+        if (endlessModeTrigger != null && StageDataManager.Instance != null)
+        {
+            bool allStagesCleared = StageDataManager.Instance.IsGameFullyCleared();
+            endlessModeTrigger.SetActive(allStagesCleared);
+            Debug.Log("무한 모드 트리거 활성화 상태: " + allStagesCleared);
         }
     }
 

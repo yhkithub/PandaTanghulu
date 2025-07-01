@@ -759,6 +759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fryingPanObject: {fileID: 403939620}
+  skewerParent: {fileID: 653547439}
   skewerRenderer: {fileID: 1031537719}
   skewerCoatedRenderer: {fileID: 1484237679}
   honeyDipper: {fileID: 842062691}

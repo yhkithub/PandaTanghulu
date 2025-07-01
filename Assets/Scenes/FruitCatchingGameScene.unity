@@ -657,9 +657,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   heartImagesInScene:
-  - {fileID: 1010295142}
-  - {fileID: 993926170}
   - {fileID: 47053742}
+  - {fileID: 993926170}
+  - {fileID: 1010295142}
   fullHeartSpriteInScene: {fileID: 9142910626554334882, guid: 7e97774b3293b184a938f6bddbd7e31b, type: 3}
   emptyHeartSpriteInScene: {fileID: 3517076595940653921, guid: 28ab7abbbe3fddf4ebdbfb74c3526227, type: 3}
 --- !u!4 &327787232

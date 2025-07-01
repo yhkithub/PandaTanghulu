@@ -55,9 +55,9 @@ public class HoneyDipperController : MonoBehaviour
     // isTrigger가 켜진 콜라이더끼리의 지속적인 충돌 감지
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("TanghuluSkewer") && hasSugar) // 설탕 묻은 허니디퍼가 탕후루 꼬치에 닿아있을 때
+        // ✅ 태그를 "TanghuluSkewer"로 확인
+        if (other.CompareTag("TanghuluSkewer") && hasSugar) 
         {
-            // SugarCoatingManager에 현재 허니디퍼 위치를 전달하며 문지르기 알림
             if (SugarCoatingManager.Instance != null)
             {
                 SugarCoatingManager.Instance.RubSkewer(transform.position);
@@ -91,7 +91,7 @@ public class HoneyDipperController : MonoBehaviour
                 Debug.LogError("SugarCoatingManager.Instance가 null입니다. DipHoneyDipper 호출 불가.");
             }
         }
-        else if (other.CompareTag("TanghuluSkewer"))
+         else if (other.CompareTag("TanghuluSkewer"))
         {
             SugarCoatingManager.Instance?.OnDipperTouchSkewer(true);
         }

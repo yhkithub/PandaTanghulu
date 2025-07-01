@@ -6,14 +6,13 @@ using System;
 
 public class SugarBoilingManager : MonoBehaviour
 {
-    [Header("핵심 UI 요소")]
+   [Header("핵심 UI 요소")]
     public Image timingBarIndicator;
     public RectTransform successZone;
     public Button clickButton;
     public Image resultImageDisplay;
     public Image successSparkleImage;
-    public Sprite clearImageSprite;
-    public Sprite failImageSprite;
+    public Sprite clearImageSprite, failImageSprite;
 
     [Header("스테이지 정보 UI")]
     public TextMeshProUGUI stageTitleText;
@@ -29,11 +28,9 @@ public class SugarBoilingManager : MonoBehaviour
     [Header("게임 설정 값")]
     public int totalChallengeCount = 3;
     public float resultDisplayDuration = 1.0f;
+    public float[] speedPerStep = new float[3] { 2.0f, 3.0f, 4.0f }; // 스테이지 모드 기본 속도
 
-    [Tooltip("1단계, 2단계, 3단계의 인디케이터 속도")]
-    public float[] speedPerStep = new float[3] { 2.0f, 3.0f, 4.0f };
-
-    [Header("사운드 설정 (AudioManager에 등록된 이름)")]
+    [Header("사운드 설정")]
     public string boilingLoopSoundName = "Boiling";
     public string successSoundName = "Success";
     public string failSoundName = "Fail";
@@ -64,17 +61,7 @@ public class SugarBoilingManager : MonoBehaviour
 
     void Start()
     {
-        if (AudioManager.Instance != null)
-        {
-            // 현재 재생 중인 BGM을 중지하려면
-            // AudioManager.Instance.StopBackgroundMusic();
-            // AudioManager.Instance.PlayBgm("MainGameBGM"); // "ShopBGM"으로 교체
-        }
-
-        if (clickButton != null)
-        {
-            clickButton.onClick.AddListener(OnTimingClick);
-        }
+        if (clickButton != null) clickButton.onClick.AddListener(OnTimingClick);
         
         halfIndicatorWidth = timingBarIndicator.rectTransform.rect.width / 2;
         RectTransform parentRect = timingBarIndicator.transform.parent.GetComponent<RectTransform>();
@@ -97,35 +84,25 @@ public class SugarBoilingManager : MonoBehaviour
         currentChallengeStep = 1;
         currentSuccessCount = 0;
 
-        if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.CurrentOrderData != null)
+        if (GameModeManager.IsEndlessMode && EndlessModeController.Instance != null)
+        {
+            stageSpeedMultiplier = EndlessModeController.Instance.GetSugarBoilingSpeed();
+            stageSuccessZoneWidth = 120f;
+        }
+        else if (CustomerOrderManager.Instance?.CurrentOrderData != null)
         {
             stageSpeedMultiplier = CustomerOrderManager.Instance.CurrentOrderData.sugarBoilingSpeed;
             stageSuccessZoneWidth = CustomerOrderManager.Instance.CurrentOrderData.sugarBoilingSuccessZoneWidth;
         }
-        else
-        {
-            stageSpeedMultiplier = 1.0f;
-            stageSuccessZoneWidth = 150f; 
-        }
 
-        
         StartCoroutine(ShowStageTitleAndStartFirstChallenge());
     }
 
-    private void Update()
-    {
-        // if (CustomerOrderManager.Instance != null && CustomerOrderManager.Instance.IsGamePaused)
-        // {
-        //     if (boilingAudioSource.isPlaying) boilingAudioSource.Pause();
-        //     return;
-        // }
-        // else
-        // {
-        //     if (isIndicatorMoving && !boilingAudioSource.isPlaying && boilingAudioSource.time > 0) boilingAudioSource.UnPause();
-        // }
 
+    void Update()
+    {
         if (!isIndicatorMoving) return;
-        
+
         Vector3 position = timingBarIndicator.rectTransform.anchoredPosition;
         position.x += (moveRight ? currentIndicatorSpeed : -currentIndicatorSpeed) * Time.deltaTime * 100f;
         position.x = Mathf.Clamp(position.x, minX, maxX);
@@ -152,27 +129,23 @@ public class SugarBoilingManager : MonoBehaviour
 
     public void StartTimingGame()
     {
-        float baseSpeedForStep = 0f;
-        if (speedPerStep != null && speedPerStep.Length > 0)
+        float[] baseSpeeds;
+        if (GameModeManager.IsEndlessMode)
         {
-            if (speedPerStep.Length >= currentChallengeStep)
-            {
-                baseSpeedForStep = speedPerStep[currentChallengeStep - 1];
-            }
-            else
-            {
-                baseSpeedForStep = speedPerStep[speedPerStep.Length - 1];
-            }
+            // ★★★[핵심 수정] 무한 모드일 때만 다른 기본 속도 배열 사용
+            baseSpeeds = new float[] { 4.0f, 5.5f, 7.0f };
+        }
+        else
+        {
+            // 스테이지 모드일 때는 Inspector에 설정된 값을 그대로 사용
+            baseSpeeds = this.speedPerStep;
         }
         
-        // 최종 속도 = (스텝별 기본 속도) * (스테이지별 속도 배율)
-        currentIndicatorSpeed = baseSpeedForStep * stageSpeedMultiplier;
+        currentIndicatorSpeed = baseSpeeds[currentChallengeStep - 1] * stageSpeedMultiplier;
 
         if (successZone != null)
         {
-            // 성공 영역의 크기를 설정
             successZone.sizeDelta = new Vector2(stageSuccessZoneWidth, successZone.sizeDelta.y);
-            // 성공 영역의 위치를 랜덤하게 설정
             float successZoneWidth = successZone.rect.width;
             float randomRangeMin = minX + (successZoneWidth / 2) - halfIndicatorWidth;
             float randomRangeMax = maxX - (successZoneWidth / 2) + halfIndicatorWidth;

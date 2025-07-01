@@ -71,22 +71,26 @@ public class DraggableTopping : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         {
             Debug.Log(toppingType + " 토핑이 꼬치 영역에 놓임.");
             ToppingPlacementManager.Instance.PlaceToppingOnSkewer(toppingType);
-            
-            // 성공적으로 배치되었으므로 아이템을 파괴합니다.
-            Destroy(gameObject);
+            Destroy(gameObject); // 성공 시 파괴
         }
         else
         {
-            Debug.Log(toppingType + " 토핑이 꼬치 영역 바깥에 놓임. 원위치로 복귀.");
-            // 드롭에 실패하면 원래 월드 위치로 복귀
-            transform.position = startPosition;
+            Debug.Log(toppingType + " 토핑이 꼬치 영역 바깥에 놓임. UI를 리셋합니다.");
+            
+            // ❌ 기존 위치 복귀 코드 삭제
+            // transform.position = startPosition; 
+
+            // ✅ 실패 시에도 ToppingPlacementManager가 UI를 다시 그리도록 하고, 자신은 파괴
+            ToppingPlacementManager.Instance.ResetToppingChoices(); 
+            Destroy(gameObject); 
         }
     }
 
     // --- OnTriggerEnter2D, OnTriggerExit2D는 기존 코드 그대로 둡니다. ---
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("TanghuluDropZone"))
+        // [수정] "TanghuluSkewer" 또는 "TanghuluDropZone" 태그를 모두 감지합니다.
+        if (other.CompareTag("TanghuluSkewer") || other.CompareTag("TanghuluDropZone"))
         {
             Debug.Log(toppingType + "이(가) " + other.name + " 영역에 들어옴.");
             canPlaceTopping = true;
@@ -95,7 +99,8 @@ public class DraggableTopping : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("TanghuluDropZone"))
+        // [수정] "TanghuluSkewer" 또는 "TanghuluDropZone" 태그를 모두 감지합니다.
+        if (other.CompareTag("TanghuluSkewer") || other.CompareTag("TanghuluDropZone"))
         {
             Debug.Log(toppingType + "이(가) " + other.name + " 영역에서 나옴.");
             canPlaceTopping = false;
